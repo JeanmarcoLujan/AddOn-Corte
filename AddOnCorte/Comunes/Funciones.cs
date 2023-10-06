@@ -13,6 +13,7 @@ namespace AddOnCorte.Comunes
         {
             SAPbouiCOM.Matrix oMatrix = null;
             SAPbouiCOM.DBDataSource oDBDataSource = null;
+            SAPbouiCOM.Column oColumn = null;
             try
             {
 
@@ -33,9 +34,13 @@ namespace AddOnCorte.Comunes
                 //oMatrix.AddRow();
                 //oMatrix.FlushToDataSource();
 
+                //oMatrix = oForm.Items.Item("ID_de_Tu_Matriz").Specific
+                
 
-                for (int i = 0; i < 17; i++)
+
+                for (int i = 0; i < 21; i++)
                 {
+                    
                     oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
                     var sdsd = oDBDataSource.Size - 1;
                     oDBDataSource.Offset = oDBDataSource.Size - 1;
@@ -44,14 +49,37 @@ namespace AddOnCorte.Comunes
                         descripcio = "Largo (ft)";
                     else if (i == 1)
                         descripcio = "Resfile";
+                    else if (i == 17)
+                        descripcio = "Subtotal";
+                    else if (i == 18)
+                        descripcio = "Total";
+                    else if (i == 19)
+                        descripcio = "ChkS Ancho dif";
+                    else if (i == 20)
+                        descripcio = "Sum M2 x corr";
                     else
                         descripcio = "Slit#" + (i - 1);
 
                     oDBDataSource.SetValue("U_MGS_CL_TITU", oDBDataSource.Size - 1, descripcio);
+                    for (int j = 1; j <= 10; j++)
+                    {
+                        string columnId = "U_MGS_CL_C" + j;
+                        oDBDataSource.SetValue(columnId, oDBDataSource.Size - 1, "0");
+                    }
+                    
                     oMatrix.AddRow();
                     oMatrix.FlushToDataSource();
 
 
+                }
+              
+
+                for (int colIndex = 1; colIndex <= oMatrix.Columns.Count-1; colIndex++)
+                {
+                    oMatrix.CommonSetting.SetCellEditable(18, colIndex, false);
+                    oMatrix.CommonSetting.SetCellEditable(19, colIndex, false);
+                    oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
+                    oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
                 }
 
                 //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
@@ -70,6 +98,10 @@ namespace AddOnCorte.Comunes
                 oMatrix.LoadFromDataSource();
                 oMatrix.AutoResizeColumns();
                 oMatrix.LoadFromDataSource();
+
+                
+
+               
 
 
             }

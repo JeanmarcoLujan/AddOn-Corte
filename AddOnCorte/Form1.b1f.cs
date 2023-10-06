@@ -37,6 +37,7 @@ namespace AddOnCorte
             this.Folder2 = ((SAPbouiCOM.Folder)(this.GetItem("Item_15").Specific));
             this.Matrix0 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_16").Specific));
             this.Matrix1 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_17").Specific));
+            this.Matrix1.KeyDownAfter += new SAPbouiCOM._IMatrixEvents_KeyDownAfterEventHandler(this.Matrix1_KeyDownAfter);
             this.Matrix2 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_18").Specific));
             this.Button0 = ((SAPbouiCOM.Button)(this.GetItem("1").Specific));
             this.Button0.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.Button0_ClickBefore);
@@ -62,6 +63,14 @@ namespace AddOnCorte
             this.Button2 = ((SAPbouiCOM.Button)(this.GetItem("Item_38").Specific));
             this.Button2.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button2_PressedAfter);
             this.Button3 = ((SAPbouiCOM.Button)(this.GetItem("Item_10").Specific));
+            this.Button3.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button3_PressedAfter);
+            this.EditText2 = ((SAPbouiCOM.EditText)(this.GetItem("Item_19").Specific));
+            this.StaticText9 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_28").Specific));
+            this.StaticText13 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_39").Specific));
+            this.EditText13 = ((SAPbouiCOM.EditText)(this.GetItem("Item_40").Specific));
+            this.StaticText14 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_41").Specific));
+            this.EditText14 = ((SAPbouiCOM.EditText)(this.GetItem("Item_42").Specific));
+            this.StaticText15 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_43").Specific));
             this.OnCustomInitialize();
 
         }
@@ -147,9 +156,65 @@ namespace AddOnCorte
         private void Button0_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
+            SAPbouiCOM.Matrix oMatrix = null;
             //throw new System.NotImplementedException();
 
             var sda = oForm.Mode;
+
+            string obtenerInfo = "NONE";
+            switch (oForm.Mode)
+            {
+
+                case SAPbouiCOM.BoFormMode.fm_ADD_MODE:
+                    obtenerInfo = "ADD";
+                    break;
+                case SAPbouiCOM.BoFormMode.fm_UPDATE_MODE:
+                    obtenerInfo = "UPDATE";
+                    break;
+                default:
+                    obtenerInfo = "NONE";
+                    //this.EditText9.Item.Enabled = false;
+                    break;
+            }
+
+            if(obtenerInfo == "ADD")
+            {
+                
+                List<string> oListErr = new List<string>();
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
+                if (oMatrix.RowCount == 0)
+                {
+                    oListErr.Add("Debe especificar informacion en la pestaña MASTER");
+                }
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+                if (oMatrix.RowCount == 0)
+                {
+                    oListErr.Add("Debe especificar informacion en la pestaña RESUMEN");
+                }
+
+                if (oListErr.Count > 0)
+                {
+                    string msmValidate = "";
+                    foreach (var msm in oListErr)
+                    {
+                        msmValidate = msmValidate + " > " + msm + "\n";
+                    }
+
+                    Globales.oApp.MessageBox("La siguiente informacion es obligatoria: \n" + msmValidate);
+                }
+
+                if (oListErr.Count > 0)
+                    BubbleEvent = false;
+                else
+                    BubbleEvent = true;
+            }
+            else
+            {
+                BubbleEvent = true;
+            }
+
+
 
 
         }
@@ -335,13 +400,14 @@ namespace AddOnCorte
                 oPB.Text = "Obteniendo la data";
                 oPB.Value = 10;
 
+
                 
-
-
                 oForm.Freeze(true);
 
-                
-                
+
+                double total_ancho = 0;
+                double total_largo = 0;
+                double total_cantidad = 0;
                 for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_lt").Rows.Count; i++)
                 {
                     if (oForm.DataSources.DataTables.Item("dt_lt").GetValue("Seleccion", i).ToString().Equals("Y"))
@@ -364,6 +430,10 @@ namespace AddOnCorte
                         oDBDataSource.SetValue("U_MGS_CL_MNBO", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_BOBINA", i).ToString());
                         oDBDataSource.SetValue("U_MGS_CL_MCAN", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_CANT", i).ToString());
 
+                        total_ancho = total_ancho + double.Parse( oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_ANCHO", i).ToString());
+                        total_largo = total_largo + double.Parse( oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_LARGO", i).ToString());
+                        total_cantidad = total_cantidad + double.Parse( oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_CANT", i).ToString());
+
 
                         oMatrix.LoadFromDataSource();
                         oMatrix.AutoResizeColumns();
@@ -374,12 +444,16 @@ namespace AddOnCorte
                     }
                 }
 
+                this.EditText2.Value = total_ancho.ToString();
+                this.EditText13.Value = total_largo.ToString();
+                this.EditText14.Value = total_cantidad.ToString();
+
                 //oDBDataSource.SetValue("U_MGS_CL_LOTE", cont - 1, "Total");
 
                 //oMatrix.AddRow();
                 //oMatrix.FlushToDataSource();
 
-                
+
 
                 System.Threading.Thread.Sleep(1000);
                 oPB.Stop();
@@ -417,6 +491,10 @@ namespace AddOnCorte
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
                 oMatrix.Clear();
 
+                this.EditText2.Value = "0";
+                this.EditText13.Value = "0";
+                this.EditText14.Value = "0";
+
             }
             catch
             {
@@ -426,5 +504,90 @@ namespace AddOnCorte
         }
 
         private SAPbouiCOM.Button Button3;
+
+        private void Button3_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            //throw new System.NotImplementedException();
+
+            Globales.oApp.MessageBox("Generarndo la aferta de venta");
+
+        }
+
+        private SAPbouiCOM.EditText EditText2;
+        private SAPbouiCOM.StaticText StaticText9;
+        private SAPbouiCOM.StaticText StaticText13;
+        private SAPbouiCOM.EditText EditText13;
+        private SAPbouiCOM.StaticText StaticText14;
+        private SAPbouiCOM.EditText EditText14;
+        private SAPbouiCOM.StaticText StaticText15;
+
+        private void Matrix1_KeyDownAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            //throw new System.NotImplementedException();
+
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.DBDataSource oDBDataSource = null;
+            SAPbouiCOM.Column oColumn = null;
+            SAPbouiCOM.EditText oEditText = null;
+            try
+            {
+
+              
+
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                double ancho = this.EditText2.Value == "" ? 0: double.Parse(this.EditText2.Value);
+
+                for (int k = 2; k < 12; k++)
+                {
+                    
+
+                    double c1_sub = 0;
+                    double c1_total = 0;
+                    double c1_largo = 0;
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(2).Specific; //Cast the Cell of 
+                    c1_total = double.Parse(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(1).Specific; //Cast the Cell of 
+                    c1_largo = double.Parse(oEditText.Value.ToString());
+
+
+                    for (int i = 3; i <= 17; i++)
+                    {
+                        
+                        //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
+
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i).Specific; //Cast the Cell of 
+                        c1_sub = c1_sub + double.Parse(oEditText.Value.ToString());
+                        oMatrix.FlushToDataSource();
+
+                    }
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
+                    oEditText.Value = c1_sub.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
+                    oEditText.Value = ( c1_sub + c1_total).ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
+                    oEditText.Value = (ancho -(c1_sub + c1_total )).ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
+                    oEditText.Value = (c1_sub* c1_largo*2.54*2.54*12/10000).ToString();
+                }
+                
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+
+        }
     }
 }
