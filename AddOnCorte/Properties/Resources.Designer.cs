@@ -79,7 +79,7 @@ namespace AddOnCorte.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MGS_CORTE.
+        ///   Looks up a localized string similar to MGS_CL_CORTE.
         /// </summary>
         internal static string NombreAddon {
             get {

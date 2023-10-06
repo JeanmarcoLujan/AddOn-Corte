@@ -156,15 +156,10 @@ namespace AddOnCorte.Comunes
             {
                 //CreaTablaMD("MSS_TIPOCUENTA", "Tipo de Cuenta", SAPbobsCOM.BoUTBTableType.bott_NoObject);
 
-                CreaTablaMD("NX_LIQU", "Liq proveedores CAB", SAPbobsCOM.BoUTBTableType.bott_Document);
-                CreaTablaMD("NX_LIEM", "Liq proveedores EM", SAPbobsCOM.BoUTBTableType.bott_DocumentLines);
-                CreaTablaMD("NX_LISG", "Liq proveedores SGI", SAPbobsCOM.BoUTBTableType.bott_DocumentLines);
-
-                CreaTablaMD("NX_BCPA", "Bonif/Castigo parametros", SAPbobsCOM.BoUTBTableType.bott_NoObject);
-                CreaTablaMD("NX_BYC", "Bonificacion y Castigo", SAPbobsCOM.BoUTBTableType.bott_NoObject);
-
-
-                //CreaTablaMD("NX_ROMA", "Aplicacion romana I", SAPbobsCOM.BoUTBTableType.bott_Document);
+                CreaTablaMD("MGS_CL_COCABE", "MGS - Solicitud corte cabecera", SAPbobsCOM.BoUTBTableType.bott_Document);
+                CreaTablaMD("MGS_CL_COMAST", "MGS - Información del master", SAPbobsCOM.BoUTBTableType.bott_DocumentLines);
+                CreaTablaMD("MGS_CL_CORRID", "MGS - Corridas detalle", SAPbobsCOM.BoUTBTableType.bott_DocumentLines);
+                CreaTablaMD("MGS_CL_CORESU", "MGS - Resumen del corte", SAPbobsCOM.BoUTBTableType.bott_DocumentLines);
 
 
             }
@@ -182,86 +177,55 @@ namespace AddOnCorte.Comunes
             try
             {
 
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_FECHA", "Fecha de solicitud", SAPbobsCOM.BoFieldTypes.db_Date, SAPbobsCOM.BoFldSubTypes.st_None, 10, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+
                 //Cabecera
                 string[] ValidValues = null;
                 string[] ValidDescrip = null;
-                CreaCampoMD("@NX_LIQU", "NX_PROV", "Proveedor", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_PRDE", "Nombre del proveedor", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 100, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_TTRI", "Tipo de trigo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 100, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                //CreaCampoMD("@NX_LIQU", "NX_PRCO", "Persona de contacto", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                //CreaCampoMD("@NX_LIQU", "NX_LREF", "Referencia", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 100, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                // CreaCampoMD("@NX_LIQU", "NX_MONE", "Moneda", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-
-                ValidValues = new string[3] { "A", "F", "E" };
-                ValidDescrip = new string[3] { "Abierto", "Facturado", "Enviado" };
-                CreaCampoMD("@NX_LIQU", "NX_ESTD", "Estado", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, ValidValues, ValidDescrip, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_FCVE", "Fecha de vencimiento", SAPbobsCOM.BoFieldTypes.db_Date, SAPbobsCOM.BoFldSubTypes.st_None, 10, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_FCDO", "Fecha del documento", SAPbobsCOM.BoFieldTypes.db_Date, SAPbobsCOM.BoFldSubTypes.st_None, 10, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_COMM", "Comentarios", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_TVTR", "Valor trigo", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_TRAL", "Trigo a liquidar", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_BONI", "Bonificacion porcentaje", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_CAST", "Castigo porcentaje", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_VBCA", "Valor bonficacion/castigo", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_PREQ", "Precio por Q", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Price, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_UNES", "Unidad estandar", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_VNET", "Valor neto", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_IVAP", "Iva pagado", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_VTOT", "Valor total", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_ANTC", "Anticipos", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_FLET", "Fletes", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_TPAG", "Total a pagar", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_RDEV", "Referencia devoluacion", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_RFAC", "Referencia factura", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_RNPR", "Precio nuevo", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Price, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_FOPR", "Serie factura", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_FONU", "Correlativo factura", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_FIND", "Indicator factura", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 10, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_FENV", "Fecha envio correo", SAPbobsCOM.BoFieldTypes.db_Date, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIQU", "NX_HENV", "Hora envio correo", SAPbobsCOM.BoFieldTypes.db_Date, SAPbobsCOM.BoFldSubTypes.st_Time, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                ValidValues = new string[2] { "A", "G" };
+                ValidDescrip = new string[2] { "Abierto", "Agendado"};
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_ESTD", "Estado", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, ValidValues, ValidDescrip, "A","");
 
 
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_CLIE", "Cliente", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_CLID", "Razon social", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 150, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_ARTC", "Artículo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 50, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null,"OITM");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_ARTD", "Descripcion de artículo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 150, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_PRAR", "Precio de artículo", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Price, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_OFVE", "Total de la oferta de venta", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Price, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_OFVI", "Total de la oferta de venta- impuesto", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Price, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_EFCO", "% Eficiencia corte", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Percentage, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_COMM", "Comentario", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 200, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
-                //Detalle
-                CreaCampoMD("@NX_LIEM", "NX_ENME", "Entrada de mercancía", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIEM", "NX_CANT", "Cantidad", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIEM", "NX_PRCO", "Precio", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Price, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LIEM", "NX_DNME", "Numero EM", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-
-                //CreaCampoMD("@NX_LIEM", "NX_PRCN", "Nuevo precio", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Price, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-
-                //CreaCampoMD("@NX_LIEM", "NX_ITEM", "Número de articulo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                //CreaCampoMD("@NX_LIEM", "NX_ITDE", "Descripción de articulo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 100, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                //CreaCampoMD("@NX_LIEM", "NX_QBTY", "Cantidad", SAPbobsCOM.BoFieldTypes.db_Numeric, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                //CreaCampoMD("@NX_LIEM", "NX_ALMC", "Almacén", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                //CreaCampoMD("@NX_LIEM", "NX_PRIC", "Precio por unidad", SAPbobsCOM.BoFieldTypes.db_Numeric, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                //CreaCampoMD("@NX_LIEM", "NX_INDC", "Indicardor de impuesto", SAPbobsCOM.BoFieldTypes.db_Numeric, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_ENME", "Entrada de mercancía", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_LIQU", "SGI code", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_SEDI", "Sedimentacion", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_PEES", "Peso especifico", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_HUME", "Humedad", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_IMPR", "Impuereza", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_GRAP", "Grano partido", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_GRAD", "Grano daniado calor", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_GRAH", "Grano helado", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_GRAB", "Grano brotado", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_GRAN", "Grano punta negra", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_BOCA", "Bonificacion - castigo", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_PTOL", "Porcentaje del total", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_PROP", "Proporcion de la suma BC", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_LISG", "NX_DNME", "Numero EM", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_LOTE", "Lote master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_ANCM", "Ancho Master (in)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_MLAR", "Ancho Master (in)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_MNBO", "N° de bobinas Master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_MCAN", "Cantidad  Master(m2)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
 
-                CreaCampoMD("@NX_BCPA", "NX_PARA", "Parametro", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_TITU", "Tiutulo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C1", "Corrida 1", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C2", "Corrida 2", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C3", "Corrida 3", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C4", "Corrida 4", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C5", "Corrida 5", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C6", "Corrida 6", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C7", "Corrida 7", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C8", "Corrida 8", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C9", "Corrida 9", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_C10", "Corrida 10", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
-                CreaCampoMD("@NX_BYC", "NX_Parametro", "Parametro", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 50, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_BYC", "NX_Val1", "Valor inicial", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Percentage, 50, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_BYC", "NX_Val2", "Valor final", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Percentage, 50, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_BYC", "NX_CASBON", "Cast/Bon", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Percentage, 50, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@NX_BYC", "NX_Seq", "Secuencia", SAPbobsCOM.BoFieldTypes.db_Numeric, SAPbobsCOM.BoFldSubTypes.st_None, 10, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
-                //U_NX_DNME
+                CreaCampoMD("@MGS_CL_CORESU", "MGS_CL_LOTE", "Lote", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORESU", "MGS_CL_RANC", "Ancho cortado (in)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORESU", "MGS_CL_RLAR", "Largo cortado (ft)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORESU", "MGS_CL_RBOB", "N° de bobinas", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORESU", "MGS_CL_RCAN", "Cantidad (m2)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORESU", "MGS_CL_RBOA", "Bobinas en almacen", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORESU", "MGS_CL_RBOV", "Bobinas para venta", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_CORESU", "MGS_CL_RCAV", "Cantidad para venta (m2)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");              
+                
             }
             catch (Exception ex)
             {
@@ -281,12 +245,12 @@ namespace AddOnCorte.Comunes
             try
             {
                 FindColumns = new string[2] { "DocEntry", "DocNum" };
-                ChildTables = new string[2] { "NX_LIEM", "NX_LISG" };
+                ChildTables = new string[3] { "MGS_CL_COMAST", "MGS_CL_CORRID", "MGS_CL_CORESU" };
 
                 CreaUDOMD(
-                    "NX_LIQU", //Code
-                    "LiquidacionProveedores", //name
-                    "NX_LIQU", //table name
+                    "MGS_CL_COCABE", //Code
+                    "MGS_CL_COCABE UDO", //name
+                    "MGS_CL_COCABE", //table name
                     FindColumns, // findcolumns
                     ChildTables, //childtable
                     SAPbobsCOM.BoYesNoEnum.tNO, // cancel 
@@ -319,17 +283,8 @@ namespace AddOnCorte.Comunes
             {
 
 
-                PreloadUDO("NX_CONF", null, new string[] { "Code", "Name", "U_NX_ITMG", "U_NX_CPRC", "U_NX_SMTP", "U_NX_EMAI", "U_NX_CONT", "U_NX_PORT", "U_NX_DIRE", "U_NX_EMCC", "U_NX_RGUI", "U_NX_RNOT", "U_NX_RINF" }, new string[] { "NX", "NX", "ABR_114120", "Precio", "smtp.gmail.com", "sapmolinos@gmail.com", "Sap$2022", "587", "C:\\Users\\nxalujan\\Documents\\nx\\files\\", "rcoloma@inxap.com", "Guia recepcion", "Nota recepcion", "Informe laboratorio" }, null, null);
-
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "1", "Sedimentación", "11" }, null, null);
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "2", "Peso Especifico", "13" }, null, null);
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "3", "Humedad", "6" }, null, null);
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "4", "Impurezas", "15" }, null, null);
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "5", "Granos Partidos", "16" }, null, null);
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "6", "Dañados Calor", "17" }, null, null);
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "7", "Helados/Inmaduros", "18" }, null, null);
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "8", "Brotados", "19" }, null, null);
-                PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "9", "Punta Negra", "20" }, null, null);
+               
+                //PreloadUDO("NX_BCPA", null, new string[] { "Code", "Name", "U_NX_PARA" }, new string[] { "9", "Punta Negra", "20" }, null, null);
 
 
 

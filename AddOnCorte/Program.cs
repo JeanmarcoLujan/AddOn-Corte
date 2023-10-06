@@ -32,7 +32,7 @@ namespace AddOnCorte
                 Application.SBO_Application.AppEvent += new SAPbouiCOM._IApplicationEvents_AppEventEventHandler(SBO_Application_AppEvent);
                 Globales.oCompany = (SAPbobsCOM.Company)Application.SBO_Application.Company.GetDICompany();
                 Globales.oApp = Application.SBO_Application;
-                //Comunes.EstructuraDatos oEstructuraDatos = new Comunes.EstructuraDatos();
+                Comunes.EstructuraDatos oEstructuraDatos = new Comunes.EstructuraDatos();
                 Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Conectado con exito",
                     SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
                 oApp.Run();

@@ -124,7 +124,7 @@
     <value>MGS AddOn Corte</value>
   </data>
   <data name="NombreAddon" xml:space="preserve">
-    <value>MGS_CORTE</value>
+    <value>MGS_CL_CORTE</value>
   </data>
   <data name="VersionAddon" xml:space="preserve">
     <value>1.0.0.0</value>
