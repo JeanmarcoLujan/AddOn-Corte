@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AddOnCorte.Clases;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -156,5 +157,10 @@ namespace AddOnCorte.Comunes
             }
 
         }
+
+
+        
+
+        
     }
 }

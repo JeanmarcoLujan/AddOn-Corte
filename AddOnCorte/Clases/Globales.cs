@@ -11,4 +11,13 @@ namespace AddOnCorte.Clases
         public static SAPbobsCOM.Company oCompany { get; set; }
         public static SAPbouiCOM.Application oApp { get; set; }
     }
+
+    public class ColumnValueCount
+    {
+        public string ColumnName { get; set; }
+        public string CellValue { get; set; }
+        public double LargoValue { get; set; }
+        public int Count { get; set; }
+        public int ColumnId { get; set; }
+    }
 }
