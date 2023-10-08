@@ -608,6 +608,8 @@ namespace AddOnCorte
             {
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
 
+                
+
                 //Dictionary<string, int> allValuesCount = new Dictionary<string, int>();
 
                 //// Recorre las filas de la matriz y cuenta los valores repetidos en todas las columnas
@@ -740,13 +742,14 @@ namespace AddOnCorte
 
                 // oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(1).Specific; //Cast the Cell of 
 
-
+                
                 int cont = 1;
                 foreach (var item in result)
                 {
+
                     oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
-                    oMatrix.AddRow();
-                    oMatrix.FlushToDataSource();
+                    //oMatrix.Clear();
+
                     //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
                     //else bAddNewRow = false;
                     oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORESU");
@@ -755,9 +758,19 @@ namespace AddOnCorte
                     var sdsd = oDBDataSource.Size - 1;
                     oDBDataSource.Offset = oDBDataSource.Size - 1;
                     oDBDataSource.SetValue("U_MGS_CL_RANC", oDBDataSource.Size - 1, item.CellValue);
+                    oDBDataSource.SetValue("U_MGS_CL_RLAR", oDBDataSource.Size - 1, item.LargoValue.ToString());
+                    oDBDataSource.SetValue("U_MGS_CL_RBOB", oDBDataSource.Size - 1, item.Count.ToString());
+                    oDBDataSource.SetValue("U_MGS_CL_RCAN", oDBDataSource.Size - 1, (Math.Round(double.Parse(item.CellValue)*item.LargoValue*item.Count*2.54*2.54*12/10000,2) ).ToString());
+
+                    //Math.Round(numeroOriginal, 2)
+                    oMatrix.AddRow();
+                    oMatrix.FlushToDataSource();
 
                     oMatrix.LoadFromDataSource();
-                    oMatrix.AutoResizeColumns();
+                    //oMatrix.AutoResizeColumns();
+                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(cont).Specific;
+                    oCombo.ValidValues.Add("Valor1", "Etiqueta1");
+                    oCombo.ValidValues.Add("Valor2", "Etiqueta2");
                     cont++;
 
                 }

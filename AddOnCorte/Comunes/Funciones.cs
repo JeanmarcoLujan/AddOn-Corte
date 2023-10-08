@@ -90,15 +90,15 @@ namespace AddOnCorte.Comunes
                 oMatrix.LoadFromDataSource();
 
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
-                oMatrix.AddRow();
+                //oMatrix.AddRow();
 
-                oMatrix.FlushToDataSource();
+                //oMatrix.FlushToDataSource();
 
                 //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
                 //else bAddNewRow = false;
-                oMatrix.LoadFromDataSource();
+                //oMatrix.LoadFromDataSource();
                 oMatrix.AutoResizeColumns();
-                oMatrix.LoadFromDataSource();
+                //oMatrix.LoadFromDataSource();
 
                 
 
