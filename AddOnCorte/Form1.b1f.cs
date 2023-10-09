@@ -77,6 +77,17 @@ namespace AddOnCorte
             this.StaticText15 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_43").Specific));
             this.Button4 = ((SAPbouiCOM.Button)(this.GetItem("Item_44").Specific));
             this.Button4.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button4_PressedAfter);
+            this.StaticText16 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_45").Specific));
+            this.StaticText17 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_46").Specific));
+            this.StaticText18 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_47").Specific));
+            this.StaticText19 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_48").Specific));
+            this.StaticText20 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_49").Specific));
+            this.StaticText21 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_50").Specific));
+            this.EditText15 = ((SAPbouiCOM.EditText)(this.GetItem("Item_51").Specific));
+            this.EditText16 = ((SAPbouiCOM.EditText)(this.GetItem("Item_52").Specific));
+            this.EditText17 = ((SAPbouiCOM.EditText)(this.GetItem("Item_53").Specific));
+            this.EditText18 = ((SAPbouiCOM.EditText)(this.GetItem("Item_54").Specific));
+            this.EditText19 = ((SAPbouiCOM.EditText)(this.GetItem("Item_55").Specific));
             this.OnCustomInitialize();
 
         }
@@ -869,5 +880,17 @@ namespace AddOnCorte
             }
 
         }
+
+        private SAPbouiCOM.StaticText StaticText16;
+        private SAPbouiCOM.StaticText StaticText17;
+        private SAPbouiCOM.StaticText StaticText18;
+        private SAPbouiCOM.StaticText StaticText19;
+        private SAPbouiCOM.StaticText StaticText20;
+        private SAPbouiCOM.StaticText StaticText21;
+        private SAPbouiCOM.EditText EditText15;
+        private SAPbouiCOM.EditText EditText16;
+        private SAPbouiCOM.EditText EditText17;
+        private SAPbouiCOM.EditText EditText18;
+        private SAPbouiCOM.EditText EditText19;
     }
 }
