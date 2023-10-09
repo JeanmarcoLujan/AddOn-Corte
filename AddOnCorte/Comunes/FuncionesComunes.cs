@@ -104,7 +104,15 @@ namespace AddOnCorte.Comunes
         }
 
 
-
+        public static int ValidateNumberInt(string inputNumber)
+        {
+            int number;
+            if (int.TryParse(inputNumber, out number))
+                return number;
+            else
+                Globales.oApp.MessageBox("El valor especificado debe ser un número entero");
+            return 0;
+        }
 
 
 

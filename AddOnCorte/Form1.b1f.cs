@@ -41,6 +41,8 @@ namespace AddOnCorte
             this.Matrix1 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_17").Specific));
             this.Matrix1.KeyDownAfter += new SAPbouiCOM._IMatrixEvents_KeyDownAfterEventHandler(this.Matrix1_KeyDownAfter);
             this.Matrix2 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_18").Specific));
+            this.Matrix2.ComboSelectAfter += new SAPbouiCOM._IMatrixEvents_ComboSelectAfterEventHandler(this.Matrix2_ComboSelectAfter);
+            this.Matrix2.KeyDownAfter += new SAPbouiCOM._IMatrixEvents_KeyDownAfterEventHandler(this.Matrix2_KeyDownAfter);
             this.Button0 = ((SAPbouiCOM.Button)(this.GetItem("1").Specific));
             this.Button0.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.Button0_ClickBefore);
             this.ComboBox0 = ((SAPbouiCOM.ComboBox)(this.GetItem("Item_20").Specific));
@@ -160,6 +162,7 @@ namespace AddOnCorte
         {
             BubbleEvent = true;
             SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.ComboBox oCombo = null;
             //throw new System.NotImplementedException();
 
             var sda = oForm.Mode;
@@ -195,6 +198,23 @@ namespace AddOnCorte
                 {
                     oListErr.Add("Debe especificar informacion en la pestaña RESUMEN");
                 }
+                else
+                {
+                    //SAPbouiCOM.ComboBox oComboBox = (SAPbouiCOM.ComboBox)oForm.Items.Item("cmbComboBox").Specific;
+                    //string valorSeleccionado = oComboBox.Selected.Value;
+                    int contar = 0;
+                    for (int j = 1; j <= oMatrix.RowCount - 1; j++)
+                    {
+                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
+                        if (oCombo.Selected == null)
+                            contar++;
+                    }
+                    if (contar > 0)
+                        oListErr.Add("En el RESUMEN, debe seleccionar los lotes");
+                }
+
+                
+                
 
                 if (oListErr.Count > 0)
                 {
@@ -335,9 +355,6 @@ namespace AddOnCorte
                     Globales.oApp.MessageBox("Debe seleccionar un artículo.");
                     continuar = false;
                 }
-
-
-
 
                 if (continuar)
                 {
@@ -608,74 +625,6 @@ namespace AddOnCorte
             {
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
 
-                
-
-                //Dictionary<string, int> allValuesCount = new Dictionary<string, int>();
-
-                //// Recorre las filas de la matriz y cuenta los valores repetidos en todas las columnas
-                //for (int rowIndex = 3; rowIndex <= oMatrix.RowCount-4; rowIndex++)
-                //{
-                //    for (int colIndex = 2; colIndex <= oMatrix.Columns.Count-1; colIndex++)
-                //    {
-                //        //string cellValue = oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific;
-
-                //        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific; 
-                //        string cellValue = oEditText.Value.ToString();
-
-                //        // Verifica si el valor ya existe en el diccionario
-                //        if (allValuesCount.ContainsKey(cellValue))
-                //        {
-                //            allValuesCount[cellValue]++;
-                //        }
-                //        else
-                //        {
-                //            allValuesCount.Add(cellValue, 1);
-                //        }
-                //    }
-                //}
-
-
-                //var sfsdfsd = allValuesCount;
-
-                //int columnCount = oMatrix.Columns.Count;
-
-                //// Crear un diccionario para cada columna
-                //Dictionary<int, Dictionary<string, int>> columnValueCounts = new Dictionary<int, Dictionary<string, int>>();
-
-                //// Inicializar los diccionarios para cada columna
-                //for (int colIndex = 2; colIndex <= columnCount-1; colIndex++)
-                //{
-                //    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
-                //    string cellValue = oEditText.Value.ToString();
-                //    columnValueCounts[colIndex] = new Dictionary<string, int>();
-                //}
-
-                //// Recorrer las filas de la matriz y contar los valores repetidos por columna
-                //for (int rowIndex = 3; rowIndex <= oMatrix.RowCount-4; rowIndex++)
-                //{
-                //    for (int colIndex = 2; colIndex <= columnCount-1; colIndex++)
-                //    {
-                //        //string cellValue = oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific.Value;
-
-                //        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific;
-                //        string cellValue = oEditText.Value.ToString();
-
-                //        // Verificar si el valor ya existe en el diccionario de la columna
-                //        if (columnValueCounts[colIndex].ContainsKey(cellValue))
-                //        {
-                //            columnValueCounts[colIndex][cellValue]++;
-                //        }
-                //        else
-                //        {
-                //            columnValueCounts[colIndex].Add(cellValue, 1);
-                //        }
-                //    }
-                //}
-
-
-                //var sdsdsd = columnValueCounts;
-
-
                 int columnCount = oMatrix.Columns.Count;
                 List<ColumnValueCount> valueCounts = new List<ColumnValueCount>();
 
@@ -736,22 +685,15 @@ namespace AddOnCorte
                 });
 
                 var sdsdf = result.ToList();
-
-
-                //oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
-
-                // oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(1).Specific; //Cast the Cell of 
-
                 
                 int cont = 1;
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+                oMatrix.Clear();
                 foreach (var item in result)
                 {
 
-                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
-                    //oMatrix.Clear();
-
-                    //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
-                    //else bAddNewRow = false;
+                    
+                   
                     oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORESU");
 
                     
@@ -761,34 +703,168 @@ namespace AddOnCorte
                     oDBDataSource.SetValue("U_MGS_CL_RLAR", oDBDataSource.Size - 1, item.LargoValue.ToString());
                     oDBDataSource.SetValue("U_MGS_CL_RBOB", oDBDataSource.Size - 1, item.Count.ToString());
                     oDBDataSource.SetValue("U_MGS_CL_RCAN", oDBDataSource.Size - 1, (Math.Round(double.Parse(item.CellValue)*item.LargoValue*item.Count*2.54*2.54*12/10000,2) ).ToString());
+                    oDBDataSource.SetValue("U_MGS_CL_RBOA", oDBDataSource.Size - 1, "0");
+                    oDBDataSource.SetValue("U_MGS_CL_RBOV", oDBDataSource.Size - 1, "0");
+                    oDBDataSource.SetValue("U_MGS_CL_RCAV", oDBDataSource.Size - 1, "0");
 
                     //Math.Round(numeroOriginal, 2)
                     oMatrix.AddRow();
                     oMatrix.FlushToDataSource();
 
                     oMatrix.LoadFromDataSource();
-                    //oMatrix.AutoResizeColumns();
-                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(cont).Specific;
-                    oCombo.ValidValues.Add("Valor1", "Etiqueta1");
-                    oCombo.ValidValues.Add("Valor2", "Etiqueta2");
                     cont++;
 
                 }
 
-                //oCombo.ValidValues.Add("Valor1", "Etiqueta1");
+                List<string> listaLotes = new List<string>();
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
 
-                //oComboBoxColumn.ValidValues.Add("Valor1", "Etiqueta1");
-                //oComboBoxColumn.ValidValues.Add("Valor2", "Etiqueta2");
-                //oComboBoxColumn.ValidValues.Add("Valor3", "Etiqueta3");
+                for (int m = 1; m <= oMatrix.RowCount; m++)
+                {
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(1).Cells.Item(m).Specific;
+                    string cellValue = oEditText.Value.ToString();
+
+                    listaLotes.Add(oEditText.Value.ToString());
+
+                }
 
 
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
 
+                for (int j = 1; j <= oMatrix.RowCount - 1; j++)
+                {
+                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
+                    foreach (var item in listaLotes)
+                    {
+                        oCombo.ValidValues.Add(item, item);
+                    }
+
+                }
 
 
             }
             catch (Exception ex)
             {
                // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+
+        }
+
+        private void Matrix2_KeyDownAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.DBDataSource oDBDataSource = null;
+            SAPbouiCOM.Column oColumn = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            try
+            {
+
+
+
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+
+                if(pVal.ColUID=="Col_5" || pVal.ColUID == "Col_6")
+                {
+                    
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(pVal.Row).Specific; 
+                    int columnValue6 = FuncionesComunes.ValidateNumberInt( oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(pVal.Row).Specific;
+                    int columnValue7 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(pVal.Row).Specific;
+                    int columnValue4 = int.Parse(oEditText.Value.ToString());
+
+                    
+
+                    if ((columnValue6 + columnValue7) > columnValue4)
+                        Globales.oApp.MessageBox("No debe superar el Número de bobina disponibles");
+                    else
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(pVal.Row).Specific;
+                        double columnValue5 = double.Parse(oEditText.Value.ToString());
+
+                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(pVal.Row).Specific;
+                        var columnValue1 = oCombo.Selected;
+
+                        oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORESU");
+                        string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue7, 2)).ToString();
+                        if (columnValue1 != null)
+                            oDBDataSource.SetValue("U_MGS_CL_LOTE", pVal.Row - 1, columnValue1.Value.ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_RBOA", pVal.Row - 1, columnValue6.ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_RBOV", pVal.Row - 1, columnValue7.ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_RCAV", pVal.Row - 1, calculo);
+                        oMatrix.LoadFromDataSource();
+
+                        
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+
+        }
+
+        private void Matrix2_ComboSelectAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.DBDataSource oDBDataSource = null;
+            SAPbouiCOM.Column oColumn = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            try
+            {
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+
+                if (pVal.ColUID == "Col_0")
+                {
+
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(pVal.Row).Specific;
+                    int columnValue6 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(pVal.Row).Specific;
+                    int columnValue7 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(pVal.Row).Specific;
+                    int columnValue4 = int.Parse(oEditText.Value.ToString());
+
+
+
+                    if ((columnValue6 + columnValue7) > columnValue4)
+                        Globales.oApp.MessageBox("No debe superar el Número de bobina disponibles");
+                    else
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(pVal.Row).Specific;
+                        double columnValue5 = double.Parse(oEditText.Value.ToString());
+
+                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(pVal.Row).Specific;
+                        var columnValue1 = oCombo.Selected;
+
+                        oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORESU");
+                        string calculo = ( Math.Round((columnValue5 / columnValue4) * columnValue7,2)).ToString();
+                        if (columnValue1 != null)
+                            oDBDataSource.SetValue("U_MGS_CL_LOTE", pVal.Row - 1, columnValue1.Value.ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_RBOA", pVal.Row - 1, columnValue6.ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_RBOV", pVal.Row - 1, columnValue7.ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_RCAV", pVal.Row - 1, calculo);
+                        oMatrix.LoadFromDataSource();
+
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
 

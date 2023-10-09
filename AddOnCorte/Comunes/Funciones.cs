@@ -100,11 +100,6 @@ namespace AddOnCorte.Comunes
                 oMatrix.AutoResizeColumns();
                 //oMatrix.LoadFromDataSource();
 
-                
-
-               
-
-
             }
             catch (Exception ex)
             {
