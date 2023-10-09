@@ -237,10 +237,11 @@ namespace AddOnCorte
                     }
                     if (contar > 0)
                         oListErr.Add("En el RESUMEN, debe seleccionar los lotes");
-                }
+                    
+                    if( int.Parse(this.EditText15.Value) != (int.Parse(this.EditText17.Value) + int.Parse(this.EditText18.Value)) )
+                        oListErr.Add("En el RESUMEN, debe distribuir el total del número de bobinas ");
 
-                
-                
+                }
 
                 if (oListErr.Count > 0)
                 {
@@ -576,7 +577,8 @@ namespace AddOnCorte
             if (continuar)
             {
       
-                if (this.EditText21.Value == "")
+                //if (this.EditText21.Value == "")
+                if (true)
                 {
                     if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la oferta de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
                     {
@@ -613,18 +615,12 @@ namespace AddOnCorte
             SAPbouiCOM.EditText oEditText = null;
             try
             {
-
-              
-
-
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
 
                 double ancho = this.EditText2.Value == "" ? 0: double.Parse(this.EditText2.Value);
 
                 for (int k = 2; k < 12; k++)
                 {
-                    
-
                     double c1_sub = 0;
                     double c1_total = 0;
                     double c1_largo = 0;
@@ -640,24 +636,28 @@ namespace AddOnCorte
                     {
                         
                         //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
-
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i).Specific; //Cast the Cell of 
                         c1_sub = c1_sub + double.Parse(oEditText.Value.ToString());
                         oMatrix.FlushToDataSource();
 
                     }
 
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
-                    oEditText.Value = c1_sub.ToString();
+                    if(c1_sub != 0)
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
+                        oEditText.Value = c1_sub.ToString();
 
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
-                    oEditText.Value = ( c1_sub + c1_total).ToString();
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
+                        oEditText.Value = (c1_sub + c1_total).ToString();
 
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
-                    oEditText.Value = (ancho -(c1_sub + c1_total )).ToString();
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
+                        oEditText.Value = (ancho - (c1_sub + c1_total)).ToString();
 
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
-                    oEditText.Value = ( Math.Round( c1_sub* c1_largo*2.54*2.54*12/10000,2 )).ToString();
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
+                        oEditText.Value = (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString();
+                    }
+
+                    
                 }
                 
 
@@ -827,10 +827,6 @@ namespace AddOnCorte
             SAPbouiCOM.ComboBox oCombo = null;
             try
             {
-
-
-
-
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
 
                 if(pVal.ColUID=="Col_5" || pVal.ColUID == "Col_6")
@@ -849,7 +845,7 @@ namespace AddOnCorte
                     
 
                     if ((columnValue6 + columnValue7) > columnValue4)
-                        Globales.oApp.MessageBox("No debe superar el Número de bobina disponibles");
+                        Globales.oApp.MessageBox("No debe superar el número de bobina disponibles");
                     else
                     {
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(pVal.Row).Specific;
@@ -994,6 +990,7 @@ namespace AddOnCorte
 
                 oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.EditText0.Value.ToString();
                 oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = this.EditText11.Value.ToString();
+                oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
 
 
