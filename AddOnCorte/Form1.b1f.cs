@@ -88,6 +88,9 @@ namespace AddOnCorte
             this.EditText17 = ((SAPbouiCOM.EditText)(this.GetItem("Item_53").Specific));
             this.EditText18 = ((SAPbouiCOM.EditText)(this.GetItem("Item_54").Specific));
             this.EditText19 = ((SAPbouiCOM.EditText)(this.GetItem("Item_55").Specific));
+            this.StaticText22 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_56").Specific));
+            this.EditText21 = ((SAPbouiCOM.EditText)(this.GetItem("Item_58").Specific));
+            this.LinkedButton1 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
             this.OnCustomInitialize();
 
         }
@@ -98,9 +101,10 @@ namespace AddOnCorte
         public override void OnInitializeFormEvents()
         {
             this.LoadAfter += new SAPbouiCOM.Framework.FormBase.LoadAfterHandler(this.Form_LoadAfter);
+            Clases.Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
+            this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
+            this.DataLoadAfter += new DataLoadAfterHandler(this.Form_DataLoadAfter);
 
-            Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
-            this.ResizeAfter += new ResizeAfterHandler(this.Form_ResizeAfter);
         }
 
         public void m_SBO_Appl_MenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent)
@@ -116,10 +120,12 @@ namespace AddOnCorte
                     case "1282":
                         //oForm.DataSources.UserDataSources.Item("UD_0").Value = "sdfsd";
                         var asd = "asdad";
+                        this.Button3.Item.Enabled = false;
                         Comunes.Funciones.AutoResizeColumnsMatrix(oForm);
                         break;
                     case "1281":
                         var asdasd = "";
+                        this.Button3.Item.Enabled = false;
                         break;
                     case "1290":
                     case "1289":
@@ -198,6 +204,15 @@ namespace AddOnCorte
             {
                 
                 List<string> oListErr = new List<string>();
+
+                string cardCode = this.EditText3.Value;
+                if(cardCode == "")
+                    oListErr.Add("Debe seleccionar un cliente");
+
+                string itemCode = this.EditText4.Value;
+                if (itemCode == "")
+                    oListErr.Add("Debe seleccionar un artículo");
+
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
                 if (oMatrix.RowCount == 0)
                 {
@@ -540,7 +555,43 @@ namespace AddOnCorte
         {
             //throw new System.NotImplementedException();
 
-            Globales.oApp.MessageBox("Generarndo la aferta de venta");
+            
+            List<string[,]> oListErr = null;
+
+
+            bool continuar = true;
+
+            switch (oForm.Mode)
+            {
+
+                case SAPbouiCOM.BoFormMode.fm_UPDATE_MODE:
+                    continuar = false;
+                    break;
+                default:
+                    continuar = true;
+                    //this.EditText9.Item.Enabled = false;
+                    break;
+            }
+
+            if (continuar)
+            {
+      
+                if (this.EditText21.Value == "")
+                {
+                    if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la oferta de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
+                    {
+
+
+                        GenerateOferta(out oListErr);
+                    }
+                }
+                else
+                {
+                    Globales.oApp.MessageBox("La oferta de ventas para este registro, ya se generó");
+                }
+                
+
+            }
 
         }
 
@@ -606,7 +657,7 @@ namespace AddOnCorte
                     oEditText.Value = (ancho -(c1_sub + c1_total )).ToString();
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
-                    oEditText.Value = (c1_sub* c1_largo*2.54*2.54*12/10000).ToString();
+                    oEditText.Value = ( Math.Round( c1_sub* c1_largo*2.54*2.54*12/10000,2 )).ToString();
                 }
                 
 
@@ -700,19 +751,18 @@ namespace AddOnCorte
                 int cont = 1;
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
                 oMatrix.Clear();
+                double sum_count = 0;
+                double sum_rcan = 0;
                 foreach (var item in result)
-                {
-
-                    
-                   
+                {                   
                     oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORESU");
-
-                    
                     var sdsd = oDBDataSource.Size - 1;
                     oDBDataSource.Offset = oDBDataSource.Size - 1;
                     oDBDataSource.SetValue("U_MGS_CL_RANC", oDBDataSource.Size - 1, item.CellValue);
                     oDBDataSource.SetValue("U_MGS_CL_RLAR", oDBDataSource.Size - 1, item.LargoValue.ToString());
+                    sum_count = sum_count + item.Count;
                     oDBDataSource.SetValue("U_MGS_CL_RBOB", oDBDataSource.Size - 1, item.Count.ToString());
+                    sum_rcan = sum_rcan + Math.Round(double.Parse(item.CellValue) * item.LargoValue * item.Count * 2.54 * 2.54 * 12 / 10000, 2);
                     oDBDataSource.SetValue("U_MGS_CL_RCAN", oDBDataSource.Size - 1, (Math.Round(double.Parse(item.CellValue)*item.LargoValue*item.Count*2.54*2.54*12/10000,2) ).ToString());
                     oDBDataSource.SetValue("U_MGS_CL_RBOA", oDBDataSource.Size - 1, "0");
                     oDBDataSource.SetValue("U_MGS_CL_RBOV", oDBDataSource.Size - 1, "0");
@@ -726,6 +776,12 @@ namespace AddOnCorte
                     cont++;
 
                 }
+
+                this.EditText15.Value = sum_count.ToString();
+                this.EditText16.Value = sum_rcan.ToString();
+                this.EditText17.Value = "0";
+                this.EditText18.Value = "0";
+                this.EditText19.Value = "0";
 
                 List<string> listaLotes = new List<string>();
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
@@ -813,6 +869,21 @@ namespace AddOnCorte
 
                         
                     }
+                    double sum_ba = 0;
+                    double sum_bv = 0;
+                    double sum_cv = 0;
+                    for (int i = 1; i <= oMatrix.RowCount; i++)
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(i).Specific;
+                        sum_ba = sum_ba + double.Parse(oEditText.Value.ToString());
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific;
+                        sum_bv = sum_bv + double.Parse(oEditText.Value.ToString());
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
+                        sum_cv = sum_cv + double.Parse(oEditText.Value.ToString());
+                    }
+                    this.EditText17.Value = sum_ba.ToString();
+                    this.EditText18.Value = sum_bv.ToString();
+                    this.EditText19.Value = Math.Round(sum_cv,2).ToString();
 
                 }
             }
@@ -892,5 +963,187 @@ namespace AddOnCorte
         private SAPbouiCOM.EditText EditText17;
         private SAPbouiCOM.EditText EditText18;
         private SAPbouiCOM.EditText EditText19;
+
+
+        private void GenerateOferta(out List<string[,]> oListErr)
+        {
+            oListErr = null;
+            SAPbobsCOM.Documents oSalesOpportunity = null;
+            //SalesOpportunities
+            SAPbouiCOM.Matrix oMatrix = null;
+            int iErrCod;
+            string sErrMsg = "";
+            SAPbouiCOM.ProgressBar oPB = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            SAPbobsCOM.Recordset oRS = null;
+
+            try
+            {
+                oPB = Clases.Globales.oApp.StatusBar.CreateProgressBar("Generando la oferta de venta", 27, true);
+                oPB.Text = "GGenerando la oferta de venta";
+                oPB.Value = 10;
+
+                oSalesOpportunity = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oQuotations);
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                oSalesOpportunity.CardCode = this.EditText3.Value;
+                oSalesOpportunity.TaxDate = DateTime.Now;
+                oSalesOpportunity.DocDate = DateTime.Now;
+                oSalesOpportunity.DocDueDate = DateTime.Now.AddDays(30);
+
+                oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.EditText0.Value.ToString();
+                oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = this.EditText11.Value.ToString();
+
+
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+
+                int salesPersonCode = 1;
+                var asdas = oMatrix.RowCount;
+                for (int i = 1; i <= oMatrix.RowCount; i++)
+                {
+                    //oSalesOpportunity.Lines.SetCurrentLine(i-1);
+                    oSalesOpportunity.Lines.ItemCode = this.EditText4.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
+                    oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = oEditText.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
+                    oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = oEditText.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific;
+                    oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
+                    oSalesOpportunity.Lines.Quantity = double.Parse(oEditText.Value.ToString());
+
+                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                    var sdsd = oCombo.Selected.Value.ToString();
+                    oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value  = oCombo.Selected.Value.ToString();
+
+                    oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
+                    if (oRS.RecordCount > 0)
+                    {
+                        oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
+                        oSalesOpportunity.Lines.CostingCode = oRS.Fields.Item(1).Value.ToString();
+                    }
+
+                    oSalesOpportunity.Lines.Add();
+
+
+                    if (oPB.Value < 25)
+                        oPB.Value = oPB.Value + 15;
+
+
+                }
+
+                //oSalesOpportunity.SalesPersonCode = salesPersonCode==-1?1: salesPersonCode;
+
+                var ss1 = oSalesOpportunity.GetAsXML();
+
+                iErrCod = oSalesOpportunity.Add();
+                if (iErrCod != 0)
+                {
+
+                    Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+                    
+
+                    Globales.oApp.MessageBox("Oferta de venta: " + sErrMsg);
+
+                }
+                else
+                {
+
+                    oSalesOpportunity.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+                    var sfsdf = Globales.oCompany.GetNewObjectKey();
+
+                    Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey());
+
+                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la oferta de venta ",
+                    SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+
+                    oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+
+
+                }
+
+                System.Threading.Thread.Sleep(1000);
+                oPB.Stop();
+                Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+
+
+                //oPurchaseReturns.
+
+            }
+            catch (Exception ex)
+            {
+                //Comunes.Funciones.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                if (oPB != null)
+                {
+                    oPB.Stop();
+                    Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+                }
+                //Comunes.Funciones.RemoveRegisterUDO(docEntryUDO);
+            }
+        }
+
+        private void Form_DataLoadAfter(ref SAPbouiCOM.BusinessObjectInfo pVal)
+        {
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            try
+            {
+                this.Button3.Item.Enabled = true;
+
+                List<string> listaLotes = new List<string>();
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
+
+                for (int m = 1; m <= oMatrix.RowCount; m++)
+                {
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(1).Cells.Item(m).Specific;
+                    string cellValue = oEditText.Value.ToString();
+
+                    listaLotes.Add(oEditText.Value.ToString());
+
+                }
+
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+
+                
+                for (int j = 1; j <= oMatrix.RowCount - 1; j++)
+                {
+                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
+                    int validValueCount = oCombo.ValidValues.Count;
+                    for (int i = validValueCount - 1; i >= 0; i--)
+                    {
+                        oCombo.ValidValues.Remove(i, SAPbouiCOM.BoSearchKey.psk_Index);
+                    }
+
+                    foreach (var item in listaLotes)
+                    {
+                        oCombo.ValidValues.Add(item, item);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+            //throw new System.NotImplementedException();
+            
+
+
+
+        }
+
+        private SAPbouiCOM.StaticText StaticText22;
+        private SAPbouiCOM.EditText EditText21;
+        private SAPbouiCOM.LinkedButton LinkedButton1;
     }
 }

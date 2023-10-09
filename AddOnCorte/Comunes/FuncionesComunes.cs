@@ -114,6 +114,32 @@ namespace AddOnCorte.Comunes
             return 0;
         }
 
+        public static void UpdateUDO(string udoId, string docEntryOf)
+        {
+
+            SAPbobsCOM.GeneralService oGeneralService = null;
+            SAPbobsCOM.GeneralData oGeneralData = null;
+            SAPbobsCOM.GeneralDataParams oGeneralParams = null;
+            SAPbobsCOM.CompanyService oCompanyService = null;
+
+            try
+            {
+                oCompanyService = Globales.oCompany.GetCompanyService();
+                oGeneralService = oCompanyService.GetGeneralService("MGS_CL_COCABE");
+                oGeneralParams = ((SAPbobsCOM.GeneralDataParams)(oGeneralService.GetDataInterface(SAPbobsCOM.GeneralServiceDataInterfaces.gsGeneralDataParams)));
+                oGeneralParams.SetProperty("DocEntry", udoId);
+                oGeneralData = oGeneralService.GetByParams(oGeneralParams);
+                oGeneralData.SetProperty("U_MGS_CL_OFEV", docEntryOf);
+                oGeneralService.Update(oGeneralData);
+                //return true;
+            }
+            catch (Exception ex)
+            {
+                //Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                //return false;
+            }
+        }
+
 
 
 
