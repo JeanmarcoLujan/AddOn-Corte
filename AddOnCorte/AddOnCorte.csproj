@@ -72,6 +72,9 @@
     <Compile Include="Comunes\Funciones.cs" />
     <Compile Include="Comunes\FuncionesComunes.cs" />
     <Compile Include="Comunes\Metadata.cs" />
+    <Compile Include="Form2.b1f.cs">
+      <DependentUpon>Form2.b1f</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -88,6 +91,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Form2.b1f">
+      <FormCategory>UserForm</FormCategory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -47,6 +47,11 @@ namespace AddOnCorte
                 oCreationPackage.UniqueID = "AddOnCorte.Form1";
                 oCreationPackage.String = "Solicitud de corte";
                 oMenus.AddEx(oCreationPackage);
+
+                oCreationPackage.Type = SAPbouiCOM.BoMenuType.mt_STRING;
+                oCreationPackage.UniqueID = "AddOnCorte.Form2";
+                oCreationPackage.String = "Agendar corte";
+                oMenus.AddEx(oCreationPackage);
             }
             catch (Exception er)
             { //  Menu already exists
@@ -63,6 +68,11 @@ namespace AddOnCorte
                 if (pVal.BeforeAction && pVal.MenuUID == "AddOnCorte.Form1")
                 {
                     Form1 activeForm = new Form1();
+                    activeForm.Show();
+                }
+                if (pVal.BeforeAction && pVal.MenuUID == "AddOnCorte.Form2")
+                {
+                    Form2 activeForm = new Form2();
                     activeForm.Show();
                 }
             }

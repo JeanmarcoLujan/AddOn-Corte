@@ -71,5 +71,13 @@ namespace AddOnCorte.Comunes
             return m_sSQL.ToString();
         }
 
+        public static string GetSolicitudesAgenda(string estado)
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('AGENDAR_SOLICITUDES','{0}','','',''); ", estado);
+
+            return m_sSQL.ToString();
+        }
     }
 }
