@@ -88,5 +88,32 @@ namespace AddOnCorte.Comunes
 
             return m_sSQL.ToString();
         }
+
+        public static string GetEquipoList()
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('EQUIPO_LIST','','','',''); ");
+
+            return m_sSQL.ToString();
+        }
+
+        public static string GetAlmacenList()
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('ALMACEN_LIST','','','',''); ");
+
+            return m_sSQL.ToString();
+        }
+
+        public static string GetEquipoSerie(string itemCode)
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('EQUIPO_SERIE','{0}','','',''); ", itemCode);
+
+            return m_sSQL.ToString();
+        }
     }
 }
