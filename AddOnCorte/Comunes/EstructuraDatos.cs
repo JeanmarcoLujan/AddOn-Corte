@@ -182,8 +182,8 @@ namespace AddOnCorte.Comunes
                 //Cabecera
                 string[] ValidValues = null;
                 string[] ValidDescrip = null;
-                ValidValues = new string[2] { "A", "G" };
-                ValidDescrip = new string[2] { "Abierto", "Agendado"};
+                ValidValues = new string[3] { "A", "G", "S"};
+                ValidDescrip = new string[3] { "Abierto", "Agendado", "Solicitado" };
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_ESTD", "Estado", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, ValidValues, ValidDescrip, "A","");
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_CLIE", "Cliente", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_CLID", "Razon social", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 150, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
@@ -203,6 +203,10 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_MTLAR", "Total largo master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_MTCANT", "Total cantidad master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_OFEV", "Referencia oferta venta", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_AFECOR", "Agenda fecha de corte", SAPbobsCOM.BoFieldTypes.db_Date, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_AEQUIP", "Equipo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_ASERIA", "Serial", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_AALMOR", "Almacén origen", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
 
 

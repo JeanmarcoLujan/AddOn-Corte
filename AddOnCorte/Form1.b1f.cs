@@ -59,6 +59,7 @@ namespace AddOnCorte
             this.EditText10 = ((SAPbouiCOM.EditText)(this.GetItem("Item_32").Specific));
             this.EditText11 = ((SAPbouiCOM.EditText)(this.GetItem("Item_33").Specific));
             this.EditText12 = ((SAPbouiCOM.EditText)(this.GetItem("Item_34").Specific));
+            this.EditText12.LostFocusAfter += new SAPbouiCOM._IEditTextEvents_LostFocusAfterEventHandler(this.EditText12_LostFocusAfter);
             this.EditText12.ChooseFromListAfter += new SAPbouiCOM._IEditTextEvents_ChooseFromListAfterEventHandler(this.EditText12_ChooseFromListAfter);
             this.LinkedButton0 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_35").Specific));
             this.Grid0 = ((SAPbouiCOM.Grid)(this.GetItem("Item_36").Specific));
@@ -383,7 +384,7 @@ namespace AddOnCorte
                     continuar = false;
                 }
 
-                if (continuar)
+                if (continuar == true && pVal.FormMode == 3)
                 {
                     oItem = oForm.Items.Item("Item_36");
 
@@ -420,6 +421,9 @@ namespace AddOnCorte
 
 
                     oGrid.AutoResizeColumns();
+
+                    GetPrecioArticulo();
+
                 }
 
 
@@ -459,7 +463,7 @@ namespace AddOnCorte
                 {
                     if (oForm.DataSources.DataTables.Item("dt_lt").GetValue("Seleccion", i).ToString().Equals("Y"))
                     {
-                        cont++;
+                      
                         oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
                         oMatrix.AddRow();
                         oMatrix.FlushToDataSource();
@@ -491,7 +495,7 @@ namespace AddOnCorte
                     }
                 }
 
-                this.EditText2.Value = total_ancho.ToString();
+                this.EditText2.Value = (total_ancho/cont).ToString();
                 this.EditText13.Value = total_largo.ToString();
                 this.EditText14.Value = total_cantidad.ToString();
 
@@ -685,129 +689,151 @@ namespace AddOnCorte
             SAPbouiCOM.ComboBox oCombo = null;
             try
             {
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
-
-                int columnCount = oMatrix.Columns.Count;
-                List<ColumnValueCount> valueCounts = new List<ColumnValueCount>();
-
-                // Recorrer las columnas de la matriz
-                for (int colIndex = 2; colIndex <= columnCount-1; colIndex++)
+                bool continuar = false;
+                if (this.EditText3.Value.ToString() == "")
                 {
-                    string columnName = oMatrix.Columns.Item(colIndex).TitleObject.Caption;
+                    continuar = false;
+                    Globales.oApp.MessageBox("Seleccione el cliente, para poder generar el resumen adecuadamente");
+                }else if (this.EditText4.Value.ToString() == "")
+                {
+                    continuar = false;
+                    Globales.oApp.MessageBox("Seleccione el artículo, para poder generar el resumen adecuadamente");
+                }
+                else
+                {
+                    GetPrecioArticulo();
+                    continuar = true;
+                }
+                    
 
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
-                    string largo = oEditText.Value.ToString();
 
-                    // Recorrer las filas de la columna y contar los valores repetidos
-                    Dictionary<string, int> columnValueCount = new Dictionary<string, int>();
-                    for (int rowIndex = 3; rowIndex <= oMatrix.RowCount-4; rowIndex++)
+
+                if (pVal.FormMode == 3 && continuar == true)
+                {
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                    int columnCount = oMatrix.Columns.Count;
+                    List<ColumnValueCount> valueCounts = new List<ColumnValueCount>();
+
+                    // Recorrer las columnas de la matriz
+                    for (int colIndex = 2; colIndex <= columnCount - 1; colIndex++)
                     {
-                        //string cellValue = oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific.Value;
+                        string columnName = oMatrix.Columns.Item(colIndex).TitleObject.Caption;
 
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific;
-                        string cellValue = oEditText.Value.ToString();
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
+                        string largo = oEditText.Value.ToString();
 
-                        if (cellValue != "0")
+                        // Recorrer las filas de la columna y contar los valores repetidos
+                        Dictionary<string, int> columnValueCount = new Dictionary<string, int>();
+                        for (int rowIndex = 3; rowIndex <= oMatrix.RowCount - 4; rowIndex++)
                         {
-                            if (columnValueCount.ContainsKey(cellValue))
+                            //string cellValue = oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific.Value;
+
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific;
+                            string cellValue = oEditText.Value.ToString();
+
+                            if (cellValue != "0")
                             {
-                                columnValueCount[cellValue]++;
+                                if (columnValueCount.ContainsKey(cellValue))
+                                {
+                                    columnValueCount[cellValue]++;
+                                }
+                                else
+                                {
+                                    columnValueCount.Add(cellValue, 1);
+                                }
                             }
-                            else
+                        }
+
+                        // Agregar los resultados a la lista de objetos
+                        foreach (var kvp in columnValueCount)
+                        {
+                            valueCounts.Add(new ColumnValueCount
                             {
-                                columnValueCount.Add(cellValue, 1);
-                            }
+                                ColumnName = columnName,
+                                CellValue = kvp.Key,
+                                Count = kvp.Value,
+                                LargoValue = double.Parse(largo),
+                                ColumnId = colIndex - 1
+                            });
                         }
                     }
 
-                    // Agregar los resultados a la lista de objetos
-                    foreach (var kvp in columnValueCount)
+
+                    var adasd = valueCounts;
+
+                    var result = valueCounts
+                    .GroupBy(vc => new { vc.CellValue, vc.LargoValue })
+                    .Select(group => new ColumnValueCount
                     {
-                        valueCounts.Add(new ColumnValueCount
+                        CellValue = group.Key.CellValue,
+                        LargoValue = group.Key.LargoValue,
+                        Count = group.Sum(vc => vc.Count),
+                    });
+
+                    var sdsdf = result.ToList();
+
+                    int cont = 1;
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+                    oMatrix.Clear();
+                    double sum_count = 0;
+                    double sum_rcan = 0;
+                    foreach (var item in result)
+                    {
+                        oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORESU");
+                        var sdsd = oDBDataSource.Size - 1;
+                        oDBDataSource.Offset = oDBDataSource.Size - 1;
+                        oDBDataSource.SetValue("U_MGS_CL_RANC", oDBDataSource.Size - 1, item.CellValue);
+                        oDBDataSource.SetValue("U_MGS_CL_RLAR", oDBDataSource.Size - 1, item.LargoValue.ToString());
+                        sum_count = sum_count + item.Count;
+                        oDBDataSource.SetValue("U_MGS_CL_RBOB", oDBDataSource.Size - 1, item.Count.ToString());
+                        sum_rcan = sum_rcan + Math.Round(double.Parse(item.CellValue) * item.LargoValue * item.Count * 2.54 * 2.54 * 12 / 10000, 2);
+                        oDBDataSource.SetValue("U_MGS_CL_RCAN", oDBDataSource.Size - 1, (Math.Round(double.Parse(item.CellValue) * item.LargoValue * item.Count * 2.54 * 2.54 * 12 / 10000, 2)).ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_RBOA", oDBDataSource.Size - 1, "0");
+                        oDBDataSource.SetValue("U_MGS_CL_RBOV", oDBDataSource.Size - 1, "0");
+                        oDBDataSource.SetValue("U_MGS_CL_RCAV", oDBDataSource.Size - 1, "0");
+
+                        //Math.Round(numeroOriginal, 2)
+                        oMatrix.AddRow();
+                        oMatrix.FlushToDataSource();
+
+                        oMatrix.LoadFromDataSource();
+                        cont++;
+
+                    }
+
+                    this.EditText15.Value = sum_count.ToString();
+                    this.EditText16.Value = sum_rcan.ToString();
+                    this.EditText17.Value = "0";
+                    this.EditText18.Value = "0";
+                    this.EditText19.Value = "0";
+
+
+                    List<string> listaLotes = new List<string>();
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
+
+                    for (int m = 1; m <= oMatrix.RowCount; m++)
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(1).Cells.Item(m).Specific;
+                        string cellValue = oEditText.Value.ToString();
+
+                        listaLotes.Add(oEditText.Value.ToString());
+
+                    }
+
+
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+
+                    for (int j = 1; j <= oMatrix.RowCount - 1; j++)
+                    {
+                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
+                        foreach (var item in listaLotes)
                         {
-                            ColumnName = columnName,
-                            CellValue = kvp.Key,
-                            Count = kvp.Value,
-                            LargoValue = double.Parse(largo),
-                            ColumnId = colIndex - 1
-                        });
+                            oCombo.ValidValues.Add(item, item);
+                        }
+
                     }
                 }
-
-
-                var adasd = valueCounts;
-
-                var result = valueCounts
-                .GroupBy(vc => new { vc.CellValue, vc.LargoValue })
-                .Select(group => new ColumnValueCount
-                {
-                    CellValue = group.Key.CellValue,
-                    LargoValue = group.Key.LargoValue,
-                    Count = group.Sum(vc => vc.Count),
-                });
-
-                var sdsdf = result.ToList();
-                
-                int cont = 1;
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
-                oMatrix.Clear();
-                double sum_count = 0;
-                double sum_rcan = 0;
-                foreach (var item in result)
-                {                   
-                    oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORESU");
-                    var sdsd = oDBDataSource.Size - 1;
-                    oDBDataSource.Offset = oDBDataSource.Size - 1;
-                    oDBDataSource.SetValue("U_MGS_CL_RANC", oDBDataSource.Size - 1, item.CellValue);
-                    oDBDataSource.SetValue("U_MGS_CL_RLAR", oDBDataSource.Size - 1, item.LargoValue.ToString());
-                    sum_count = sum_count + item.Count;
-                    oDBDataSource.SetValue("U_MGS_CL_RBOB", oDBDataSource.Size - 1, item.Count.ToString());
-                    sum_rcan = sum_rcan + Math.Round(double.Parse(item.CellValue) * item.LargoValue * item.Count * 2.54 * 2.54 * 12 / 10000, 2);
-                    oDBDataSource.SetValue("U_MGS_CL_RCAN", oDBDataSource.Size - 1, (Math.Round(double.Parse(item.CellValue)*item.LargoValue*item.Count*2.54*2.54*12/10000,2) ).ToString());
-                    oDBDataSource.SetValue("U_MGS_CL_RBOA", oDBDataSource.Size - 1, "0");
-                    oDBDataSource.SetValue("U_MGS_CL_RBOV", oDBDataSource.Size - 1, "0");
-                    oDBDataSource.SetValue("U_MGS_CL_RCAV", oDBDataSource.Size - 1, "0");
-
-                    //Math.Round(numeroOriginal, 2)
-                    oMatrix.AddRow();
-                    oMatrix.FlushToDataSource();
-
-                    oMatrix.LoadFromDataSource();
-                    cont++;
-
-                }
-
-                this.EditText15.Value = sum_count.ToString();
-                this.EditText16.Value = sum_rcan.ToString();
-                this.EditText17.Value = "0";
-                this.EditText18.Value = "0";
-                this.EditText19.Value = "0";
-
-                List<string> listaLotes = new List<string>();
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
-
-                for (int m = 1; m <= oMatrix.RowCount; m++)
-                {
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(1).Cells.Item(m).Specific;
-                    string cellValue = oEditText.Value.ToString();
-
-                    listaLotes.Add(oEditText.Value.ToString());
-
-                }
-
-
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
-
-                for (int j = 1; j <= oMatrix.RowCount - 1; j++)
-                {
-                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
-                    foreach (var item in listaLotes)
-                    {
-                        oCombo.ValidValues.Add(item, item);
-                    }
-
-                }
-
 
             }
             catch (Exception ex)
@@ -880,8 +906,12 @@ namespace AddOnCorte
                     this.EditText17.Value = sum_ba.ToString();
                     this.EditText18.Value = sum_bv.ToString();
                     this.EditText19.Value = Math.Round(sum_cv,2).ToString();
+                    this.EditText9.Value = (Math.Round(sum_cv, 2)* double.Parse(this.EditText8.Value.ToString()) ).ToString();
+                    this.EditText10.Value = (double.Parse(this.EditText9.Value.ToString()) * 1.16).ToString();
+                    this.EditText11.Value = ( 100*double.Parse(this.EditText19.Value.ToString())/ double.Parse(this.EditText16.Value.ToString()) ).ToString();
 
                 }
+
             }
             catch (Exception ex)
             {
@@ -1142,5 +1172,44 @@ namespace AddOnCorte
         private SAPbouiCOM.StaticText StaticText22;
         private SAPbouiCOM.EditText EditText21;
         private SAPbouiCOM.LinkedButton LinkedButton1;
+
+        private void GetPrecioArticulo()
+        {
+            SAPbobsCOM.Recordset oRS = null;
+            try
+            {
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+                oRS.DoQuery(Comunes.Consultas.GetPrecioArticulo(this.EditText4.Value.ToString(), this.EditText3.Value.ToString()));
+
+                if (oRS.RecordCount > 0)
+                {
+                    this.EditText8.Value = oRS.Fields.Item(0).Value.ToString();
+                }
+                else
+                    this.EditText8.Value = "0";
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+        }
+
+        
+
+        private void EditText12_LostFocusAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            try
+            {
+                if (pVal.FormMode == 3)
+                    GetPrecioArticulo();
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+
+        }
     }
 }

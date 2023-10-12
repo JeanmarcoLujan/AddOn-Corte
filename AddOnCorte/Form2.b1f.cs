@@ -78,6 +78,43 @@ namespace AddOnCorte
                         
 
                     oGrid.DataTable.ExecuteQuery(Comunes.Consultas.GetSolicitudesAgenda(this.ComboBox0.Value));
+
+
+                    oGrid.Columns.Item("Codigo").Editable = false;
+                    oGrid.Columns.Item("Codigo").TitleObject.Caption = "Código";
+                    oGrid.Columns.Item("FechaSolicitud").Editable = false;
+                    oGrid.Columns.Item("FechaSolicitud").TitleObject.Caption = "Fecha de solicitud";
+                    oGrid.Columns.Item("Cliente").Editable = false;
+                    ((SAPbouiCOM.EditTextColumn)oGrid.Columns.Item("Cliente")).LinkedObjectType = "2";
+                    oGrid.Columns.Item("Nombre").Editable = false;
+                    oGrid.Columns.Item("Artículo").Editable = false;
+                    ((SAPbouiCOM.EditTextColumn)oGrid.Columns.Item("Artículo")).LinkedObjectType = "4";
+                    oGrid.Columns.Item("Descripción").Editable = false;
+                    oGrid.Columns.Item("Ofertav").Editable = false;
+                    oGrid.Columns.Item("Ofertav").TitleObject.Caption = "Oferta de venta";
+                    oGrid.Columns.Item("AlmacenOrigen").TitleObject.Caption = "Almacén origen";
+                    //oGrid.Columns.Item("FechaCorte").Type = SAPbouiCOM.BoGridColumnType.gct_Date;
+
+                    
+
+                    oGrid.Columns.Item("Seleccion").Type = SAPbouiCOM.BoGridColumnType.gct_CheckBox;
+                    oGrid.Columns.Item("Seleccion").TitleObject.Caption = "Check";
+
+                    if (this.ComboBox0.Value.ToString() == "A")
+                    {
+                        oGrid.Columns.Item("FechaCorte").Visible = true;
+                        oGrid.Columns.Item("Equipo").Visible = true;
+                        oGrid.Columns.Item("Serial").Visible = true;
+                        oGrid.Columns.Item("AlmacenOrigen").Visible = false;
+                    }
+                    else
+                    {
+                        oGrid.Columns.Item("FechaCorte").Visible = false;
+                        oGrid.Columns.Item("Equipo").Visible = false;
+                        oGrid.Columns.Item("Serial").Visible = false;
+                        oGrid.Columns.Item("AlmacenOrigen").Visible = true;
+                    }
+
                     oGrid.AutoResizeColumns();
                 }
                     
