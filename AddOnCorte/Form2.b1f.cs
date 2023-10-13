@@ -28,6 +28,7 @@ namespace AddOnCorte
             this.Button1 = ((SAPbouiCOM.Button)(this.GetItem("Item_4").Specific));
             this.Button1.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button1_PressedAfter);
             this.Button2 = ((SAPbouiCOM.Button)(this.GetItem("Item_5").Specific));
+            this.Button2.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button2_PressedAfter);
             this.OnCustomInitialize();
 
         }
@@ -218,16 +219,22 @@ namespace AddOnCorte
                     if (this.ComboBox0.Value.ToString() == "A")
                     {
                         oGrid.Columns.Item("FechaCorte").Visible = true;
+                        oGrid.Columns.Item("FechaCorte").Editable = true;
                         oGrid.Columns.Item("Equipo").Visible = true;
+                        oGrid.Columns.Item("Equipo").Editable = true;
                         oGrid.Columns.Item("Serial").Visible = true;
+                        oGrid.Columns.Item("Serial").Editable = true;
                         oGrid.Columns.Item("AlmacenOrigen").Visible = false;
                         AjustarComboBox(2, "Item_0", 1);
                     }
                     else
                     {
-                        oGrid.Columns.Item("FechaCorte").Visible = false;
-                        oGrid.Columns.Item("Equipo").Visible = false;
-                        oGrid.Columns.Item("Serial").Visible = false;
+                        oGrid.Columns.Item("FechaCorte").Visible = true;
+                        oGrid.Columns.Item("FechaCorte").Editable = false;
+                        oGrid.Columns.Item("Equipo").Visible = true;
+                        oGrid.Columns.Item("Equipo").Editable = false;
+                        oGrid.Columns.Item("Serial").Visible = true;
+                        oGrid.Columns.Item("Serial").Editable = false;
                         oGrid.Columns.Item("AlmacenOrigen").Visible = true;
                         AjustarComboBox(2, "Item_0", 2);
                     }
@@ -264,9 +271,6 @@ namespace AddOnCorte
                     oForm.Freeze(true);
 
                     oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-
-                    
-
                     oGrid = ((SAPbouiCOM.Grid)oForm.Items.Item("Item_0").Specific);
                    // var asdad = oGrid.DataTable.GetValue("Equipo", oGrid.GetDataTableRowIndex(row)).ToString();
                     
@@ -304,19 +308,53 @@ namespace AddOnCorte
         {
             try
             {
+
+                List<Agenda> listaAgenda = new List<Agenda>();
                 int ircontando = 0;
+                int incompleto = 0;
                 for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_gr").Rows.Count; i++)
                 {
 
                     if (oForm.DataSources.DataTables.Item("dt_gr").GetValue("Seleccion", i).ToString().Equals("Y"))
                     {
                         ircontando++;
-                        Globales.oApp.MessageBox("Se agendó");
+
+                        var fecha = oForm.DataSources.DataTables.Item("dt_gr").GetValue("FechaCorte", i);
+                        string equipo = oForm.DataSources.DataTables.Item("dt_gr").GetValue("Equipo", i).ToString();
+                        string serie = oForm.DataSources.DataTables.Item("dt_gr").GetValue("Serial", i).ToString();
+                        string docEntry = oForm.DataSources.DataTables.Item("dt_gr").GetValue("Codigo", i).ToString();
+
+
+                        if (fecha != null && equipo != "" && serie != "")
+                        {
+                            Agenda agenda = new Agenda();
+                            agenda.DocEntry = docEntry;
+                            agenda.Fecha = fecha.ToString();
+                            agenda.Equipo = equipo;
+                            agenda.Serie = serie;
+
+                            listaAgenda.Add(agenda);
+                        }
+                        else
+                            incompleto++;
+
+
+                        if (incompleto == 0)
+                        {
+                            foreach (var item in listaAgenda)
+                            {
+                                Comunes.FuncionesComunes.UpdateUDOAgendarSolicitud(item.DocEntry, item.Fecha, item.Equipo, item.Serie);
+                            }
+                        }
+                            
+                    
                     }
                 }
 
                 if (ircontando == 0)
                     Globales.oApp.MessageBox("Debe marcar las solicitudes a agendar, no ha marcado ninguna");
+                else if(incompleto!=0)
+                    Globales.oApp.MessageBox("En todas la línea que marco, debe completar la fecha, equipo y serie.");
                 else
                     ListSolicitudes();
 
@@ -324,6 +362,42 @@ namespace AddOnCorte
             catch (Exception ex)
             {
                 oForm.Freeze(false);
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+
+        }
+
+        private void Button2_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            //throw new System.NotImplementedException();
+
+            SAPbobsCOM.StockTransfer oTransferReq = null;
+            SAPbobsCOM.Recordset oRS = null;
+
+
+            try
+            {
+                oTransferReq = (SAPbobsCOM.StockTransfer)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryTransferRequest);
+
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                oRS.DoQuery(Comunes.Consultas.GetAlmacenList());
+
+                if (oRS.RecordCount > 0)
+                {
+                    while (oRS.EoF == false)
+                    {
+                        
+                        oRS.MoveNext();
+                    }
+
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
             }
 

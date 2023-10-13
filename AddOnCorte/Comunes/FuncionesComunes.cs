@@ -140,6 +140,35 @@ namespace AddOnCorte.Comunes
             }
         }
 
+        public static void UpdateUDOAgendarSolicitud(string udoId, string fecha, string equipo, string serie)
+        {
+
+            SAPbobsCOM.GeneralService oGeneralService = null;
+            SAPbobsCOM.GeneralData oGeneralData = null;
+            SAPbobsCOM.GeneralDataParams oGeneralParams = null;
+            SAPbobsCOM.CompanyService oCompanyService = null;
+
+            try
+            {
+                oCompanyService = Globales.oCompany.GetCompanyService();
+                oGeneralService = oCompanyService.GetGeneralService("MGS_CL_COCABE");
+                oGeneralParams = ((SAPbobsCOM.GeneralDataParams)(oGeneralService.GetDataInterface(SAPbobsCOM.GeneralServiceDataInterfaces.gsGeneralDataParams)));
+                oGeneralParams.SetProperty("DocEntry", udoId);
+                oGeneralData = oGeneralService.GetByParams(oGeneralParams);
+                oGeneralData.SetProperty("U_MGS_CL_AFECOR", fecha);
+                oGeneralData.SetProperty("U_MGS_CL_AEQUIP", equipo);
+                oGeneralData.SetProperty("U_MGS_CL_ASERIA", serie);
+                oGeneralData.SetProperty("U_MGS_CL_ESTD", "G");
+                oGeneralService.Update(oGeneralData);
+                //return true;
+            }
+            catch (Exception ex)
+            {
+                //Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                //return false;
+            }
+        }
+
 
 
 

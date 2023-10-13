@@ -20,4 +20,12 @@ namespace AddOnCorte.Clases
         public int Count { get; set; }
         public int ColumnId { get; set; }
     }
+
+    public class Agenda
+    {
+        public string DocEntry { get; set; }
+        public string Fecha { get; set; }
+        public string Equipo { get; set; }
+        public string Serie { get; set; }
+    }
 }
