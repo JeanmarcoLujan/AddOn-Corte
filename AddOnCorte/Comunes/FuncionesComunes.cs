@@ -170,7 +170,89 @@ namespace AddOnCorte.Comunes
         }
 
 
+        public static Solicitud GetUDOSolicitudAgendada(string udoId)
+        {
 
+            SAPbobsCOM.GeneralService oGeneralService = null;
+            SAPbobsCOM.GeneralData oGeneralData = null;
+            SAPbobsCOM.GeneralDataParams oGeneralParams = null;
+            SAPbobsCOM.CompanyService oCompanyService = null;
+            SAPbobsCOM.GeneralDataCollection oChildren = null;
+
+            try
+            {
+                oCompanyService = Globales.oCompany.GetCompanyService();
+                oGeneralService = oCompanyService.GetGeneralService("MGS_CL_COCABE");
+                oGeneralParams = ((SAPbobsCOM.GeneralDataParams)(oGeneralService.GetDataInterface(SAPbobsCOM.GeneralServiceDataInterfaces.gsGeneralDataParams)));
+                oGeneralParams.SetProperty("DocEntry", udoId);
+                oGeneralData = oGeneralService.GetByParams(oGeneralParams);
+
+                Solicitud solicitud = new Solicitud();
+
+                if (oGeneralData != null)
+                {
+                    // Access the UDO record data here
+                    solicitud.DocEntry = oGeneralData.GetProperty("DocEntry").ToString();
+                    solicitud.MGS_CL_FECHA = DateTime.Parse( oGeneralData.GetProperty("U_MGS_CL_FECHA").ToString());
+                    solicitud.MGS_CL_CLIE = oGeneralData.GetProperty("U_MGS_CL_CLIE").ToString();
+                    solicitud.MGS_CL_CLID = oGeneralData.GetProperty("U_MGS_CL_CLID").ToString();
+                    solicitud.MGS_CL_ARTC = oGeneralData.GetProperty("U_MGS_CL_ARTC").ToString();
+                    solicitud.MGS_CL_ARTD = oGeneralData.GetProperty("U_MGS_CL_ARTD").ToString();
+                    solicitud.MGS_CL_PRAR = oGeneralData.GetProperty("U_MGS_CL_PRAR").ToString();
+                    solicitud.MGS_CL_OFVE = oGeneralData.GetProperty("U_MGS_CL_OFVE").ToString();
+                    solicitud.MGS_CL_OFVI = oGeneralData.GetProperty("U_MGS_CL_OFVI").ToString();
+                    solicitud.MGS_CL_EFCO = oGeneralData.GetProperty("U_MGS_CL_EFCO").ToString();
+                    solicitud.MGS_CL_MTANC = oGeneralData.GetProperty("U_MGS_CL_MTANC").ToString();
+                    solicitud.MGS_CL_MTLAR = oGeneralData.GetProperty("U_MGS_CL_MTLAR").ToString();
+                    solicitud.MGS_CL_MTCANT = oGeneralData.GetProperty("U_MGS_CL_MTCANT").ToString();
+                    solicitud.MGS_CL_OFEV = oGeneralData.GetProperty("U_MGS_CL_OFEV").ToString();
+                    solicitud.MGS_CL_AFECOR = DateTime.Parse( oGeneralData.GetProperty("U_MGS_CL_AFECOR").ToString());
+
+                    oChildren = oGeneralData.Child("MGS_CL_COMAST");
+                    var sss = oChildren.Count;
+                    List<SolicitudDetalle> detalleSolicitud = new List<SolicitudDetalle>();
+                    foreach (SAPbobsCOM.GeneralData detailRecord in oChildren)
+                    {
+                        SolicitudDetalle det = new SolicitudDetalle();
+                        det.MGS_CL_LOTE = detailRecord.GetProperty("U_MGS_CL_LOTE").ToString();
+                        det.MGS_CL_ANCM = detailRecord.GetProperty("U_MGS_CL_ANCM").ToString();
+                        det.MGS_CL_MLAR = detailRecord.GetProperty("U_MGS_CL_MLAR").ToString();
+                        det.MGS_CL_MNBO = detailRecord.GetProperty("U_MGS_CL_MNBO").ToString();
+                        det.MGS_CL_MCAN = detailRecord.GetProperty("U_MGS_CL_MCAN").ToString();
+                        detalleSolicitud.Add(det);
+                        
+                        // Acceder a los campos de detalle
+                    }
+
+                    solicitud.Detalle = detalleSolicitud;
+
+                    //oChildren = oGeneralData.Child("MGS_CL_COMAST");
+                    //var sldj = oChildren.Count;
+                    //foreach (SAPbobsCOM.GeneralData detailRecord in oChildren)
+                    //{
+                    //    Console.WriteLine("Detalle - Nombre del UDO: " + detailRecord.GetProperty("LineId"));
+                    //    // Acceder a los campos de detalle
+                    //}
+
+                    //oChildren = oGeneralData.Child("MGS_CL_CORESU");
+                    //var asdasd = oChildren.Count;
+
+                    //foreach (SAPbobsCOM.GeneralData detailRecord in oChildren)
+                    //{
+                    //    Console.WriteLine("Detalle - Nombre del UDO: " + detailRecord.GetProperty("LineId"));
+                    //    // Acceder a los campos de detalle
+                    //}
+                    //return true;
+                }
+
+                return solicitud;
+            }
+            catch (Exception ex)
+            {
+                //Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                return null;
+            }
+        }
 
         #endregion
     }

@@ -354,7 +354,7 @@ namespace AddOnCorte
                 if (ircontando == 0)
                     Globales.oApp.MessageBox("Debe marcar las solicitudes a agendar, no ha marcado ninguna");
                 else if(incompleto!=0)
-                    Globales.oApp.MessageBox("En todas la línea que marco, debe completar la fecha, equipo y serie.");
+                    Globales.oApp.MessageBox("En todas las líneas que marco, debe completar la fecha, equipo y serie.");
                 else
                     ListSolicitudes();
 
@@ -371,27 +371,78 @@ namespace AddOnCorte
         {
             //throw new System.NotImplementedException();
 
-            SAPbobsCOM.StockTransfer oTransferReq = null;
+            
             SAPbobsCOM.Recordset oRS = null;
 
 
             try
             {
-                oTransferReq = (SAPbobsCOM.StockTransfer)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryTransferRequest);
 
-                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-
-                oRS.DoQuery(Comunes.Consultas.GetAlmacenList());
-
-                if (oRS.RecordCount > 0)
+                List<Agendado> listaAgenda = new List<Agendado>();
+                int ircontando = 0;
+                int incompleto = 0;
+                for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_gr").Rows.Count; i++)
                 {
-                    while (oRS.EoF == false)
+
+                    if (oForm.DataSources.DataTables.Item("dt_gr").GetValue("Seleccion", i).ToString().Equals("Y"))
                     {
-                        
-                        oRS.MoveNext();
+                        ircontando++;
+
+                        var almacen = oForm.DataSources.DataTables.Item("dt_gr").GetValue("AlmacenOrigen", i);
+                        string docEntry = oForm.DataSources.DataTables.Item("dt_gr").GetValue("Codigo", i).ToString();
+
+
+                        if (almacen != null)
+                        {
+                            Agendado agenda = new Agendado();
+                            agenda.DocEntry = docEntry;
+                            agenda.Almacen = almacen.ToString();
+                            listaAgenda.Add(agenda);
+                        }
+                        else
+                            incompleto++;
+
+                        if (incompleto == 0)
+                        {
+                            foreach (var item in listaAgenda)
+                            {
+                                Comunes.FuncionesComunes.UpdateUDOAgendarSolicitud(item.DocEntry, item.Fecha, item.Equipo, item.Serie);
+                            }
+                        }
                     }
 
                 }
+
+                if (ircontando == 0)
+                    Globales.oApp.MessageBox("Debe marcar las solicitudes agendadas para generar la solicitud de transferencia, no ha marcado ninguna");
+                else if (incompleto != 0)
+                    Globales.oApp.MessageBox("En todas las líneas que marco, debe completar o seleccionar el almacén.");
+                else
+                    ListSolicitudes();
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+
+        }
+    
+        private void GenerateSolicitudTransferencia(Agendado agendado)
+        {
+            SAPbobsCOM.StockTransfer oTransferReq = null;
+            try
+            {
+                oTransferReq = (SAPbobsCOM.StockTransfer)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryTransferRequest);
+
+
+                Solicitud sol = Comunes.FuncionesComunes.GetUDOSolicitudAgendada(agendado.DocEntry);
+
+                oTransferReq.CardCode = sol.MGS_CL_CLIE.ToString();
+                oTransferReq.DocDate = DateTime.Now;
+                oTransferReq.TaxDate = DateTime.Now;
+                oTransferReq.DueDate = sol.MGS_CL_AFECOR;
+
 
 
 
@@ -400,7 +451,6 @@ namespace AddOnCorte
             {
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
             }
-
         }
     }
 }

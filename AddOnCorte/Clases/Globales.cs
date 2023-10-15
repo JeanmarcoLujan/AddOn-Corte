@@ -28,4 +28,39 @@ namespace AddOnCorte.Clases
         public string Equipo { get; set; }
         public string Serie { get; set; }
     }
+
+
+    public class Agendado
+    {
+        public string DocEntry { get; set; }
+        public string Almacen { get; set; }
+    }
+
+    public class SolicitudDetalle
+    {
+        public string MGS_CL_LOTE { get; set; }
+        public string MGS_CL_ANCM { get; set; }
+        public string MGS_CL_MLAR { get; set; }
+        public string MGS_CL_MNBO { get; set; }
+        public string MGS_CL_MCAN { get; set; }
+    }
+    public class Solicitud
+    {
+        public string DocEntry { get; set; }
+        public DateTime MGS_CL_FECHA { get; set; }
+        public string MGS_CL_CLIE { get; set; }
+        public string MGS_CL_CLID { get; set; }
+        public string MGS_CL_ARTD { get; set; }
+        public string MGS_CL_PRAR { get; set; }
+        public string MGS_CL_OFVE { get; set; }
+        public string MGS_CL_OFVI { get; set; }
+        public string MGS_CL_EFCO { get; set; }
+        public string MGS_CL_ARTC { get; set; }
+        public string MGS_CL_MTANC { get; set; }
+        public string MGS_CL_MTLAR { get; set; }
+        public string MGS_CL_MTCANT { get; set; }
+        public string MGS_CL_OFEV { get; set; }
+        public DateTime MGS_CL_AFECOR { get; set; }
+        public List<SolicitudDetalle> Detalle { get; set; }
+    }
 }

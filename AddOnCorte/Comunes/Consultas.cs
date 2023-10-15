@@ -115,5 +115,14 @@ namespace AddOnCorte.Comunes
 
             return m_sSQL.ToString();
         }
+
+        public static string GetSolicitudCorte()
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('SOLICITUD_CORTE','','','',''); ");
+
+            return m_sSQL.ToString();
+        }
     }
 }
