@@ -268,7 +268,7 @@ namespace AddOnCorte
                 if (row >= 0)
                 {
 
-                    oForm.Freeze(true);
+                   // oForm.Freeze(true);
 
                     oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
                     oGrid = ((SAPbouiCOM.Grid)oForm.Items.Item("Item_0").Specific);
@@ -294,12 +294,12 @@ namespace AddOnCorte
 
 
 
-                    oForm.Freeze(false);
+                    //oForm.Freeze(false);
                 }
             }
             catch (Exception ex)
             {
-                oForm.Freeze(false);
+               // oForm.Freeze(false);
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
             }
         }
@@ -404,9 +404,9 @@ namespace AddOnCorte
 
                         if (incompleto == 0)
                         {
-                            foreach (var item in listaAgenda)
+                            foreach (Agendado item in listaAgenda)
                             {
-                                Comunes.FuncionesComunes.UpdateUDOAgendarSolicitud(item.DocEntry, item.Fecha, item.Equipo, item.Serie);
+                                GenerateSolicitudTransferencia(item);
                             }
                         }
                     }
@@ -431,10 +431,13 @@ namespace AddOnCorte
         private void GenerateSolicitudTransferencia(Agendado agendado)
         {
             SAPbobsCOM.StockTransfer oTransferReq = null;
+            SAPbobsCOM.Recordset oRS = null;
+            int iErrCod;
+            string sErrMsg = "";
             try
             {
                 oTransferReq = (SAPbobsCOM.StockTransfer)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryTransferRequest);
-
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
 
                 Solicitud sol = Comunes.FuncionesComunes.GetUDOSolicitudAgendada(agendado.DocEntry);
 
@@ -442,7 +445,63 @@ namespace AddOnCorte
                 oTransferReq.DocDate = DateTime.Now;
                 oTransferReq.TaxDate = DateTime.Now;
                 oTransferReq.DueDate = sol.MGS_CL_AFECOR;
+                oTransferReq.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = agendado.DocEntry;
+                oTransferReq.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = sol.MGS_CL_EFCO;
+                oTransferReq.FromWarehouse = agendado.Almacen.ToString();
+                oTransferReq.ToWarehouse = "CORTE";
 
+                string modelo = "";
+                string ccrCod = "";
+                oRS.DoQuery(Comunes.Consultas.GetItemData(sol.MGS_CL_ARTC));
+                if (oRS.RecordCount > 0)
+                {
+                    modelo = oRS.Fields.Item(0).Value.ToString();
+                    ccrCod = oRS.Fields.Item(1).Value.ToString();
+                }
+
+                foreach (SolicitudDetalle item in sol.Detalle)
+                {
+                    oTransferReq.Lines.ItemCode = sol.MGS_CL_ARTC;
+                    oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = item.MGS_CL_MLAR.ToString();
+                    oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = item.MGS_CL_ANCM.ToString();
+                    oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = item.MGS_CL_MNBO.ToString();
+                    oTransferReq.Lines.Quantity = 1; // double.Parse(item.MGS_CL_MCAN.ToString());
+                    oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
+                    oTransferReq.Lines.DistributionRule = ccrCod;
+                    oTransferReq.Lines.FromWarehouseCode = agendado.Almacen;
+                    oTransferReq.Lines.WarehouseCode = "CORTE";
+                    oTransferReq.Lines.BatchNumbers.BatchNumber = item.MGS_CL_LOTE;
+                    oTransferReq.Lines.BatchNumbers.Quantity = 1;
+
+                    oTransferReq.Lines.Add();
+                }
+
+                iErrCod = oTransferReq.Add();
+                if (iErrCod != 0)
+                {
+
+                    Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+
+
+                    Globales.oApp.MessageBox("Oferta de venta: " + sErrMsg);
+
+                }
+                else
+                {
+
+                    oTransferReq.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+                    var sfsdf = Globales.oCompany.GetNewObjectKey();
+
+                    Comunes.FuncionesComunes.UpdateUDO(agendado.DocEntry, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_SOLTRA");
+
+                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la solicitud de traslado",
+                    SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+
+                    //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+
+
+                }
 
 
 

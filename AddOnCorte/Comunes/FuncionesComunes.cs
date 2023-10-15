@@ -114,7 +114,7 @@ namespace AddOnCorte.Comunes
             return 0;
         }
 
-        public static void UpdateUDO(string udoId, string docEntryOf)
+        public static void UpdateUDO(string udoId, string docEntryOf, string fieldUpdate)
         {
 
             SAPbobsCOM.GeneralService oGeneralService = null;
@@ -129,7 +129,9 @@ namespace AddOnCorte.Comunes
                 oGeneralParams = ((SAPbobsCOM.GeneralDataParams)(oGeneralService.GetDataInterface(SAPbobsCOM.GeneralServiceDataInterfaces.gsGeneralDataParams)));
                 oGeneralParams.SetProperty("DocEntry", udoId);
                 oGeneralData = oGeneralService.GetByParams(oGeneralParams);
-                oGeneralData.SetProperty("U_MGS_CL_OFEV", docEntryOf);
+                oGeneralData.SetProperty(fieldUpdate, docEntryOf);
+                if(fieldUpdate.ToString().Equals("U_MGS_CL_SOLTRA"))
+                    oGeneralData.SetProperty("U_MGS_CL_ESTD", "S");
                 oGeneralService.Update(oGeneralData);
                 //return true;
             }

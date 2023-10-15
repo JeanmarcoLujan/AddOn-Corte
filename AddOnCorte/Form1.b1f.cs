@@ -1086,7 +1086,7 @@ namespace AddOnCorte
 
                     var sfsdf = Globales.oCompany.GetNewObjectKey();
 
-                    Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey());
+                    Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_OFEV");
 
                     Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la oferta de venta ",
                     SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
