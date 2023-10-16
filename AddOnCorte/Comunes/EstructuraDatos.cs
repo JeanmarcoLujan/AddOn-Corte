@@ -271,8 +271,10 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_MTANC", "Total ancho master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_MTLAR", "Total largo master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_MTCANT", "Total cantidad master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-               
-                
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFSAL", "Ref salida mercancia", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFENT", "Ref entrada mercancia", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+
+
 
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_LOTE", "Lote master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_ANCM", "Ancho Master (in)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");

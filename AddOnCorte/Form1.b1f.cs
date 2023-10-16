@@ -92,6 +92,8 @@ namespace AddOnCorte
             this.StaticText22 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_56").Specific));
             this.EditText21 = ((SAPbouiCOM.EditText)(this.GetItem("Item_58").Specific));
             this.LinkedButton1 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
+            this.Button5 = ((SAPbouiCOM.Button)(this.GetItem("Item_57").Specific));
+            this.Button5.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button5_PressedAfter);
             this.OnCustomInitialize();
 
         }
@@ -1209,6 +1211,16 @@ namespace AddOnCorte
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
+
+        }
+
+        private SAPbouiCOM.Button Button5;
+
+        private void Button5_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            //throw new System.NotImplementedException();
+            Form3 activeForm = new Form3();
+            activeForm.Show();
 
         }
     }

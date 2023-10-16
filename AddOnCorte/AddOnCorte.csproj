@@ -75,6 +75,9 @@
     <Compile Include="Form2.b1f.cs">
       <DependentUpon>Form2.b1f</DependentUpon>
     </Compile>
+    <Compile Include="Form3.b1f.cs">
+      <DependentUpon>Form3.b1f</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -92,6 +95,9 @@
     <Compile Include="Menu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Form2.b1f">
+      <FormCategory>UserForm</FormCategory>
+    </None>
+    <None Include="Form3.b1f">
       <FormCategory>UserForm</FormCategory>
     </None>
   </ItemGroup>
