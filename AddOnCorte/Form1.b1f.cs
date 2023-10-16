@@ -1219,8 +1219,8 @@ namespace AddOnCorte
         private void Button5_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
         {
             //throw new System.NotImplementedException();
-            Form3 activeForm = new Form3();
-            activeForm.Show();
+            //Form3 activeForm = new Form3();
+            //activeForm.Show();
 
         }
     }

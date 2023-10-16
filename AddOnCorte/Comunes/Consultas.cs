@@ -124,5 +124,15 @@ namespace AddOnCorte.Comunes
 
             return m_sSQL.ToString();
         }
+
+        public static string GetCortesCmb()
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat("SELECT \"DocEntry\" AS \"Value\", TO_VARCHAR(\"U_MGS_CL_FECHA\",'dd/MM/yyyy') AS \"Desc\" FROM \"@MGS_CL_COCABE\" ");
+
+
+            return m_sSQL.ToString();
+        }
     }
 }
