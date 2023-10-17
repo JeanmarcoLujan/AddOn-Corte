@@ -29,6 +29,7 @@ namespace AddOnCorte
             this.Button1.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button1_PressedAfter);
             this.Button2 = ((SAPbouiCOM.Button)(this.GetItem("Item_5").Specific));
             this.Button2.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button2_PressedAfter);
+            this.Matrix0 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_6").Specific));
             this.OnCustomInitialize();
 
         }
@@ -511,5 +512,7 @@ namespace AddOnCorte
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
             }
         }
+
+        private SAPbouiCOM.Matrix Matrix0;
     }
 }
