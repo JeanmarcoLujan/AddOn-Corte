@@ -228,13 +228,29 @@ namespace AddOnCorte.Comunes
 
                     solicitud.Detalle = detalleSolicitud;
 
-                    //oChildren = oGeneralData.Child("MGS_CL_COMAST");
-                    //var sldj = oChildren.Count;
-                    //foreach (SAPbobsCOM.GeneralData detailRecord in oChildren)
-                    //{
-                    //    Console.WriteLine("Detalle - Nombre del UDO: " + detailRecord.GetProperty("LineId"));
-                    //    // Acceder a los campos de detalle
-                    //}
+                    oChildren = oGeneralData.Child("MGS_CL_CORRID");
+                    var sldj = oChildren.Count;
+                    List<CorridasDetalle> detalleCorrida = new List<CorridasDetalle>();
+                    foreach (SAPbobsCOM.GeneralData detailRecord in oChildren)
+                    {
+                        //Console.WriteLine("Detalle - Nombre del UDO: " + detailRecord.GetProperty("LineId"));
+                        // Acceder a los campos de detalle
+                        CorridasDetalle det = new CorridasDetalle();
+                        det.MGS_CL_TITU = detailRecord.GetProperty("U_MGS_CL_TITU").ToString();
+                        det.MGS_CL_C1 = detailRecord.GetProperty("U_MGS_CL_C1").ToString();
+                        det.MGS_CL_C2 = detailRecord.GetProperty("U_MGS_CL_C2").ToString();
+                        det.MGS_CL_C3 = detailRecord.GetProperty("U_MGS_CL_C3").ToString();
+                        det.MGS_CL_C4 = detailRecord.GetProperty("U_MGS_CL_C4").ToString();
+                        det.MGS_CL_C5 = detailRecord.GetProperty("U_MGS_CL_C5").ToString();
+                        det.MGS_CL_C6 = detailRecord.GetProperty("U_MGS_CL_C6").ToString();
+                        det.MGS_CL_C7 = detailRecord.GetProperty("U_MGS_CL_C7").ToString();
+                        det.MGS_CL_C8 = detailRecord.GetProperty("U_MGS_CL_C8").ToString();
+                        det.MGS_CL_C9 = detailRecord.GetProperty("U_MGS_CL_C9").ToString();
+                        det.MGS_CL_C10 = detailRecord.GetProperty("U_MGS_CL_C10").ToString();
+                        detalleCorrida.Add(det);
+                    }
+
+                    solicitud.DetalleCorridas = detalleCorrida;
 
                     //oChildren = oGeneralData.Child("MGS_CL_CORESU");
                     //var asdasd = oChildren.Count;

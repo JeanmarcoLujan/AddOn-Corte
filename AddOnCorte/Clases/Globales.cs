@@ -44,6 +44,21 @@ namespace AddOnCorte.Clases
         public string MGS_CL_MNBO { get; set; }
         public string MGS_CL_MCAN { get; set; }
     }
+
+    public class CorridasDetalle
+    {
+        public string MGS_CL_TITU { get; set; }
+        public string MGS_CL_C1 { get; set; }
+        public string MGS_CL_C2 { get; set; }
+        public string MGS_CL_C3 { get; set; }
+        public string MGS_CL_C4 { get; set; }
+        public string MGS_CL_C5 { get; set; }
+        public string MGS_CL_C6 { get; set; }
+        public string MGS_CL_C7 { get; set; }
+        public string MGS_CL_C8 { get; set; }
+        public string MGS_CL_C9 { get; set; }
+        public string MGS_CL_C10 { get; set; }
+    }
     public class Solicitud
     {
         public string DocEntry { get; set; }
@@ -62,5 +77,6 @@ namespace AddOnCorte.Clases
         public string MGS_CL_OFEV { get; set; }
         public DateTime MGS_CL_AFECOR { get; set; }
         public List<SolicitudDetalle> Detalle { get; set; }
+        public List<CorridasDetalle> DetalleCorridas { get; set; }
     }
 }
