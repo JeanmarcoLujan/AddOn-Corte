@@ -92,8 +92,6 @@ namespace AddOnCorte
             this.StaticText22 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_56").Specific));
             this.EditText21 = ((SAPbouiCOM.EditText)(this.GetItem("Item_58").Specific));
             this.LinkedButton1 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
-            this.Button5 = ((SAPbouiCOM.Button)(this.GetItem("Item_57").Specific));
-            this.Button5.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button5_PressedAfter);
             this.OnCustomInitialize();
 
         }
@@ -583,8 +581,7 @@ namespace AddOnCorte
             if (continuar)
             {
       
-                //if (this.EditText21.Value == "")
-                if (true)
+                if (this.EditText21.Value == "")
                 {
                     if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la oferta de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
                     {
@@ -692,7 +689,12 @@ namespace AddOnCorte
             try
             {
                 bool continuar = false;
-                if (this.EditText3.Value.ToString() == "")
+                if (this.EditText21.Value != "")
+                {
+                    continuar = false;
+                    Globales.oApp.MessageBox("Ya no es posible generar el resumen, porque ya se genero la oferta de venta");
+                }
+                else if (this.EditText3.Value.ToString() == "")
                 {
                     continuar = false;
                     Globales.oApp.MessageBox("Seleccione el cliente, para poder generar el resumen adecuadamente");
@@ -1009,7 +1011,7 @@ namespace AddOnCorte
             try
             {
                 oPB = Clases.Globales.oApp.StatusBar.CreateProgressBar("Generando la oferta de venta", 27, true);
-                oPB.Text = "GGenerando la oferta de venta";
+                oPB.Text = "Generando la oferta de venta";
                 oPB.Value = 10;
 
                 oSalesOpportunity = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oQuotations);
@@ -1214,14 +1216,6 @@ namespace AddOnCorte
 
         }
 
-        private SAPbouiCOM.Button Button5;
-
-        private void Button5_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
-        {
-            //throw new System.NotImplementedException();
-            //Form3 activeForm = new Form3();
-            //activeForm.Show();
-
-        }
+        
     }
 }

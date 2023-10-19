@@ -375,7 +375,13 @@ namespace AddOnCorte
             try
             {
                 bool continuar = false;
-                if (this.EditText3.Value.ToString() == "")
+
+                if(this.EditText18.Value != "")
+                {
+                    continuar = false;
+                    Globales.oApp.MessageBox("No es posible generar el resumen, porque ya se genero la salida/entrada");
+                }
+                else if (this.EditText3.Value.ToString() == "")
                 {
                     continuar = false;
                     Globales.oApp.MessageBox("Seleccione el cliente, para poder generar el resumen adecuadamente");
@@ -642,10 +648,46 @@ namespace AddOnCorte
         private void Form_DataLoadAfter(ref SAPbouiCOM.BusinessObjectInfo pVal)
         {
             //throw new System.NotImplementedException();
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+
             try
             {
                 this.Button2.Item.Enabled = true;
                 this.Button2.Item.Enabled = true;
+
+                List<string> listaLotes = new List<string>();
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_51").Specific;
+
+                for (int m = 1; m <= oMatrix.RowCount; m++)
+                {
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(1).Cells.Item(m).Specific;
+                    string cellValue = oEditText.Value.ToString();
+
+                    listaLotes.Add(oEditText.Value.ToString());
+
+                }
+
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+
+
+                for (int j = 1; j <= oMatrix.RowCount; j++)
+                {
+                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
+                    int validValueCount = oCombo.ValidValues.Count;
+                    for (int i = validValueCount - 1; i >= 0; i--)
+                    {
+                        oCombo.ValidValues.Remove(i, SAPbouiCOM.BoSearchKey.psk_Index);
+                    }
+
+                    foreach (var item in listaLotes)
+                    {
+                        oCombo.ValidValues.Add(item, item);
+                    }
+
+                }
 
             }
             catch (Exception ex)
@@ -969,17 +1011,19 @@ namespace AddOnCorte
                         oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
-                        oInventoryExit.Lines.Quantity = 1; // double.Parse(oEditText.Value.ToString());
+                        oInventoryExit.Lines.Quantity = double.Parse(oEditText.Value.ToString());
 
                         oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
                         oInventoryExit.Lines.CostingCode = ccrCod;
 
-                        oInventoryExit.Lines.WarehouseCode = "IMP";
+                        oInventoryExit.Lines.WarehouseCode = "CORTE";
                         oInventoryExit.Lines.AccountCode = "5110190";
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
                         oInventoryExit.Lines.BatchNumbers.BatchNumber = oEditText.Value.ToString();
-                        oInventoryExit.Lines.BatchNumbers.Quantity = 1;
+
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                        oInventoryExit.Lines.BatchNumbers.Quantity = double.Parse(oEditText.Value.ToString());
 
                         oInventoryExit.Lines.Add();
                     }
@@ -1086,20 +1130,28 @@ namespace AddOnCorte
                         oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
-                        oSalesOpportunity.Lines.Quantity = 1; // double.Parse(oEditText.Value.ToString());
+                        oSalesOpportunity.Lines.Quantity = double.Parse(oEditText.Value.ToString());
 
                         //oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
                         //var sdsd = oCombo.Selected.Value.ToString();
                         //oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
 
-                        oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = "IMP";
+                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                        var sdsd = oCombo.Selected.Value.ToString();
+                        oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
+
+
+                        oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
                         oSalesOpportunity.Lines.CostingCode = ccrCod;
 
                         oSalesOpportunity.Lines.WarehouseCode = "CORTE";
                         oSalesOpportunity.Lines.AccountCode = "5110190";
 
-                        oSalesOpportunity.Lines.BatchNumbers.BatchNumber = "ABC1234566";
-                        oSalesOpportunity.Lines.BatchNumbers.Quantity = 1;
+                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                        oSalesOpportunity.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
+
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
+                        oSalesOpportunity.Lines.BatchNumbers.Quantity = double.Parse(oEditText.Value.ToString());
 
                         oSalesOpportunity.Lines.Add();
 
@@ -1121,7 +1173,7 @@ namespace AddOnCorte
                         Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
 
 
-                        Globales.oApp.MessageBox("Entrada de mercancía: " + sErrMsg);
+                        Globales.oApp.MessageBox("Entrada de inventario: " + sErrMsg);
 
                     }
                     else

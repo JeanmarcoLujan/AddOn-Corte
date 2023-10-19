@@ -29,7 +29,6 @@ namespace AddOnCorte
             this.Button1.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button1_PressedAfter);
             this.Button2 = ((SAPbouiCOM.Button)(this.GetItem("Item_5").Specific));
             this.Button2.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button2_PressedAfter);
-            this.Matrix0 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_6").Specific));
             this.OnCustomInitialize();
 
         }
@@ -96,8 +95,9 @@ namespace AddOnCorte
         private void OnCustomInitialize()
         {
             oForm = Application.SBO_Application.Forms.Item(this.UIAPIRawForm.UniqueID);
+            this.ComboBox0.Select(0, SAPbouiCOM.BoSearchKey.psk_Index);
+            ListSolicitudes();
 
-            
         }
 
         private SAPbouiCOM.Button Button0;
@@ -405,10 +405,14 @@ namespace AddOnCorte
 
                         if (incompleto == 0)
                         {
-                            foreach (Agendado item in listaAgenda)
+                            if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la(s) solicitud de traslado?", 1, "Continuar", "Cancelar", "") == 1)
                             {
-                                GenerateSolicitudTransferencia(item);
+                                foreach (Agendado item in listaAgenda)
+                                {
+                                    GenerateSolicitudTransferencia(item);
+                                }
                             }
+
                         }
                     }
 
@@ -466,7 +470,7 @@ namespace AddOnCorte
                     oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = item.MGS_CL_MLAR.ToString();
                     oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = item.MGS_CL_ANCM.ToString();
                     oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = item.MGS_CL_MNBO.ToString();
-                    oTransferReq.Lines.Quantity = 1; // double.Parse(item.MGS_CL_MCAN.ToString());
+                    oTransferReq.Lines.Quantity = double.Parse(item.MGS_CL_MCAN.ToString());
                     oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
                     oTransferReq.Lines.DistributionRule = ccrCod;
                     oTransferReq.Lines.FromWarehouseCode = agendado.Almacen;
@@ -484,7 +488,7 @@ namespace AddOnCorte
                     Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
 
 
-                    Globales.oApp.MessageBox("Oferta de venta: " + sErrMsg);
+                    Globales.oApp.MessageBox(" Solicitud de traslado : " + sErrMsg);
 
                 }
                 else
@@ -512,7 +516,5 @@ namespace AddOnCorte
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
             }
         }
-
-        private SAPbouiCOM.Matrix Matrix0;
     }
 }
