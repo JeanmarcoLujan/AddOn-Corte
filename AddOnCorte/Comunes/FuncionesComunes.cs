@@ -142,6 +142,34 @@ namespace AddOnCorte.Comunes
             }
         }
 
+        public static void UpdateUDORecibo(string udoId, string docEntryOf, string fieldUpdate)
+        {
+
+            SAPbobsCOM.GeneralService oGeneralService = null;
+            SAPbobsCOM.GeneralData oGeneralData = null;
+            SAPbobsCOM.GeneralDataParams oGeneralParams = null;
+            SAPbobsCOM.CompanyService oCompanyService = null;
+
+            try
+            {
+                oCompanyService = Globales.oCompany.GetCompanyService();
+                oGeneralService = oCompanyService.GetGeneralService("MGS_CL_RCOCABE");
+                oGeneralParams = ((SAPbobsCOM.GeneralDataParams)(oGeneralService.GetDataInterface(SAPbobsCOM.GeneralServiceDataInterfaces.gsGeneralDataParams)));
+                oGeneralParams.SetProperty("DocEntry", udoId);
+                oGeneralData = oGeneralService.GetByParams(oGeneralParams);
+                oGeneralData.SetProperty(fieldUpdate, docEntryOf);
+                oGeneralService.Update(oGeneralData);
+                //return true;
+            }
+            catch (Exception ex)
+            {
+                //Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                //return false;
+            }
+        }
+
+
+
         public static void UpdateUDOAgendarSolicitud(string udoId, string fecha, string equipo, string serie)
         {
 
