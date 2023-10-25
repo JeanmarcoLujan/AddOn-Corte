@@ -106,6 +106,8 @@ namespace AddOnCorte
             this.LinkedButton0 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_64").Specific));
             this.LinkedButton1 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_65").Specific));
             this.LinkedButton2 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_66").Specific));
+            this.StaticText23 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_67").Specific));
+            this.EditText20 = ((SAPbouiCOM.EditText)(this.GetItem("Item_68").Specific));
             this.OnCustomInitialize();
 
         }
@@ -1220,5 +1222,7 @@ namespace AddOnCorte
         }
 
         private SAPbouiCOM.LinkedButton LinkedButton2;
+        private SAPbouiCOM.StaticText StaticText23;
+        private SAPbouiCOM.EditText EditText20;
     }
 }

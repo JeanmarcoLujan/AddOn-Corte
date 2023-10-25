@@ -320,6 +320,9 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("OINV", "MGS_CL_SOLCOR", "Código solicitud corte", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("OINV", "MGS_CL_EFCO", "% Eficiencia corte", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Percentage, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
+                //ALMACEN
+                CreaCampoMD("OWHS", "MGS_CL_ALMAGE", "Válido para agenda", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
+
             }
             catch (Exception ex)
             {
