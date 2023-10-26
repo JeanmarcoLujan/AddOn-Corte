@@ -38,6 +38,7 @@ namespace AddOnCorte
             this.Folder1 = ((SAPbouiCOM.Folder)(this.GetItem("Item_14").Specific));
             this.Folder2 = ((SAPbouiCOM.Folder)(this.GetItem("Item_15").Specific));
             this.Matrix0 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_16").Specific));
+            this.Matrix0.KeyDownAfter += new SAPbouiCOM._IMatrixEvents_KeyDownAfterEventHandler(this.Matrix0_KeyDownAfter);
             this.Matrix1 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_17").Specific));
             this.Matrix1.KeyDownAfter += new SAPbouiCOM._IMatrixEvents_KeyDownAfterEventHandler(this.Matrix1_KeyDownAfter);
             this.Matrix2 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_18").Specific));
@@ -94,6 +95,8 @@ namespace AddOnCorte
             this.LinkedButton1 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
             this.Button5 = ((SAPbouiCOM.Button)(this.GetItem("Item_57").Specific));
             this.Button5.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button5_PressedAfter);
+            this.Button6 = ((SAPbouiCOM.Button)(this.GetItem("Item_60").Specific));
+            this.Button6.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button6_PressedAfter);
             this.OnCustomInitialize();
 
         }
@@ -125,6 +128,7 @@ namespace AddOnCorte
                         var asd = "asdad";
                         this.Button3.Item.Enabled = false;
                         Comunes.Funciones.AutoResizeColumnsMatrix(oForm);
+                        this.Button6.Item.Enabled = false;
                         break;
                     case "1281":
                         var asdasd = "";
@@ -1147,6 +1151,12 @@ namespace AddOnCorte
             {
                 this.Button3.Item.Enabled = true;
 
+                if (this.EditText21.Value == "")
+                {
+                    this.Button6.Item.Enabled = false;
+                }else
+                    this.Button6.Item.Enabled = true;
+
                 List<string> listaLotes = new List<string>();
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
 
@@ -1246,6 +1256,8 @@ namespace AddOnCorte
             {
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
 
+                oForm.Freeze(true);
+
                 double ancho = this.EditText2.Value == "" ? 0 : double.Parse(this.EditText2.Value);
 
                 for (int k = 2; k < 12; k++)
@@ -1289,8 +1301,132 @@ namespace AddOnCorte
 
                 }
 
+                oForm.Freeze(false);
 
 
+            }
+            catch (Exception ex)
+            {
+                oForm.Freeze(false);
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+
+        }
+
+        private void Matrix0_KeyDownAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.DBDataSource oDBDataSource = null;
+            SAPbouiCOM.Column oColumn = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            try
+            {
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
+
+                if (pVal.ColUID == "Col_3" )
+                {
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(pVal.Row).Specific;
+                    int columnValue4 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(pVal.Row).Specific;
+                    double columnValue2 = double.Parse(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(pVal.Row).Specific;
+                    double columnValue3 = double.Parse(oEditText.Value.ToString());
+
+
+
+                    if (columnValue4  == 0)
+                        Globales.oApp.MessageBox("Especifique un valor mayor a cero");
+                    else
+                    {
+                        //oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(pVal.Row).Specific;
+                        //double columnValue5 = double.Parse(oEditText.Value.ToString());
+
+                        //oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(pVal.Row).Specific;
+                        //var columnValue1 = oCombo.Selected;
+
+                        oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_COMAST");
+                        string calculo = (Math.Round( (columnValue2*columnValue3*columnValue4*2.54 * 2.54 * 12 / 10000) , 2)).ToString();
+                        oDBDataSource.SetValue("U_MGS_CL_MNBO", pVal.Row - 1, columnValue4.ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_MCAN", pVal.Row - 1, calculo);
+                        oMatrix.LoadFromDataSource();
+
+
+                    }
+                    //double sum_ba = 0;
+                    //double sum_bv = 0;
+                    //double sum_cv = 0;
+                    //for (int i = 1; i <= oMatrix.RowCount; i++)
+                    //{
+                    //    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(i).Specific;
+                    //    sum_ba = sum_ba + double.Parse(oEditText.Value.ToString());
+                    //    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific;
+                    //    sum_bv = sum_bv + double.Parse(oEditText.Value.ToString());
+                    //    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
+                    //    sum_cv = sum_cv + double.Parse(oEditText.Value.ToString());
+                    //}
+                    //this.EditText17.Value = sum_ba.ToString();
+                    //this.EditText18.Value = sum_bv.ToString();
+                    //this.EditText19.Value = Math.Round(sum_cv, 2).ToString();
+                    //this.EditText9.Value = (Math.Round(sum_cv, 2) * double.Parse(this.EditText8.Value.ToString())).ToString();
+                    //this.EditText10.Value = (double.Parse(this.EditText9.Value.ToString()) * 1.16).ToString();
+                    //this.EditText11.Value = (100 * double.Parse(this.EditText19.Value.ToString()) / double.Parse(this.EditText16.Value.ToString())).ToString();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+        }
+
+        private SAPbouiCOM.Button Button6;
+
+        private void Button6_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            SAPbobsCOM.Documents oSalesOpportunity = null;
+            try
+            {
+                if (this.EditText21.Value != "")
+                {
+                    oSalesOpportunity = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oQuotations);
+
+                    
+
+                    if (oSalesOpportunity.GetByKey(int.Parse( this.EditText21.Value.ToString())))
+                    {
+                        //salesOrder.UserFields.Fields.Item("U_Motivo_Cancelacion").Value = "Motivo de cancelación"; // Puedes especificar un motivo de cancelación opcional.
+
+                        if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la aferta de ventas?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
+                        {
+                            if (oSalesOpportunity.Cancel() == 0)
+                            {
+                                Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "", "U_MGS_CL_OFEV");
+                                oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+                                Globales.oApp.MessageBox("Oferta de venta cancelada con éxito.");
+
+                               
+                            }
+                            else
+                            {
+                                Globales.oApp.MessageBox($"Error al cancelar la oferta de venta: {Globales.oCompany.GetLastErrorDescription()}");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Globales.oApp.MessageBox("Oferta de venta no encontrada.");
+                    }
+                }
+                else
+                    Globales.oApp.MessageBox("Debe existe oferta de venta asociada a la soiclitud de corte, por consiguiente el procedimiento no es válido");
 
             }
             catch (Exception ex)
