@@ -425,6 +425,11 @@ namespace AddOnCorte
                     oGrid.Columns.Item("U_MGS_CL_CANT").TitleObject.Caption = "Cantidad";
                     oGrid.Columns.Item("U_MGS_CL_CANT").Editable = false;
 
+                    oGrid.Columns.Item("U_MGS_CL_FECHA").TitleObject.Caption = "Fecha";
+                    oGrid.Columns.Item("U_MGS_CL_FECHA").Editable = false;
+
+                   // oGrid.Columns.Item("Fifo").TitleObject.Caption = "Cantidad";
+                    oGrid.Columns.Item("Fifo").Editable = false;
 
                     oGrid.AutoResizeColumns();
 
@@ -457,16 +462,53 @@ namespace AddOnCorte
                 oPB.Text = "Obteniendo la data";
                 oPB.Value = 10;
 
+                string[] posiblesFormatos = {
+                    "MM/dd/yyyy hh:mm:ss tt",
+                    "MM/d/yyyy hh:mm:ss tt",
+                    "dd/MM/yyyy hh:mm:ss tt",
+                    "d/MM/yyyy hh:mm:ss tt",
+                    "d/M/yyyy hh:mm:ss tt",
+                    "yyyy-MM-dd",
+                    "dd/MM/yyyy",
+                    "d/MM/yyyy",
+                    "dd/M/yyyy",
+                    "d/M/yyyy",
+                    "yyyyMMdd",
+                    "yyyy/MM/dd",
+                    "MM/dd/yyyy",
+                    "dd-MMM-yyyy"
+                };
 
-                
                 oForm.Freeze(true);
 
 
                 double total_ancho = 0;
                 double total_largo = 0;
                 double total_cantidad = 0;
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
+                oMatrix.Clear();
+                bool continuar = false;
                 for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_lt").Rows.Count; i++)
                 {
+                    if (oForm.DataSources.DataTables.Item("dt_lt").GetValue("Seleccion", i).ToString().Equals("Y"))
+                    {
+                        if (oForm.DataSources.DataTables.Item("dt_lt").GetValue("Fifo", i).ToString() == "1")
+                            continuar = true;
+                    }
+                }
+
+                if (!continuar)
+                {
+                    if (Globales.oApp.MessageBox("No ha seleccionado el lote más antiguo, ¿Desea continuar con el proceso?", 1, "Continuar", "Cancelar", "") == 1)
+                        continuar = true;
+                }
+
+                for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_lt").Rows.Count; i++)
+                {
+                    if (!continuar)
+                        break;
+                    
                     if (oForm.DataSources.DataTables.Item("dt_lt").GetValue("Seleccion", i).ToString().Equals("Y"))
                     {
                       
@@ -486,6 +528,23 @@ namespace AddOnCorte
                         oDBDataSource.SetValue("U_MGS_CL_MLAR", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_LARGO", i).ToString());
                         oDBDataSource.SetValue("U_MGS_CL_MNBO", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_BOBINA", i).ToString());
                         oDBDataSource.SetValue("U_MGS_CL_MCAN", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_CANT", i).ToString());
+
+
+                        //var asdasd34 = oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_FECHA", i).ToString();
+                        //DateTime fecha = DateTime.ParseExact(asdasd34, "dd/MM/yyyy", null);
+                        //string fechaFormateada = fecha.ToString("yyyyMMdd");
+                        //oDBDataSource.SetValue("U_MGS_CL_FECADM", oDBDataSource.Size - 1, fechaFormateada);
+
+                        DateTime fecha;
+                        if (DateTime.TryParseExact(oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_FECHA", i).ToString(), posiblesFormatos, null, System.Globalization.DateTimeStyles.None, out fecha))
+                        {
+                            oDBDataSource.SetValue("U_MGS_CL_FECADM", oDBDataSource.Size - 1, fecha.ToString("yyyyMMdd"));
+                        }
+
+
+
+
+                        oDBDataSource.SetValue("U_MGS_CL_FIFO", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("Fifo", i).ToString());
 
                         total_ancho = total_ancho + double.Parse( oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_ANCHO", i).ToString());
                         total_largo = total_largo + double.Parse( oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_LARGO", i).ToString());

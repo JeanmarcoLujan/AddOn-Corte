@@ -193,7 +193,21 @@ namespace AddOnCorte
             SAPbouiCOM.CheckBox oCheckBox = null;
             try
             {
-                if(pVal.FormMode == 3)
+                string[] posiblesFormatos = {
+                    "MM/dd/yyyy hh:mm:ss tt",
+                    "MM/d/yyyy hh:mm:ss tt",
+                    "dd/MM/yyyy hh:mm:ss tt",
+                    "d/MM/yyyy hh:mm:ss tt",
+                    "d/M/yyyy hh:mm:ss tt",
+                    "yyyy-MM-dd",
+                    "dd/MM/yyyy",
+                    "yyyyMMdd",
+                    "yyyy/MM/dd",
+                    "MM/dd/yyyy",
+                    "dd-MMM-yyyy"
+                };
+
+                if (pVal.FormMode == 3)
                 {
                     var asd = this.ComboBox0.Selected.Value;
                     Solicitud sol = Comunes.FuncionesComunes.GetUDOSolicitudAgendada(asd);
@@ -238,6 +252,20 @@ namespace AddOnCorte
                             oDBDataSource.SetValue("U_MGS_CL_MLAR", oDBDataSource.Size - 1, item.MGS_CL_MLAR );
                             oDBDataSource.SetValue("U_MGS_CL_MNBO", oDBDataSource.Size - 1, item.MGS_CL_MNBO);
                             oDBDataSource.SetValue("U_MGS_CL_MCAN", oDBDataSource.Size - 1, item.MGS_CL_MCAN);
+
+                            DateTime fecha;
+                            if (DateTime.TryParseExact(item.MGS_CL_FECADM, posiblesFormatos, null, System.Globalization.DateTimeStyles.None, out fecha))
+                            {
+                                oDBDataSource.SetValue("U_MGS_CL_FECADM", oDBDataSource.Size - 1, fecha.ToString("yyyyMMdd"));
+                            }
+
+                            //var ssss = item.MGS_CL_FECADM;
+                            ////DateTime fecha = DateTime.ParseExact(item.MGS_CL_FECADM, "dd/MM/yyyy", null);
+                            //DateTime fecha = DateTime.ParseExact(item.MGS_CL_FECADM, "MM/dd/yyyy hh:mm:ss tt", null);
+                            //string fechaFormateada = fecha.ToString("yyyyMMdd");
+
+                            
+                            oDBDataSource.SetValue("U_MGS_CL_FIFO", oDBDataSource.Size - 1, item.MGS_CL_FIFO);
 
                             oMatrix.LoadFromDataSource();
                             oMatrix.AutoResizeColumns();
@@ -629,16 +657,29 @@ namespace AddOnCorte
         private void CheckBoxManagement(SAPbouiCOM.CheckBox checkBox, SAPbouiCOM.SBOItemEventArg pVal, int column)
         {
             SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.EditText oEditText = null;
             try
             {
                 if (pVal.FormMode == 3)
                 {
                     oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
-
+                    double sumar = 0;
                     for (int i = 1; i <= oMatrix.RowCount - 4; i++)
                     {
-                        oMatrix.CommonSetting.SetCellEditable(i, column, !checkBox.Checked);
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(column).Cells.Item(i).Specific; //Cast the Cell of 
+                        sumar = sumar + double.Parse(oEditText.Value.ToString());
                     }
+
+                    if (sumar == 0)
+                        Globales.oApp.MessageBox("El proceso de corrida, no es válido, porque todos los valores estan en cero.");
+                    else
+                    {
+                        for (int i = 1; i <= oMatrix.RowCount - 4; i++)
+                        {
+                            oMatrix.CommonSetting.SetCellEditable(i, column, checkBox.Checked);
+                        }
+                    }
+                    
                 }
             }
             catch (Exception ex)
@@ -1094,15 +1135,8 @@ namespace AddOnCorte
                 {
                     oSalesOpportunity = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryGenEntry);
                     oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-
-                    //oSalesOpportunity.CardCode = this.EditText3.Value;
                     oSalesOpportunity.TaxDate = DateTime.Now;
                     oSalesOpportunity.DocDate = DateTime.Now;
-                    //oSalesOpportunity.DocDueDate = DateTime.Now.AddDays(30);
-
-                    //oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.EditText0.Value.ToString();
-                    //oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = this.EditText11.Value.ToString();
-                    //oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
                     string modelo = "";
                     string ccrCod = "";
@@ -1226,5 +1260,104 @@ namespace AddOnCorte
         private SAPbouiCOM.StaticText StaticText23;
         private SAPbouiCOM.EditText EditText20;
         private SAPbouiCOM.Button Button4;
+
+
+        private void GenerateSalida()
+        {
+
+            SAPbobsCOM.Documents oInventoryExit = null;
+            SAPbobsCOM.Recordset oRS = null;
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            int iErrCod;
+            string sErrMsg = "";
+            try
+            {
+                oInventoryExit = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryGenExit);
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                oInventoryExit.DocDate = DateTime.Now;
+                oInventoryExit.TaxDate = DateTime.Now;
+
+                string modelo = "";
+                string ccrCod = "";
+                oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
+                if (oRS.RecordCount > 0)
+                {
+                    modelo = oRS.Fields.Item(0).Value.ToString();
+                    ccrCod = oRS.Fields.Item(1).Value.ToString();
+                }
+
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_51").Specific;
+
+                int salesPersonCode = 1;
+                var asdas = oMatrix.RowCount;
+                for (int i = 1; i <= oMatrix.RowCount; i++)
+                {
+
+                    oInventoryExit.Lines.ItemCode = this.EditText4.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
+                    oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = oEditText.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
+                    oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = oEditText.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(i).Specific;
+                    oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                    oInventoryExit.Lines.Quantity = double.Parse(oEditText.Value.ToString());
+
+                    oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
+                    oInventoryExit.Lines.CostingCode = ccrCod;
+
+                    oInventoryExit.Lines.WarehouseCode = "CORTE";
+                    oInventoryExit.Lines.AccountCode = "5110190";
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                    oInventoryExit.Lines.BatchNumbers.BatchNumber = oEditText.Value.ToString();
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                    oInventoryExit.Lines.BatchNumbers.Quantity = double.Parse(oEditText.Value.ToString());
+
+                    oInventoryExit.Lines.Add();
+                }
+
+
+
+                iErrCod = oInventoryExit.Add();
+                if (iErrCod != 0)
+                {
+
+                    Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+
+
+                    Globales.oApp.MessageBox("Salida de inventario: " + sErrMsg);
+
+                }
+                else
+                {
+
+                    oInventoryExit.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+                    var sfsdf = Globales.oCompany.GetNewObjectKey();
+
+                    Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFSAL");
+
+                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la salida con éxito",
+                    SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+                    oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+        }
     }
 }

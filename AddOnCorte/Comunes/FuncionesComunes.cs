@@ -249,6 +249,8 @@ namespace AddOnCorte.Comunes
                         det.MGS_CL_MLAR = detailRecord.GetProperty("U_MGS_CL_MLAR").ToString();
                         det.MGS_CL_MNBO = detailRecord.GetProperty("U_MGS_CL_MNBO").ToString();
                         det.MGS_CL_MCAN = detailRecord.GetProperty("U_MGS_CL_MCAN").ToString();
+                        det.MGS_CL_FECADM = detailRecord.GetProperty("U_MGS_CL_FECADM").ToString();
+                        det.MGS_CL_FIFO = detailRecord.GetProperty("U_MGS_CL_FIFO").ToString();
                         detalleSolicitud.Add(det);
                         
                         // Acceder a los campos de detalle

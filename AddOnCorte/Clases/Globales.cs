@@ -43,6 +43,8 @@ namespace AddOnCorte.Clases
         public string MGS_CL_MLAR { get; set; }
         public string MGS_CL_MNBO { get; set; }
         public string MGS_CL_MCAN { get; set; }
+        public string MGS_CL_FECADM { get; set; }
+        public string MGS_CL_FIFO { get; set; }
     }
 
     public class CorridasDetalle

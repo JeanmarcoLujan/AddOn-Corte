@@ -188,7 +188,7 @@ namespace AddOnCorte.Comunes
                 string[] ValidValues = null;
                 string[] ValidDescrip = null;
                 ValidValues = new string[3] { "A", "G", "S"};
-                ValidDescrip = new string[3] { "Abierto", "Agendado", "Solicitado" };
+                ValidDescrip = new string[3] { "Por aprobar", "Agendado", "Solicitado" };
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_ESTD", "Estado", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, ValidValues, ValidDescrip, "A","");
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_CLIE", "Cliente", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_CLID", "Razon social", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 150, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
@@ -220,6 +220,8 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_MLAR", "Ancho Master (in)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_MNBO", "N° de bobinas Master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_MCAN", "Cantidad  Master(m2)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_FECADM", "Fecha de admision lote", SAPbobsCOM.BoFieldTypes.db_Date, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_COMAST", "MGS_CL_FIFO", "Indicador FIFO", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
 
                 CreaCampoMD("@MGS_CL_CORRID", "MGS_CL_TITU", "Tiutulo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
@@ -291,6 +293,8 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_MLAR", "Ancho Master (in)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_MNBO", "N° de bobinas Master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_MCAN", "Cantidad  Master(m2)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_FECADM", "Fecha de admision lote", SAPbobsCOM.BoFieldTypes.db_Date, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_FIFO", "Indicador FIFO", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
 
                 CreaCampoMD("@MGS_CL_RCORRID", "MGS_CL_TITU", "Tiutulo", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");

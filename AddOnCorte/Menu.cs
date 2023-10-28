@@ -20,7 +20,7 @@ namespace AddOnCorte
 
             oCreationPackage.Type = SAPbouiCOM.BoMenuType.mt_POPUP;
             oCreationPackage.UniqueID = "AddOnCorte";
-            oCreationPackage.String = "AddOnCorte";
+            oCreationPackage.String = "Gestión de corte";
             oCreationPackage.Enabled = true;
             oCreationPackage.Position = -1;
 
@@ -45,12 +45,12 @@ namespace AddOnCorte
                 // Create s sub menu
                 oCreationPackage.Type = SAPbouiCOM.BoMenuType.mt_STRING;
                 oCreationPackage.UniqueID = "AddOnCorte.Form1";
-                oCreationPackage.String = "Solicitud de corte";
+                oCreationPackage.String = "Solicitud";
                 oMenus.AddEx(oCreationPackage);
 
                 oCreationPackage.Type = SAPbouiCOM.BoMenuType.mt_STRING;
                 oCreationPackage.UniqueID = "AddOnCorte.Form2";
-                oCreationPackage.String = "Agendar corte";
+                oCreationPackage.String = "Agendar";
                 oMenus.AddEx(oCreationPackage);
 
                 oCreationPackage.Type = SAPbouiCOM.BoMenuType.mt_STRING;
