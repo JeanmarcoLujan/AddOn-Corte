@@ -125,10 +125,11 @@ namespace AddOnCorte
 
                     case "1282":
                         //oForm.DataSources.UserDataSources.Item("UD_0").Value = "sdfsd";
-                        var asd = "asdad";
+                        
                         this.Button3.Item.Enabled = false;
                         Comunes.Funciones.AutoResizeColumnsMatrix(oForm);
                         this.Button6.Item.Enabled = false;
+                        this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
                         break;
                     case "1281":
                         var asdasd = "";
@@ -369,8 +370,6 @@ namespace AddOnCorte
         {
             oForm.Items.Item("Item_36").Width = 190;
             oForm.Items.Item("Item_36").Height = 317;
-            
-
 
         }
 
@@ -1380,7 +1379,7 @@ namespace AddOnCorte
             SAPbouiCOM.DBDataSource oDBDataSource = null;
             SAPbouiCOM.Column oColumn = null;
             SAPbouiCOM.EditText oEditText = null;
-            SAPbouiCOM.ComboBox oCombo = null;
+           
             try
             {
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
