@@ -276,6 +276,8 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFSAL", "Ref salida mercancia", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFENT", "Ref entrada mercancia", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ARTCORE", "Artículo core", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 50, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "OITM");
+
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_PRO1", "Proceso 1", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_PRO2", "Proceso 2", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_PRO3", "Proceso 3", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
@@ -308,6 +310,7 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_RCORRID", "MGS_CL_C8", "Corrida 8", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCORRID", "MGS_CL_C9", "Corrida 9", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCORRID", "MGS_CL_C10", "Corrida 10", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCORRID", "MGS_CL_C11", "Merma", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
 
                 CreaCampoMD("@MGS_CL_RCORESU", "MGS_CL_LOTE", "Lote", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");

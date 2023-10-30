@@ -217,6 +217,12 @@ namespace AddOnCorte
                     oGrid.Columns.Item("Seleccion").Type = SAPbouiCOM.BoGridColumnType.gct_CheckBox;
                     oGrid.Columns.Item("Seleccion").TitleObject.Caption = "Check";
 
+                    oGrid.Columns.Item("DiferenciaDias").Editable = false;
+                    oGrid.Columns.Item("DiferenciaDias").TitleObject.Caption = "Diferencia días";
+
+                    oGrid.Columns.Item("Indicador").Editable = false;
+                    oGrid.Columns.Item("Indicador").TitleObject.Caption = "Indicador 911";
+
                     if (this.ComboBox0.Value.ToString() == "A")
                     {
                         oGrid.Columns.Item("FechaCorte").Visible = true;
