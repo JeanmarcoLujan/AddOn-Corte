@@ -85,7 +85,6 @@ namespace AddOnCorte
             this.StaticText15 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_46").Specific));
             this.EditText14 = ((SAPbouiCOM.EditText)(this.GetItem("Item_47").Specific));
             this.StaticText16 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_48").Specific));
-            this.StaticText17 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_49").Specific));
             this.Folder2 = ((SAPbouiCOM.Folder)(this.GetItem("Item_50").Specific));
             this.Matrix2 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_51").Specific));
             this.StaticText18 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_52").Specific));
@@ -109,6 +108,13 @@ namespace AddOnCorte
             this.StaticText23 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_67").Specific));
             this.EditText20 = ((SAPbouiCOM.EditText)(this.GetItem("Item_68").Specific));
             this.Button4 = ((SAPbouiCOM.Button)(this.GetItem("Item_69").Specific));
+            this.StaticText25 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_71").Specific));
+            this.StaticText26 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_72").Specific));
+            this.StaticText27 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_73").Specific));
+            this.EditText21 = ((SAPbouiCOM.EditText)(this.GetItem("Item_74").Specific));
+            this.EditText22 = ((SAPbouiCOM.EditText)(this.GetItem("Item_75").Specific));
+            this.CheckBox10 = ((SAPbouiCOM.CheckBox)(this.GetItem("Item_76").Specific));
+            this.CheckBox10.PressedAfter += new SAPbouiCOM._ICheckBoxEvents_PressedAfterEventHandler(this.CheckBox10_PressedAfter);
             this.OnCustomInitialize();
 
         }
@@ -298,6 +304,7 @@ namespace AddOnCorte
                             oDBDataSource.SetValue("U_MGS_CL_C8", oDBDataSource.Size - 1, item.MGS_CL_C8);
                             oDBDataSource.SetValue("U_MGS_CL_C9", oDBDataSource.Size - 1, item.MGS_CL_C9);
                             oDBDataSource.SetValue("U_MGS_CL_C10", oDBDataSource.Size - 1, item.MGS_CL_C10);
+                            oDBDataSource.SetValue("U_MGS_CL_C11", oDBDataSource.Size - 1,"0");
 
                             oMatrix.LoadFromDataSource();
                             oMatrix.AutoResizeColumns();
@@ -631,12 +638,16 @@ namespace AddOnCorte
                     //Globales.oApp.MessageBox("asdasd");
 
                     oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
-                    for (int colIndex = 1; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+
+                    if(oMatrix.Columns.Count > 0)
                     {
-                        oMatrix.CommonSetting.SetCellEditable(18, colIndex, false);
-                        oMatrix.CommonSetting.SetCellEditable(19, colIndex, false);
-                        oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
-                        oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
+                        for (int colIndex = 1; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                        {
+                            oMatrix.CommonSetting.SetCellEditable(18, colIndex, false);
+                            oMatrix.CommonSetting.SetCellEditable(19, colIndex, false);
+                            oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
+                            oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
+                        }
                     }
 
                     Form_ResizeAfter(pVal);
@@ -1565,6 +1576,23 @@ namespace AddOnCorte
             oForm.Items.Item("Item_36").Left =  inicial + col_1 * 7;
             oForm.Items.Item("Item_37").Left =  inicial + col_1 * 8;
             oForm.Items.Item("Item_38").Left =  inicial + col_1 * 9;
+            oForm.Items.Item("Item_76").Left =  inicial + col_1 * 10;
+
+
+
+        }
+
+        private SAPbouiCOM.StaticText StaticText24;
+        private SAPbouiCOM.StaticText StaticText25;
+        private SAPbouiCOM.StaticText StaticText26;
+        private SAPbouiCOM.StaticText StaticText27;
+        private SAPbouiCOM.EditText EditText21;
+        private SAPbouiCOM.EditText EditText22;
+        private SAPbouiCOM.CheckBox CheckBox10;
+
+        private void CheckBox10_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            CheckBoxManagement(this.CheckBox10, pVal, 12);
 
         }
     }
