@@ -67,6 +67,7 @@
     <Reference Include="SAPBusinessOneSDK" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\MiExcepcion.cs" />
     <Compile Include="Comunes\Consultas.cs" />
     <Compile Include="Comunes\EstructuraDatos.cs" />
     <Compile Include="Comunes\Funciones.cs" />

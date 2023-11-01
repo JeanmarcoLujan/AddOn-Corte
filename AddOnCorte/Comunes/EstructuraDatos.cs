@@ -275,6 +275,7 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_MTCANT", "Total cantidad master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFSAL", "Ref salida mercancia", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFENT", "Ref entrada mercancia", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFSAC", "Ref salida core", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ARTCORE", "Artículo core", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 50, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "OITM");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ARTDCOR", "Descripcion artículo core", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 150, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");

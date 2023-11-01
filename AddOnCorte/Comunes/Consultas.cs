@@ -71,6 +71,15 @@ namespace AddOnCorte.Comunes
             return m_sSQL.ToString();
         }
 
+        public static string GetAlmacenCore()
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('ALMACEN_CORE','','','',''); ");
+
+            return m_sSQL.ToString();
+        }
+
         public static string GetSolicitudesAgenda(string estado)
         {
             m_sSQL.Length = 0;
