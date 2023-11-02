@@ -292,6 +292,15 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_PRO10", "Proceso 10", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_PRO11", "Proceso merma", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
 
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_MBOIZQ", "Maste borde izquierdo", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_MCENTR", "Maste centro", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_MBODER", "Maste borde derecho", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_BBOIZQ", "Bobinas borde izquierdo", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_BCENTR", "Bobinas centro", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_BBODER", "Bobinas borde derecho", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ENHEBR", "Enhebrado", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Quantity, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REBOBI", "Rebobinar", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
+
 
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_LOTE", "Lote master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_ANCM", "Ancho Master (in)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
@@ -329,6 +338,8 @@ namespace AddOnCorte.Comunes
                 //DOCUMENTO DE MARKETING
                 CreaCampoMD("OINV", "MGS_CL_SOLCOR", "Código solicitud corte", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("OINV", "MGS_CL_EFCO", "% Eficiencia corte", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Percentage, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                //Orden de venta
+                CreaCampoMD("ORDR", "MGS_CL_911", "Es de 911?", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
 
                 //ALMACEN
                 CreaCampoMD("OWHS", "MGS_CL_ALMAGE", "Válido para agenda", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);

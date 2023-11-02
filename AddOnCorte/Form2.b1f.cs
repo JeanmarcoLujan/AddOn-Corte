@@ -388,41 +388,65 @@ namespace AddOnCorte
                 List<Agendado> listaAgenda = new List<Agendado>();
                 int ircontando = 0;
                 int incompleto = 0;
-                for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_gr").Rows.Count; i++)
+                List<string> listaAgendaRespuesta = new List<string>();
+
+
+                listaAgendaRespuesta.Add("Resumen - Resultado");
+                
+
+                string respuestaGlobal = "";
+                
+
+                if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la(s) solicitud de traslado?", 1, "Continuar", "Cancelar", "") == 1)
                 {
-
-                    if (oForm.DataSources.DataTables.Item("dt_gr").GetValue("Seleccion", i).ToString().Equals("Y"))
+                    for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_gr").Rows.Count; i++)
                     {
-                        ircontando++;
 
-                        var almacen = oForm.DataSources.DataTables.Item("dt_gr").GetValue("AlmacenOrigen", i);
-                        string docEntry = oForm.DataSources.DataTables.Item("dt_gr").GetValue("Codigo", i).ToString();
-
-
-                        if (almacen != null)
+                        if (oForm.DataSources.DataTables.Item("dt_gr").GetValue("Seleccion", i).ToString().Equals("Y"))
                         {
-                            Agendado agenda = new Agendado();
-                            agenda.DocEntry = docEntry;
-                            agenda.Almacen = almacen.ToString();
-                            listaAgenda.Add(agenda);
-                        }
-                        else
-                            incompleto++;
+                            ircontando++;
 
-                        if (incompleto == 0)
-                        {
-                            if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la(s) solicitud de traslado?", 1, "Continuar", "Cancelar", "") == 1)
+                            var almacen = oForm.DataSources.DataTables.Item("dt_gr").GetValue("AlmacenOrigen", i);
+                            string docEntry = oForm.DataSources.DataTables.Item("dt_gr").GetValue("Codigo", i).ToString();
+
+
+                            if (almacen != null && almacen!="")
+                            {
+                                Agendado agenda = new Agendado();
+                                agenda.DocEntry = docEntry;
+                                agenda.Almacen = almacen.ToString();
+                                listaAgenda.Add(agenda);
+                            }
+                            else
+                                incompleto++;
+
+                            if (incompleto == 0)
                             {
                                 foreach (Agendado item in listaAgenda)
                                 {
-                                    GenerateSolicitudTransferencia(item);
+                                    listaAgendaRespuesta.Add(GenerateSolicitudTransferencia(item));
                                 }
-                            }
 
+                            }
                         }
+
+                    }
+                }
+
+
+
+                if(listaAgendaRespuesta.Count > 1)
+                {
+                    foreach (var item in listaAgendaRespuesta)
+                    {
+                        respuestaGlobal = respuestaGlobal + item.ToString() + "\n";
                     }
 
+                    Globales.oApp.MessageBox(respuestaGlobal);
                 }
+
+
+                
 
                 if (ircontando == 0)
                     Globales.oApp.MessageBox("Debe marcar las solicitudes agendadas para generar la solicitud de transferencia, no ha marcado ninguna");
@@ -439,12 +463,13 @@ namespace AddOnCorte
 
         }
     
-        private void GenerateSolicitudTransferencia(Agendado agendado)
+        private string GenerateSolicitudTransferencia(Agendado agendado)
         {
             SAPbobsCOM.StockTransfer oTransferReq = null;
             SAPbobsCOM.Recordset oRS = null;
             int iErrCod;
             string sErrMsg = "";
+            string rpta = "";
             try
             {
                 oTransferReq = (SAPbobsCOM.StockTransfer)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryTransferRequest);
@@ -476,13 +501,14 @@ namespace AddOnCorte
                     oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = item.MGS_CL_MLAR.ToString();
                     oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = item.MGS_CL_ANCM.ToString();
                     oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = item.MGS_CL_MNBO.ToString();
+                    var asdasd = double.Parse(item.MGS_CL_MCAN.ToString());
                     oTransferReq.Lines.Quantity = double.Parse(item.MGS_CL_MCAN.ToString());
                     oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
                     oTransferReq.Lines.DistributionRule = ccrCod;
                     oTransferReq.Lines.FromWarehouseCode = agendado.Almacen;
                     oTransferReq.Lines.WarehouseCode = "CORTE";
                     oTransferReq.Lines.BatchNumbers.BatchNumber = item.MGS_CL_LOTE;
-                    oTransferReq.Lines.BatchNumbers.Quantity = 1;
+                    oTransferReq.Lines.BatchNumbers.Quantity = double.Parse(item.MGS_CL_MCAN.ToString());
 
                     oTransferReq.Lines.Add();
                 }
@@ -494,7 +520,8 @@ namespace AddOnCorte
                     Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
 
 
-                    Globales.oApp.MessageBox(" Solicitud de traslado : " + sErrMsg);
+                   // Globales.oApp.MessageBox(" Solicitud de traslado : " + sErrMsg);
+                    rpta = "Solic. corte: " + agendado.DocEntry.ToString() + " - " + sErrMsg;
 
                 }
                 else
@@ -506,8 +533,9 @@ namespace AddOnCorte
 
                     Comunes.FuncionesComunes.UpdateUDO(agendado.DocEntry, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_SOLTRA");
 
-                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la solicitud de traslado",
-                    SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+                    //Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la solicitud de traslado",
+                    //SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+                    rpta = "Solic. corte: " + agendado.DocEntry.ToString() + " - Se generó con éxito" ;
 
                     //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
 
@@ -519,8 +547,11 @@ namespace AddOnCorte
             }
             catch (Exception ex)
             {
-                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                //Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                rpta = "Solic. corte: " + agendado.DocEntry.ToString() + " - " + ex.Message.ToString();
             }
+
+            return rpta;
         }
     }
 }

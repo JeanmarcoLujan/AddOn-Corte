@@ -1416,6 +1416,17 @@ namespace AddOnCorte
 
 
                     }
+
+                    double suma__col5 = 0;
+                    for (int i = 1; i <= oMatrix.RowCount; i++)
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                        suma__col5 = suma__col5 + double.Parse(oEditText.Value.ToString());
+                    }
+
+                    this.EditText14.Value = suma__col5.ToString();
+
+
                     //double sum_ba = 0;
                     //double sum_bv = 0;
                     //double sum_cv = 0;
@@ -1462,7 +1473,7 @@ namespace AddOnCorte
                     {
                         //salesOrder.UserFields.Fields.Item("U_Motivo_Cancelacion").Value = "Motivo de cancelación"; // Puedes especificar un motivo de cancelación opcional.
 
-                        if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la aferta de ventas?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
+                        if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la oferta de ventas?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
                         {
                             if (oSalesOpportunity.Cancel() == 0)
                             {

@@ -123,6 +123,26 @@ namespace AddOnCorte
             this.LinkedButton3 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
             this.EditText24 = ((SAPbouiCOM.EditText)(this.GetItem("Item_70").Specific));
             this.Button2 = ((SAPbouiCOM.Button)(this.GetItem("Item_77").Specific));
+            this.Button3 = ((SAPbouiCOM.Button)(this.GetItem("Item_1").Specific));
+            this.Folder3 = ((SAPbouiCOM.Folder)(this.GetItem("Item_78").Specific));
+            this.StaticText29 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_79").Specific));
+            this.StaticText30 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_80").Specific));
+            this.StaticText31 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_81").Specific));
+            this.StaticText32 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_82").Specific));
+            this.EditText23 = ((SAPbouiCOM.EditText)(this.GetItem("Item_83").Specific));
+            this.EditText25 = ((SAPbouiCOM.EditText)(this.GetItem("Item_84").Specific));
+            this.EditText26 = ((SAPbouiCOM.EditText)(this.GetItem("Item_85").Specific));
+            this.StaticText33 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_86").Specific));
+            this.CheckBox11 = ((SAPbouiCOM.CheckBox)(this.GetItem("Item_87").Specific));
+            this.StaticText34 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_88").Specific));
+            this.StaticText35 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_89").Specific));
+            this.StaticText36 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_90").Specific));
+            this.StaticText37 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_91").Specific));
+            this.EditText27 = ((SAPbouiCOM.EditText)(this.GetItem("Item_92").Specific));
+            this.EditText28 = ((SAPbouiCOM.EditText)(this.GetItem("Item_93").Specific));
+            this.EditText29 = ((SAPbouiCOM.EditText)(this.GetItem("Item_94").Specific));
+            this.StaticText38 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_95").Specific));
+            this.EditText30 = ((SAPbouiCOM.EditText)(this.GetItem("Item_96").Specific));
             this.OnCustomInitialize();
 
         }
@@ -1156,6 +1176,7 @@ namespace AddOnCorte
                     Globales.oCompany.EndTransaction(BoWfTransOpt.wf_Commit);
                     rasultadoAll = true;
                 }
+                rasultadoAll = true;
 
             }
             catch (MiExcepcion exx)
@@ -1707,5 +1728,26 @@ namespace AddOnCorte
             }
 
         }
+
+        private SAPbouiCOM.Button Button3;
+        private SAPbouiCOM.Folder Folder3;
+        private SAPbouiCOM.StaticText StaticText29;
+        private SAPbouiCOM.StaticText StaticText30;
+        private SAPbouiCOM.StaticText StaticText31;
+        private SAPbouiCOM.StaticText StaticText32;
+        private SAPbouiCOM.EditText EditText23;
+        private SAPbouiCOM.EditText EditText25;
+        private SAPbouiCOM.EditText EditText26;
+        private SAPbouiCOM.StaticText StaticText33;
+        private SAPbouiCOM.CheckBox CheckBox11;
+        private SAPbouiCOM.StaticText StaticText34;
+        private SAPbouiCOM.StaticText StaticText35;
+        private SAPbouiCOM.StaticText StaticText36;
+        private SAPbouiCOM.StaticText StaticText37;
+        private SAPbouiCOM.EditText EditText27;
+        private SAPbouiCOM.EditText EditText28;
+        private SAPbouiCOM.EditText EditText29;
+        private SAPbouiCOM.StaticText StaticText38;
+        private SAPbouiCOM.EditText EditText30;
     }
 }
