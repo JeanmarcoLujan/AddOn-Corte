@@ -18,6 +18,7 @@ namespace AddOnCorte
         SAPbouiCOM.Form oForm;
         int entrada_mercancia = 0;
         int salida1_mercancia = 0;
+        int salida1_core = 0;
         public Form3()
         {
         }
@@ -123,7 +124,6 @@ namespace AddOnCorte
             this.LinkedButton3 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
             this.EditText24 = ((SAPbouiCOM.EditText)(this.GetItem("Item_70").Specific));
             this.Button2 = ((SAPbouiCOM.Button)(this.GetItem("Item_77").Specific));
-            this.Button3 = ((SAPbouiCOM.Button)(this.GetItem("Item_1").Specific));
             this.Folder3 = ((SAPbouiCOM.Folder)(this.GetItem("Item_78").Specific));
             this.StaticText29 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_79").Specific));
             this.StaticText30 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_80").Specific));
@@ -154,7 +154,8 @@ namespace AddOnCorte
         {
             this.DataLoadAfter += new SAPbouiCOM.Framework.FormBase.DataLoadAfterHandler(this.Form_DataLoadAfter);
             this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
-            this.DataAddAfter += new DataAddAfterHandler(this.Form_DataAddAfter);
+            this.DataAddAfter += new SAPbouiCOM.Framework.FormBase.DataAddAfterHandler(this.Form_DataAddAfter);
+            this.DataAddBefore += new DataAddBeforeHandler(this.Form_DataAddBefore);
 
         }
 
@@ -247,6 +248,8 @@ namespace AddOnCorte
                     "dd/MM/yyyy hh:mm:ss tt",
                     "d/MM/yyyy hh:mm:ss tt",
                     "d/M/yyyy hh:mm:ss tt",
+                    "M/dd/yyyy hh:mm:ss tt",
+                    "M/d/yyyy hh:mm:ss tt",
                     "yyyy-MM-dd",
                     "dd/MM/yyyy",
                     "yyyyMMdd",
@@ -1066,75 +1069,76 @@ namespace AddOnCorte
 
         private void Button0_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
+            //BubbleEvent = true;
+            //SAPbouiCOM.Matrix oMatrix = null;
+            //SAPbouiCOM.ComboBox oCombo = null;
+            ////throw new System.NotImplementedException();
+
+
+
+            //if (pVal.FormMode == 3)
+            //{
+
+            //    List<string> oListErr = new List<string>();
+
+            //    string itemCode = this.EditText4.Value;
+            //    if (itemCode == "")
+            //        oListErr.Add("Debe seleccionar un artículo");
+
+            //    string itemCodeCore = this.EditText21.Value;
+            //    if (itemCodeCore == "")
+            //        oListErr.Add("Debe seleccionar un artículo core");
+
+            //    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+            //    if (oMatrix.RowCount == 0)
+            //    {
+            //        oListErr.Add("Debe especificar informacion en la pestaña RESUMEN");
+            //    }
+            //    else
+            //    {
+            //        //SAPbouiCOM.ComboBox oComboBox = (SAPbouiCOM.ComboBox)oForm.Items.Item("cmbComboBox").Specific;
+            //        //string valorSeleccionado = oComboBox.Selected.Value;
+            //        int contar = 0;
+            //        for (int j = 1; j <= oMatrix.RowCount; j++)
+            //        {
+            //            oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
+            //            if (oCombo.Selected == null)
+            //                contar++;
+            //        }
+            //        if (contar > 0)
+            //            oListErr.Add("En el RESUMEN, debe seleccionar los lotes");
+
+            //        if (int.Parse(this.EditText1.Value) != (int.Parse(this.EditText7.Value) + int.Parse(this.EditText8.Value)))
+            //            oListErr.Add("En el RESUMEN, debe distribuir el total del número de bobinas ");
+
+            //    }
+
+            //    if (oListErr.Count > 0)
+            //    {
+            //        string msmValidate = "";
+            //        foreach (var msm in oListErr)
+            //        {
+            //            msmValidate = msmValidate + " > " + msm + "\n";
+            //        }
+
+            //        Globales.oApp.MessageBox("La siguiente informacion es obligatoria: \n" + msmValidate);
+            //    }
+
+            //    if (oListErr.Count > 0)
+            //        BubbleEvent = false;
+            //    else
+            //    {
+            //        bool rs = generateDocuments();
+            //        //GenerateEntrada();
+            //        BubbleEvent = rs;
+            //    }
+
+            //}
+            //else
+            //{
+            //    BubbleEvent = true;
+            //}
             BubbleEvent = true;
-            SAPbouiCOM.Matrix oMatrix = null;
-            SAPbouiCOM.ComboBox oCombo = null;
-            //throw new System.NotImplementedException();
-
-
-
-            if (pVal.FormMode == 3)
-            {
-
-                List<string> oListErr = new List<string>();
-
-                string itemCode = this.EditText4.Value;
-                if (itemCode == "")
-                    oListErr.Add("Debe seleccionar un artículo");
-
-                string itemCodeCore = this.EditText21.Value;
-                if (itemCodeCore == "")
-                    oListErr.Add("Debe seleccionar un artículo core");
-
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
-                if (oMatrix.RowCount == 0)
-                {
-                    oListErr.Add("Debe especificar informacion en la pestaña RESUMEN");
-                }
-                else
-                {
-                    //SAPbouiCOM.ComboBox oComboBox = (SAPbouiCOM.ComboBox)oForm.Items.Item("cmbComboBox").Specific;
-                    //string valorSeleccionado = oComboBox.Selected.Value;
-                    int contar = 0;
-                    for (int j = 1; j <= oMatrix.RowCount; j++)
-                    {
-                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
-                        if (oCombo.Selected == null)
-                            contar++;
-                    }
-                    if (contar > 0)
-                        oListErr.Add("En el RESUMEN, debe seleccionar los lotes");
-
-                    if (int.Parse(this.EditText1.Value) != (int.Parse(this.EditText7.Value) + int.Parse(this.EditText8.Value)))
-                        oListErr.Add("En el RESUMEN, debe distribuir el total del número de bobinas ");
-
-                }
-
-                if (oListErr.Count > 0)
-                {
-                    string msmValidate = "";
-                    foreach (var msm in oListErr)
-                    {
-                        msmValidate = msmValidate + " > " + msm + "\n";
-                    }
-
-                    Globales.oApp.MessageBox("La siguiente informacion es obligatoria: \n" + msmValidate);
-                }
-
-                if (oListErr.Count > 0)
-                    BubbleEvent = false;
-                else
-                {
-                    bool rs = generateDocuments();
-                    //GenerateEntrada();
-                    BubbleEvent = rs;
-                }
-                    
-            }
-            else
-            {
-                BubbleEvent = true;
-            }
 
         }
 
@@ -1168,6 +1172,7 @@ namespace AddOnCorte
 
                 GenerateSalida();
                 GenerateEntrada();
+                GenerateSalidaCore();
 
                 //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
 
@@ -1222,6 +1227,7 @@ namespace AddOnCorte
 
                 oInventoryExit.DocDate = DateTime.Now;
                 oInventoryExit.TaxDate = DateTime.Now;
+                oInventoryExit.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
 
                 string modelo = "";
                 string ccrCod = "";
@@ -1250,7 +1256,7 @@ namespace AddOnCorte
                     oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
-                    oInventoryExit.Lines.Quantity =  double.Parse(oEditText.Value.ToString());
+                    oInventoryExit.Lines.Quantity = double.Parse(oEditText.Value.ToString());
 
                     oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
                     oInventoryExit.Lines.CostingCode = ccrCod;
@@ -1262,7 +1268,7 @@ namespace AddOnCorte
                     oInventoryExit.Lines.BatchNumbers.BatchNumber =  oEditText.Value.ToString();
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
-                    oInventoryExit.Lines.BatchNumbers.Quantity =  double.Parse(oEditText.Value.ToString());
+                    oInventoryExit.Lines.BatchNumbers.Quantity = double.Parse(oEditText.Value.ToString());
 
                     oInventoryExit.Lines.Add();
                 }
@@ -1288,13 +1294,13 @@ namespace AddOnCorte
 
                     salida1_mercancia = int.Parse(Globales.oCompany.GetNewObjectKey());
 
-                    
+
 
                     //Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFSAL");
 
                     Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la salida con éxito",
                     SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
-                    //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+
                     rpta = true;
                 }
 
@@ -1306,7 +1312,6 @@ namespace AddOnCorte
             {
                // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
                 throw ex;
-                rpta = false;
             }
 
             return rpta;
@@ -1329,6 +1334,15 @@ namespace AddOnCorte
 
                 oInventoryExit.DocDate = DateTime.Now;
                 oInventoryExit.TaxDate = DateTime.Now;
+                oInventoryExit.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
+
+                int validarItem = 0;
+                oRS.DoQuery(Comunes.Consultas.ValidateArticuloLotes(this.EditText21.Value.ToString()));
+                if (oRS.RecordCount == 0)
+                {
+                    throw new MiExcepcion("Salida core de inventario: " + "El artículo es gestionado por lotes");
+                }
+
 
                 string almacen = "";
                 oRS.DoQuery(Comunes.Consultas.GetAlmacenCore());
@@ -1355,14 +1369,16 @@ namespace AddOnCorte
                 {
                     for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 2; colIndex++)
                     {
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(0).Specific;
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
                         if (oEditText.Value.ToString() != "0")
                             contar++;
                     }
                 }
 
+                var casdasd = contar;
+
                 oInventoryExit.Lines.ItemCode = this.EditText21.Value.ToString();
-                oInventoryExit.Lines.Quantity = 1;
+                oInventoryExit.Lines.Quantity = contar;
                 oInventoryExit.Lines.WarehouseCode = almacen;
                 oInventoryExit.Lines.AccountCode = "5110190";
                 oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
@@ -1379,7 +1395,7 @@ namespace AddOnCorte
 
                     Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
 
-                    throw new MiExcepcion("Salida de inventario: " + sErrMsg);
+                    throw new MiExcepcion("Salida core de inventario: " + sErrMsg);
 
                     //Globales.oApp.MessageBox("Salida de inventario: " + sErrMsg);
                     rpta = false;
@@ -1390,13 +1406,13 @@ namespace AddOnCorte
 
                     oInventoryExit.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
 
-                    salida1_mercancia = int.Parse(Globales.oCompany.GetNewObjectKey());
+                    salida1_core = int.Parse(Globales.oCompany.GetNewObjectKey());
 
 
 
                     //Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFSAL");
 
-                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la salida con éxito",
+                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la salida core con éxito",
                     SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
                     //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
                     rpta = true;
@@ -1410,7 +1426,6 @@ namespace AddOnCorte
             {
                 // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
                 throw ex;
-                rpta = false;
             }
 
             return rpta;
@@ -1423,24 +1438,24 @@ namespace AddOnCorte
             SAPbouiCOM.Matrix oMatrix = null;
             int iErrCod;
             string sErrMsg = "";
-            SAPbouiCOM.ProgressBar oPB = null;
+            
             SAPbouiCOM.EditText oEditText = null;
             SAPbouiCOM.ComboBox oCombo = null;
             SAPbobsCOM.Recordset oRS = null;
             bool rpta = true;
             try
             {
-                oPB = Clases.Globales.oApp.StatusBar.CreateProgressBar("Generando la entrada de mercancia", 27, true);
-                oPB.Text = "Generando la entrada de mercancia";
-                oPB.Value = 10;
+                
 
                 oSalesOpportunity = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryGenEntry);
                 oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
                 oSalesOpportunity.TaxDate = DateTime.Now;
                 oSalesOpportunity.DocDate = DateTime.Now;
+                oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
 
                 string modelo = "";
                 string ccrCod = "";
+
                 oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
                 if (oRS.RecordCount > 0)
                 {
@@ -1468,11 +1483,8 @@ namespace AddOnCorte
                     oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
-                    oSalesOpportunity.Lines.Quantity =  double.Parse(oEditText.Value.ToString());
+                    oSalesOpportunity.Lines.Quantity = double.Parse(oEditText.Value.ToString());
 
-                    //oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
-                    //var sdsd = oCombo.Selected.Value.ToString();
-                    //oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
 
                     oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
                     var sdsd = oCombo.Selected.Value.ToString();
@@ -1493,16 +1505,7 @@ namespace AddOnCorte
 
                     oSalesOpportunity.Lines.Add();
 
-
-                    if (oPB.Value < 25)
-                        oPB.Value = oPB.Value + 15;
-
-
                 }
-
-                //oSalesOpportunity.SalesPersonCode = salesPersonCode==-1?1: salesPersonCode;
-
-                var ss1 = oSalesOpportunity.GetAsXML();
 
                 iErrCod = oSalesOpportunity.Add();
                 if (iErrCod != 0)
@@ -1537,24 +1540,12 @@ namespace AddOnCorte
 
 
 
-                System.Threading.Thread.Sleep(1000);
-                oPB.Stop();
-                Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
-
-
-                //oPurchaseReturns.
-
             }
             catch (Exception ex)
             {
                 //Comunes.Funciones.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
-                if (oPB != null)
-                {
-                    oPB.Stop();
-                    Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
-                }
+                
                 throw ex;
-                rpta = false;
                 //Comunes.Funciones.RemoveRegisterUDO(docEntryUDO);
             }
 
@@ -1644,6 +1635,7 @@ namespace AddOnCorte
 
                 Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_mercancia.ToString(), "U_MGS_CL_REFSAL");
                 Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, entrada_mercancia.ToString(), "U_MGS_CL_REFENT");
+                Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_core.ToString(), "U_MGS_CL_REFSAC");
 
 
             }
@@ -1728,8 +1720,6 @@ namespace AddOnCorte
             }
 
         }
-
-        private SAPbouiCOM.Button Button3;
         private SAPbouiCOM.Folder Folder3;
         private SAPbouiCOM.StaticText StaticText29;
         private SAPbouiCOM.StaticText StaticText30;
@@ -1749,5 +1739,69 @@ namespace AddOnCorte
         private SAPbouiCOM.EditText EditText29;
         private SAPbouiCOM.StaticText StaticText38;
         private SAPbouiCOM.EditText EditText30;
+
+        private void Form_DataAddBefore(ref SAPbouiCOM.BusinessObjectInfo pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            //throw new System.NotImplementedException();
+
+
+            List<string> oListErr = new List<string>();
+
+            string itemCode = this.EditText4.Value;
+            if (itemCode == "")
+                oListErr.Add("Debe seleccionar un artículo");
+
+            string itemCodeCore = this.EditText21.Value;
+            if (itemCodeCore == "")
+                oListErr.Add("Debe seleccionar un artículo core");
+
+            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+            if (oMatrix.RowCount == 0)
+            {
+                oListErr.Add("Debe especificar informacion en la pestaña RESUMEN");
+            }
+            else
+            {
+                //SAPbouiCOM.ComboBox oComboBox = (SAPbouiCOM.ComboBox)oForm.Items.Item("cmbComboBox").Specific;
+                //string valorSeleccionado = oComboBox.Selected.Value;
+                int contar = 0;
+                for (int j = 1; j <= oMatrix.RowCount; j++)
+                {
+                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
+                    if (oCombo.Selected == null)
+                        contar++;
+                }
+                if (contar > 0)
+                    oListErr.Add("En el RESUMEN, debe seleccionar los lotes");
+
+                if (int.Parse(this.EditText1.Value) != (int.Parse(this.EditText7.Value) + int.Parse(this.EditText8.Value)))
+                    oListErr.Add("En el RESUMEN, debe distribuir el total del número de bobinas ");
+
+            }
+
+            if (oListErr.Count > 0)
+            {
+                string msmValidate = "";
+                foreach (var msm in oListErr)
+                {
+                    msmValidate = msmValidate + " > " + msm + "\n";
+                }
+
+                Globales.oApp.MessageBox("La siguiente informacion es obligatoria: \n" + msmValidate);
+            }
+
+            if (oListErr.Count > 0)
+                BubbleEvent = false;
+            else
+            {
+                bool rs = generateDocuments();
+                //GenerateEntrada();
+                BubbleEvent = rs;
+            }
+
+        }
     }
 }

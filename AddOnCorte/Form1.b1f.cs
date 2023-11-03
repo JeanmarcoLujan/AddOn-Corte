@@ -36,6 +36,7 @@ namespace AddOnCorte
             this.EditText4.ChooseFromListAfter += new SAPbouiCOM._IEditTextEvents_ChooseFromListAfterEventHandler(this.EditText4_ChooseFromListAfter);
             this.EditText5 = ((SAPbouiCOM.EditText)(this.GetItem("Item_13").Specific));
             this.Folder1 = ((SAPbouiCOM.Folder)(this.GetItem("Item_14").Specific));
+            this.Folder1.PressedAfter += new SAPbouiCOM._IFolderEvents_PressedAfterEventHandler(this.Folder1_PressedAfter);
             this.Folder2 = ((SAPbouiCOM.Folder)(this.GetItem("Item_15").Specific));
             this.Matrix0 = ((SAPbouiCOM.Matrix)(this.GetItem("Item_16").Specific));
             this.Matrix0.KeyDownAfter += new SAPbouiCOM._IMatrixEvents_KeyDownAfterEventHandler(this.Matrix0_KeyDownAfter);
@@ -188,6 +189,7 @@ namespace AddOnCorte
             BubbleEvent = true;
             SAPbouiCOM.Matrix oMatrix = null;
             SAPbouiCOM.ComboBox oCombo = null;
+            SAPbouiCOM.EditText oEditText = null;
             //throw new System.NotImplementedException();
 
             var sda = oForm.Mode;
@@ -250,6 +252,25 @@ namespace AddOnCorte
                         oListErr.Add("En el RESUMEN, debe distribuir el total del número de bobinas ");
 
                 }
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                double totalCorridas = 0;
+                for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                {
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(21).Specific;
+                    totalCorridas = totalCorridas + double.Parse(oEditText.Value.ToString());
+                    
+                }
+
+                double totalMaster = double.Parse(this.EditText14.Value.ToString());
+
+                if(totalCorridas < 1)
+                    oListErr.Add("En la pestaña Corridas, le faltó totalizar; para ello dar clic en el botón Totalizar.");
+
+                if (Math.Abs(totalMaster - totalCorridas) > 1)
+                    oListErr.Add("Los totales del Master y Corridas deben ser iguales.");
+
+
 
                 if (oListErr.Count > 0)
                 {
@@ -467,6 +488,8 @@ namespace AddOnCorte
                     "dd/MM/yyyy hh:mm:ss tt",
                     "d/MM/yyyy hh:mm:ss tt",
                     "d/M/yyyy hh:mm:ss tt",
+                    "M/dd/yyyy hh:mm:ss tt",
+                    "M/d/yyyy hh:mm:ss tt",
                     "yyyy-MM-dd",
                     "dd/MM/yyyy",
                     "d/MM/yyyy",
@@ -1246,6 +1269,24 @@ namespace AddOnCorte
                     }
 
                 }
+
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                {
+                    for (int i = 1; i <= oMatrix.RowCount; i++)
+                    {
+                        oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
+                        //oMatrix.CommonSetting.SetCellEditable(19, colIndex, false);
+                        //oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
+                        //oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
+                    }
+
+                        
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -1503,6 +1544,41 @@ namespace AddOnCorte
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
+
+        }
+
+        private void Folder1_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            SAPbouiCOM.Matrix oMatrix = null;
+            try
+            {
+
+                if (pVal.FormMode == 3)
+                {
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                    for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                    {
+                        for (int i = 1; i <= oMatrix.RowCount; i++)
+                        {
+                            if (i > 17)
+                                oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
+                            else
+                                oMatrix.CommonSetting.SetCellEditable(i, colIndex, true);
+                        }
+
+
+                    }
+                }
+                
+
+            }
+            catch(Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+
+            //throw new System.NotImplementedException();
 
         }
     }

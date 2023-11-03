@@ -73,15 +73,28 @@ namespace AddOnCorte.Comunes
 
 
                 }
-              
 
-                for (int colIndex = 1; colIndex <= oMatrix.Columns.Count-1; colIndex++)
-                {
-                    oMatrix.CommonSetting.SetCellEditable(18, colIndex, false);
-                    oMatrix.CommonSetting.SetCellEditable(19, colIndex, false);
-                    oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
-                    oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
-                }
+                //oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                //for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                //{
+                //    for (int i = 1; i <= oMatrix.RowCount; i++)
+                //    {
+                //        if(i>17)
+                //            oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
+                //        else
+                //            oMatrix.CommonSetting.SetCellEditable(i, colIndex, true);
+                //    }
+
+
+                //}
+                //for (int colIndex = 1; colIndex <= oMatrix.Columns.Count-1; colIndex++)
+                //{
+                //    oMatrix.CommonSetting.SetCellEditable(18, colIndex, false);
+                //    oMatrix.CommonSetting.SetCellEditable(19, colIndex, false);
+                //    oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
+                //    oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
+                //}
 
                 //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
                 //else bAddNewRow = false;
