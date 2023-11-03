@@ -1367,17 +1367,33 @@ namespace AddOnCorte
 
                 //oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_51").Specific;
 
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+
+
+               // oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
                 int contar = 0;
-                if (oMatrix.Columns.Count > 0)
-                {
-                    for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 2; colIndex++)
-                    {
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
-                        if (oEditText.Value.ToString() != "0")
-                            contar++;
-                    }
-                }
+                //if (oMatrix.Columns.Count > 0)
+                //{
+                //    for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 2; colIndex++)
+                //    {
+                //        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
+                //        if (oEditText.Value.ToString() != "0")
+                //            contar++;
+                //    }
+                //}
+
+
+                contar += this.CheckBox0.Checked ? 1 : 0;
+                contar += this.CheckBox1.Checked ? 1 : 0;
+                contar += this.CheckBox2.Checked ? 1 : 0;
+                contar += this.CheckBox3.Checked ? 1 : 0;
+                contar += this.CheckBox4.Checked ? 1 : 0;
+                contar += this.CheckBox5.Checked ? 1 : 0;
+                contar += this.CheckBox6.Checked ? 1 : 0;
+                contar += this.CheckBox7.Checked ? 1 : 0;
+                contar += this.CheckBox8.Checked ? 1 : 0;
+                contar += this.CheckBox9.Checked ? 1 : 0;
+                contar += this.CheckBox10.Checked ? 1 : 0;
 
                 var casdasd = contar;
 
@@ -1824,6 +1840,8 @@ namespace AddOnCorte
             try
             {
                 if (this.EditText31.Value != "" && this.EditText31.Value != null)
+                    Globales.oApp.MessageBox("La entrega ya se generó, no es posible volverlo a generar.");
+                else
                 {
                     if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la entrega de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
                     {
@@ -1869,6 +1887,8 @@ namespace AddOnCorte
                                 oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
 
                                 oEntrega.Lines.Quantity = cantidad;
+
+                                oEntrega.Lines.WarehouseCode = "CORTE";
 
                                 oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
                                 var sdsd = oCombo.Selected.Value.ToString();
@@ -1918,7 +1938,7 @@ namespace AddOnCorte
 
                             var sfsdf = Globales.oCompany.GetNewObjectKey();
 
-                            Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
+                            Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
 
                             Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
                             SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
@@ -1933,8 +1953,8 @@ namespace AddOnCorte
                         Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
                     }
                 }
-                else
-                    Globales.oApp.MessageBox("La entrega ya se generó, no es posible volverlo a generar.");
+                
+                    
 
                 
 

@@ -257,6 +257,9 @@ namespace AddOnCorte
                 double totalCorridas = 0;
                 for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
                 {
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
+                    totalCorridas = totalCorridas + double.Parse(oEditText.Value.ToString());
+
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(21).Specific;
                     totalCorridas = totalCorridas + double.Parse(oEditText.Value.ToString());
                     
