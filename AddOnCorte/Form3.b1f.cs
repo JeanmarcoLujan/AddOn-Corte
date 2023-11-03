@@ -124,6 +124,7 @@ namespace AddOnCorte
             this.LinkedButton3 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
             this.EditText24 = ((SAPbouiCOM.EditText)(this.GetItem("Item_70").Specific));
             this.Button2 = ((SAPbouiCOM.Button)(this.GetItem("Item_77").Specific));
+            this.Button2.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button2_PressedAfter);
             this.Folder3 = ((SAPbouiCOM.Folder)(this.GetItem("Item_78").Specific));
             this.StaticText29 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_79").Specific));
             this.StaticText30 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_80").Specific));
@@ -143,6 +144,9 @@ namespace AddOnCorte
             this.EditText29 = ((SAPbouiCOM.EditText)(this.GetItem("Item_94").Specific));
             this.StaticText38 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_95").Specific));
             this.EditText30 = ((SAPbouiCOM.EditText)(this.GetItem("Item_96").Specific));
+            this.StaticText39 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_1").Specific));
+            this.EditText31 = ((SAPbouiCOM.EditText)(this.GetItem("Item_97").Specific));
+            this.LinkedButton4 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_98").Specific));
             this.OnCustomInitialize();
 
         }
@@ -1803,5 +1807,154 @@ namespace AddOnCorte
             }
 
         }
+
+        private void Button2_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            
+            SAPbobsCOM.Documents oEntrega = null;
+            //SalesOpportunities
+            SAPbouiCOM.Matrix oMatrix = null;
+            int iErrCod;
+            string sErrMsg = "";
+            SAPbouiCOM.ProgressBar oPB = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            SAPbobsCOM.Recordset oRS = null;
+
+            try
+            {
+                if (this.EditText31.Value != "" && this.EditText31.Value != null)
+                {
+                    if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la entrega de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
+                    {
+                        oPB = Clases.Globales.oApp.StatusBar.CreateProgressBar("Generando la entrega de venta", 27, true);
+                        oPB.Text = "Generando la entrega de venta";
+                        oPB.Value = 10;
+
+                        oEntrega = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDeliveryNotes);
+                        oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                        oEntrega.CardCode = this.EditText2.Value;
+                        oEntrega.TaxDate = DateTime.Now;
+                        oEntrega.DocDate = DateTime.Now;
+                        oEntrega.DocDueDate = DateTime.Now.AddDays(30);
+
+                        //oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.EditText0.Value.ToString();
+                        //oEntrega.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = this.EditText11.Value.ToString();
+                        //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
+
+
+
+                        oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+
+                        
+                        var asdas = oMatrix.RowCount;
+                        for (int i = 1; i <= oMatrix.RowCount; i++)
+                        {
+
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
+                            double cantidad = double.Parse(oEditText.Value.ToString());
+
+                            if (cantidad != 0)
+                            {
+                                oEntrega.Lines.ItemCode = this.EditText4.Value.ToString();
+
+                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
+                                oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = oEditText.Value.ToString();
+
+                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
+                                oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = oEditText.Value.ToString();
+
+                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific;
+                                oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
+
+                                oEntrega.Lines.Quantity = cantidad;
+
+                                oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                                var sdsd = oCombo.Selected.Value.ToString();
+                                oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
+
+
+                                oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                                oEntrega.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
+
+                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                                oEntrega.Lines.BatchNumbers.Quantity = cantidad;// double.Parse(oEditText.Value.ToString());
+
+
+                                oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
+                                if (oRS.RecordCount > 0)
+                                {
+                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
+                                    oEntrega.Lines.CostingCode = oRS.Fields.Item(1).Value.ToString();
+                                }
+
+                                oEntrega.Lines.Add();
+                            }
+
+
+                            if (oPB.Value < 25)
+                                oPB.Value = oPB.Value + 15;
+
+
+                        }
+
+                        var ss1 = oEntrega.GetAsXML();
+
+                        iErrCod = oEntrega.Add();
+                        if (iErrCod != 0)
+                        {
+
+                            Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+
+
+                            Globales.oApp.MessageBox("Entrega de venta: " + sErrMsg);
+
+                        }
+                        else
+                        {
+
+                            oEntrega.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+                            var sfsdf = Globales.oCompany.GetNewObjectKey();
+
+                            Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
+
+                            Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
+                            SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+
+                            oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+
+
+                        }
+
+                        System.Threading.Thread.Sleep(1000);
+                        oPB.Stop();
+                        Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+                    }
+                }
+                else
+                    Globales.oApp.MessageBox("La entrega ya se generó, no es posible volverlo a generar.");
+
+                
+
+
+            }
+            catch (Exception ex)
+            {
+                //Comunes.Funciones.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                if (oPB != null)
+                {
+                    oPB.Stop();
+                    Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+                }
+                //Comunes.Funciones.RemoveRegisterUDO(docEntryUDO);
+            }
+
+        }
+
+        private SAPbouiCOM.StaticText StaticText39;
+        private SAPbouiCOM.EditText EditText31;
+        private SAPbouiCOM.LinkedButton LinkedButton4;
     }
 }
