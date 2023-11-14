@@ -147,8 +147,7 @@ namespace AddOnCorte.Comunes
         {
             m_sSQL.Length = 0;
 
-            m_sSQL.AppendFormat("SELECT \"DocEntry\" AS \"Value\", TO_VARCHAR(\"U_MGS_CL_FECHA\",'dd/MM/yyyy') AS \"Desc\" FROM \"@MGS_CL_COCABE\" ");
-
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('LISTAR_SOLICITUDES','','','',''); ");
 
             return m_sSQL.ToString();
         }
