@@ -732,7 +732,10 @@ namespace AddOnCorte
                             oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific;
                             string cellValue = oEditText.Value.ToString();
 
-                            if (cellValue != "0")
+                            double cellValueD = double.Parse(cellValue);
+
+                            //if (cellValue != "0" && cellValue != "0.00")
+                            if (cellValueD > 0.000001)
                             {
                                 if (columnValueCount.ContainsKey(cellValue))
                                 {
@@ -1301,13 +1304,13 @@ namespace AddOnCorte
                     if (c1_sub != 0)
                     {
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
-                        oEditText.Value = c1_sub.ToString();
+                        oEditText.Value = Math.Round( c1_sub,2).ToString();
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
-                        oEditText.Value = (c1_sub + c1_total).ToString();
+                        oEditText.Value = Math.Round( (c1_sub + c1_total),2).ToString();
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
-                        oEditText.Value = (ancho - (c1_sub + c1_total)).ToString();
+                        oEditText.Value = Math.Round((ancho - (c1_sub + c1_total)),2).ToString();
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
                         oEditText.Value = (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString();

@@ -205,6 +205,10 @@ namespace AddOnCorte
                     oGrid.Columns.Item("Descripción").Editable = false;
                     oGrid.Columns.Item("Ofertav").Editable = false;
                     oGrid.Columns.Item("Ofertav").TitleObject.Caption = "Oferta de venta";
+                    ((SAPbouiCOM.EditTextColumn)oGrid.Columns.Item("Ofertav")).LinkedObjectType = "23";
+                    oGrid.Columns.Item("OrdenVenta").Editable = false;
+                    oGrid.Columns.Item("OrdenVenta").TitleObject.Caption = "Orden de venta";
+                    ((SAPbouiCOM.EditTextColumn)oGrid.Columns.Item("OrdenVenta")).LinkedObjectType = "17";
                     oGrid.Columns.Item("AlmacenOrigen").TitleObject.Caption = "Almacén origen";
                     oGrid.Columns.Item("AlmacenOrigen").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;
                     ((SAPbouiCOM.ComboBoxColumn)oGrid.Columns.Item("AlmacenOrigen")).DisplayType = SAPbouiCOM.BoComboDisplayType.cdt_Description;
