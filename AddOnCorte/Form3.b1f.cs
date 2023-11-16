@@ -1402,7 +1402,7 @@ namespace AddOnCorte
                 contar += this.CheckBox7.Checked ? 1 : 0;
                 contar += this.CheckBox8.Checked ? 1 : 0;
                 contar += this.CheckBox9.Checked ? 1 : 0;
-                contar += this.CheckBox10.Checked ? 1 : 0;
+               // contar += this.CheckBox10.Checked ? 1 : 0;
 
                 var casdasd = contar;
 
@@ -1481,6 +1481,12 @@ namespace AddOnCorte
                 oSalesOpportunity.TaxDate = DateTime.Now;
                 oSalesOpportunity.DocDate = DateTime.Now;
                 oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
+
+
+                //oSalesOpportunity.DocumentReferences.ReferencedObjectType = SAPbobsCOM.ReferencedObjectTypeEnum.rot_SalesOrder;
+                //oSalesOpportunity.DocumentReferences.REFER = 82;
+                //oSalesOpportunity.DocumentReferences.Add();
+
 
                 string modelo = "";
                 string ccrCod = "";
@@ -1702,8 +1708,8 @@ namespace AddOnCorte
                     double c1_total = 0;
                     double c1_largo = 0;
 
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(2).Specific; //Cast the Cell of 
-                    c1_total = double.Parse(oEditText.Value.ToString());
+                    //oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(2).Specific; //Cast the Cell of 
+                    //c1_total = double.Parse(oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(1).Specific; //Cast the Cell of 
                     c1_largo = double.Parse(oEditText.Value.ToString());
@@ -1778,11 +1784,11 @@ namespace AddOnCorte
             SAPbouiCOM.ProgressBar oPB = null;
             //throw new System.NotImplementedException();
 
-            oPB = Globales.oApp.StatusBar.CreateProgressBar("Validando información...", 27, true);
-            oPB.Text = "Validando información...";
-            oPB.Value = 35;
+            //oPB = Globales.oApp.StatusBar.CreateProgressBar("Validando información...", 27, true);
+            //oPB.Text = "Validando información...";
+            //oPB.Value = 35;
 
-            oForm.Freeze(true);
+            //oForm.Freeze(true);
 
             UpdateMatrixResumen();
 
@@ -1908,10 +1914,10 @@ namespace AddOnCorte
             if (Math.Abs(totalMaster - totalCorridas) > 1)
                 oListErr.Add("Los totales de las Corridas seleccionadas y el Resumen deben ser iguales.");
 
-            oForm.Freeze(false);
+            //oForm.Freeze(false);
 
-            oPB.Stop();
-            Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+            //oPB.Stop();
+            //Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
 
             if (oListErr.Count > 0)
             {
@@ -1948,6 +1954,7 @@ namespace AddOnCorte
             SAPbouiCOM.ComboBox oCombo = null;
             SAPbobsCOM.Recordset oRS = null;
 
+
             try
             {
                 if (this.EditText31.Value != "" && this.EditText31.Value != null)
@@ -1963,17 +1970,33 @@ namespace AddOnCorte
                         oEntrega = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDeliveryNotes);
                         oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
 
+                        double precio = 0;
+                        string docEntryOV = "";
+                        bool tiene_precio = false;
+                        oRS.DoQuery(Comunes.Consultas.GetPrecioOrdenVenta(this.ComboBox0.Selected.Value.ToString()));
+                        if (oRS.RecordCount > 0)
+                        {
+                            tiene_precio = true;
+                            precio = double.Parse(oRS.Fields.Item(0).Value.ToString());
+                            docEntryOV = oRS.Fields.Item(1).Value.ToString();
+                        }
+                        else
+                            tiene_precio = false;
+                        
+
                         oEntrega.CardCode = this.EditText2.Value;
                         oEntrega.TaxDate = DateTime.Now;
                         oEntrega.DocDate = DateTime.Now;
                         oEntrega.DocDueDate = DateTime.Now.AddDays(30);
 
-                        //oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.EditText0.Value.ToString();
-                        //oEntrega.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = this.EditText11.Value.ToString();
+                        oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
+                        oEntrega.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = this.EditText14.Value.ToString();
+                        if (tiene_precio)
+                            oEntrega.UserFields.Fields.Item("U_MGS_CL_REFOVE").Value = docEntryOV;
                         //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
 
-                        
+
 
                         oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
 
@@ -2000,6 +2023,9 @@ namespace AddOnCorte
 
                                 oEntrega.Lines.Quantity = cantidad;
 
+                                if(tiene_precio)
+                                    oEntrega.Lines.Price = precio;
+
                                 oEntrega.Lines.WarehouseCode = "CORTE";
 
                                 oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
@@ -2011,7 +2037,7 @@ namespace AddOnCorte
                                 oEntrega.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
 
                                 oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
-                                oEntrega.Lines.BatchNumbers.Quantity = cantidad;// double.Parse(oEditText.Value.ToString());
+                                oEntrega.Lines.BatchNumbers.Quantity =  cantidad;// double.Parse(oEditText.Value.ToString());
 
 
                                 oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
@@ -2252,7 +2278,7 @@ namespace AddOnCorte
             }
             catch (Exception ex)
             {
-                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+               // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
         }

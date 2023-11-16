@@ -75,9 +75,11 @@
     <Compile Include="Comunes\Metadata.cs" />
     <Compile Include="Form2.b1f.cs">
       <DependentUpon>Form2.b1f</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Form3.b1f.cs">
       <DependentUpon>Form3.b1f</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -87,19 +89,23 @@
     <None Include="app.config" />
     <None Include="Form1.b1f">
       <FormCategory>UserForm</FormCategory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Clases\Globales.cs" />
     <Compile Include="Form1.b1f.cs">
       <DependentUpon>Form1.b1f</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Form2.b1f">
       <FormCategory>UserForm</FormCategory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Form3.b1f">
       <FormCategory>UserForm</FormCategory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

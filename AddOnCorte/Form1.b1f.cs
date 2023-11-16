@@ -48,7 +48,6 @@ namespace AddOnCorte
             this.Matrix2.ComboSelectAfter += new SAPbouiCOM._IMatrixEvents_ComboSelectAfterEventHandler(this.Matrix2_ComboSelectAfter);
             this.Matrix2.KeyDownAfter += new SAPbouiCOM._IMatrixEvents_KeyDownAfterEventHandler(this.Matrix2_KeyDownAfter);
             this.Button0 = ((SAPbouiCOM.Button)(this.GetItem("1").Specific));
-            this.Button0.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.Button0_ClickBefore);
             this.ComboBox0 = ((SAPbouiCOM.ComboBox)(this.GetItem("Item_20").Specific));
             this.StaticText6 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_21").Specific));
             this.StaticText7 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_22").Specific));
@@ -112,7 +111,8 @@ namespace AddOnCorte
             this.LoadAfter += new SAPbouiCOM.Framework.FormBase.LoadAfterHandler(this.Form_LoadAfter);
             Clases.Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
             this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
-            this.DataLoadAfter += new DataLoadAfterHandler(this.Form_DataLoadAfter);
+            this.DataLoadAfter += new SAPbouiCOM.Framework.FormBase.DataLoadAfterHandler(this.Form_DataLoadAfter);
+            this.DataAddBefore += new DataAddBeforeHandler(this.Form_DataAddBefore);
 
         }
 
@@ -161,6 +161,12 @@ namespace AddOnCorte
             this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
             CondiconesCFLsSN();
             this.Button6.Item.Enabled = false;
+            oForm.Items.Item("Item_36").Width = 350;
+            oForm.Items.Item("Item_37").Left = oForm.Items.Item("Item_36").Width + oForm.Items.Item("Item_36").Left + 1;
+            oForm.Items.Item("Item_38").Left = oForm.Items.Item("Item_36").Width + oForm.Items.Item("Item_36").Left + 1;
+            oForm.Items.Item("Item_16").Left = oForm.Items.Item("Item_38").Width + oForm.Items.Item("Item_38").Left + 5;
+
+
         }
 
         private SAPbouiCOM.StaticText StaticText0;
@@ -188,166 +194,7 @@ namespace AddOnCorte
 
         }
 
-        private void Button0_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
-        {
-            BubbleEvent = true;
-            SAPbouiCOM.Matrix oMatrix = null;
-            SAPbouiCOM.ComboBox oCombo = null;
-            SAPbouiCOM.EditText oEditText = null;
-            SAPbouiCOM.ProgressBar oPB = null;
-            //throw new System.NotImplementedException();
-
-            var sda = oForm.Mode;
-
-            string obtenerInfo = "NONE";
-            switch (oForm.Mode)
-            {
-
-                case SAPbouiCOM.BoFormMode.fm_ADD_MODE:
-                    obtenerInfo = "ADD";
-                    break;
-                case SAPbouiCOM.BoFormMode.fm_UPDATE_MODE:
-                    obtenerInfo = "UPDATE";
-                    break;
-                default:
-                    obtenerInfo = "NONE";
-                    //this.EditText9.Item.Enabled = false;
-                    break;
-            }
-
-            if(obtenerInfo == "ADD")
-            {
-
-                oPB = Globales.oApp.StatusBar.CreateProgressBar("Validando información...", 27, true);
-                oPB.Text = "Validando información...";
-                oPB.Value = 35;
-
-                oForm.Freeze(true);
-
-                //Matrix0_ValidateAfter(sboObject, pVal);
-                updateMatrixResumen();
-                
-
-                List<string> oListErr = new List<string>();
-
-                string cardCode = this.EditText3.Value;
-                if(cardCode == "")
-                    oListErr.Add("Debe seleccionar un cliente");
-
-                string itemCode = this.EditText4.Value;
-                if (itemCode == "")
-                    oListErr.Add("Debe seleccionar un artículo");
-
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
-                if (oMatrix.RowCount == 0)
-                {
-                    oListErr.Add("Debe especificar informacion en la pestaña MASTER");
-                }
-
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
-                if (oMatrix.RowCount == 0)
-                {
-                    oListErr.Add("Debe especificar informacion en la pestaña RESUMEN");
-                }
-                else
-                {
-                    //SAPbouiCOM.ComboBox oComboBox = (SAPbouiCOM.ComboBox)oForm.Items.Item("cmbComboBox").Specific;
-                    //string valorSeleccionado = oComboBox.Selected.Value;
-                    int contar = 0;
-                    for (int j = 1; j <= oMatrix.RowCount; j++)
-                    {
-                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
-                        if (oCombo.Selected == null)
-                            contar++;
-                    }
-                    if (contar > 0)
-                        oListErr.Add("En el RESUMEN, debe seleccionar los lotes");
-                    
-                    if( int.Parse(this.EditText15.Value) != (int.Parse(this.EditText17.Value) + int.Parse(this.EditText18.Value)) )
-                        oListErr.Add("En el RESUMEN, debe distribuir el total del número de bobinas ");
-
-                }
-
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
-                double totalCorridas = 0;
-                double totalCorridasReal = 0;
-                for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
-                {
-                    //oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
-                    //totalCorridas = totalCorridas + double.Parse(oEditText.Value.ToString());
-
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(21).Specific;
-                    totalCorridas = totalCorridas + double.Parse(oEditText.Value.ToString());
-
-
-                    double c1_sub = 0;
-                    double c1_largo = 0;
-
-
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific; //Cast the Cell of 
-                    c1_largo = double.Parse(oEditText.Value.ToString());
-
-
-                    for (int i = 2; i <= oMatrix.RowCount - 4; i++)
-                    {
-
-                        //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(i).Specific; //Cast the Cell of 
-                        c1_sub = c1_sub + double.Parse(oEditText.Value.ToString());
-                        oMatrix.FlushToDataSource();
-
-                    }
-
-                    if (c1_sub != 0)
-                    {
-                        totalCorridasReal = totalCorridasReal + double.Parse((Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString());
-                    }
-
-                }
-
-                double totalMaster = double.Parse(this.EditText14.Value.ToString());
-
-                if(totalCorridas < 1)
-                    oListErr.Add("En la pestaña Corridas, le faltó totalizar; para ello dar clic en el botón Totalizar.");
-
-                if (Math.Abs(totalCorridasReal - totalCorridas) > 2)
-                    oListErr.Add("En la pestaña Corridas, debe totalizar, los totales no coinciden.");
-
-                if (Math.Abs(totalMaster - totalCorridas) > 1)
-                    oListErr.Add("Los totales del Master y Corridas deben ser iguales.");
-
-                oForm.Freeze(false);
-
-                oPB.Stop();
-                Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
-
-                if (oListErr.Count > 0)
-                {
-                    string msmValidate = "";
-                    foreach (var msm in oListErr)
-                    {
-                        msmValidate = msmValidate + " > " + msm + "\n";
-                    }
-
-                    Globales.oApp.MessageBox("La siguiente informacion es obligatoria: \n" + msmValidate);
-                }
-
-
-
-                if (oListErr.Count > 0)
-                    BubbleEvent = false;
-                else
-                    BubbleEvent = true;
-            }
-            else
-            {
-                BubbleEvent = true;
-            }
-
-
-
-
-        }
+        
 
         private SAPbouiCOM.StaticText StaticText6;
         private SAPbouiCOM.StaticText StaticText7;
@@ -440,9 +287,12 @@ namespace AddOnCorte
 
         private void Form_ResizeAfter(SAPbouiCOM.SBOItemEventArg pVal)
         {
-            oForm.Items.Item("Item_36").Width = 400;
+            oForm.Items.Item("Item_36").Width = 350;
             oForm.Items.Item("Item_37").Left = oForm.Items.Item("Item_36").Width + oForm.Items.Item("Item_36").Left + 1;
             oForm.Items.Item("Item_38").Left = oForm.Items.Item("Item_36").Width + oForm.Items.Item("Item_36").Left + 1;
+            oForm.Items.Item("Item_16").Left = oForm.Items.Item("Item_38").Width + oForm.Items.Item("Item_38").Left + 5;
+
+            var sdfsdf = oForm.Width;
             //oForm.Items.Item("Item_36").Height = 317;
 
         }
@@ -1431,8 +1281,8 @@ namespace AddOnCorte
                     double c1_total = 0;
                     double c1_largo = 0;
 
-                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(2).Specific; //Cast the Cell of 
-                    c1_total = double.Parse(oEditText.Value.ToString());
+                    //oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(2).Specific; //Cast the Cell of 
+                    //c1_total = double.Parse(oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(1).Specific; //Cast the Cell of 
                     c1_largo = double.Parse(oEditText.Value.ToString());
@@ -1871,9 +1721,139 @@ namespace AddOnCorte
             }
             catch (Exception ex)
             {
-                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+               // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
+        }
+
+        private void Form_DataAddBefore(ref SAPbouiCOM.BusinessObjectInfo pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ProgressBar oPB = null;
+            oPB = Globales.oApp.StatusBar.CreateProgressBar("Validando información...", 27, true);
+            oPB.Text = "Validando información...";
+            oPB.Value = 35;
+
+            //oForm.Freeze(true);
+
+            //Matrix0_ValidateAfter(sboObject, pVal);
+            updateMatrixResumen();
+
+
+            List<string> oListErr = new List<string>();
+
+            string cardCode = this.EditText3.Value;
+            if (cardCode == "")
+                oListErr.Add("Debe seleccionar un cliente");
+
+            string itemCode = this.EditText4.Value;
+            if (itemCode == "")
+                oListErr.Add("Debe seleccionar un artículo");
+
+            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
+            if (oMatrix.RowCount == 0)
+            {
+                oListErr.Add("Debe especificar informacion en la pestaña MASTER");
+            }
+
+            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
+            if (oMatrix.RowCount == 0)
+            {
+                oListErr.Add("Debe especificar informacion en la pestaña RESUMEN");
+            }
+            else
+            {
+                //SAPbouiCOM.ComboBox oComboBox = (SAPbouiCOM.ComboBox)oForm.Items.Item("cmbComboBox").Specific;
+                //string valorSeleccionado = oComboBox.Selected.Value;
+                int contar = 0;
+                for (int j = 1; j <= oMatrix.RowCount; j++)
+                {
+                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
+                    if (oCombo.Selected == null)
+                        contar++;
+                }
+                if (contar > 0)
+                    oListErr.Add("En el RESUMEN, debe seleccionar los lotes");
+
+                if (int.Parse(this.EditText15.Value) != (int.Parse(this.EditText17.Value) + int.Parse(this.EditText18.Value)))
+                    oListErr.Add("En el RESUMEN, debe distribuir el total del número de bobinas ");
+
+            }
+
+            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+            double totalCorridas = 0;
+            double totalCorridasReal = 0;
+            for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+            {
+                //oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
+                //totalCorridas = totalCorridas + double.Parse(oEditText.Value.ToString());
+
+                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(21).Specific;
+                totalCorridas = totalCorridas + double.Parse(oEditText.Value.ToString());
+
+
+                double c1_sub = 0;
+                double c1_largo = 0;
+
+
+                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific; //Cast the Cell of 
+                c1_largo = double.Parse(oEditText.Value.ToString());
+
+
+                for (int i = 2; i <= oMatrix.RowCount - 4; i++)
+                {
+
+                    //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(i).Specific; //Cast the Cell of 
+                    c1_sub = c1_sub + double.Parse(oEditText.Value.ToString());
+                    oMatrix.FlushToDataSource();
+
+                }
+
+                if (c1_sub != 0)
+                {
+                    totalCorridasReal = totalCorridasReal + double.Parse((Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString());
+                }
+
+            }
+
+            double totalMaster = double.Parse(this.EditText14.Value.ToString());
+
+            if (totalCorridas < 1)
+                oListErr.Add("En la pestaña Corridas, le faltó totalizar; para ello dar clic en el botón Totalizar.");
+
+            if (Math.Abs(totalCorridasReal - totalCorridas) > 2)
+                oListErr.Add("En la pestaña Corridas, debe totalizar, los totales no coinciden.");
+
+            if (Math.Abs(totalMaster - totalCorridas) > 1)
+                oListErr.Add("Los totales del Master y Corridas deben ser iguales.");
+
+            //oForm.Freeze(false);
+
+            oPB.Stop();
+            Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+
+            if (oListErr.Count > 0)
+            {
+                string msmValidate = "";
+                foreach (var msm in oListErr)
+                {
+                    msmValidate = msmValidate + " > " + msm + "\n";
+                }
+
+                Globales.oApp.MessageBox("La siguiente informacion es obligatoria: \n" + msmValidate);
+            }
+
+
+
+            if (oListErr.Count > 0)
+                BubbleEvent = false;
+            else
+                BubbleEvent = true;
+
         }
     }
 }
