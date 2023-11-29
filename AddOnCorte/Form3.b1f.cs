@@ -239,6 +239,7 @@ namespace AddOnCorte
             SAPbouiCOM.DBDataSource oDBDataSource = null;
             SAPbouiCOM.CheckBox oCheckBox = null;
             SAPbouiCOM.ProgressBar oPB = null;
+            SAPbobsCOM.Recordset oRS = null;
             try
             {
 
@@ -390,16 +391,54 @@ namespace AddOnCorte
                         }
 
                         Form_ResizeAfter(pVal);
+                        oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+
 
                         oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
                         if (oMatrix.Columns.Count > 0)
                         {
                             for (int colIndex = 1; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
                             {
+                                bool continuar = true;
+                                if (colIndex > 1 && colIndex< oMatrix.Columns.Count-1)
+                                {
+                                    oRS.DoQuery(Comunes.Consultas.ValidateCorridasDelRecibo(this.ComboBox0.Selected.Value.ToString()));
 
-                                for (int i = 1; i <= oMatrix.RowCount - 1; i++)
+                                    
+                                    string columnName = "U_MGS_CL_PRO" + ((colIndex - 1).ToString());
+                                    if (oRS.RecordCount > 0)
+                                    {
+                                        while (oRS.EoF == false)
+                                        {
+                                            var asda = oRS.Fields.Item(columnName).Value.ToString().Trim();
+
+                                            if (asda == "Y")
+                                            {
+
+                                                continuar = false;
+
+                                            }
+
+
+                                            oRS.MoveNext();
+                                        }
+
+                                    }
+                                    else
+                                        continuar = true;
+                                }
+                                    
+
+
+                                for (int i = 1; i <= oMatrix.RowCount ; i++)
                                 {
                                     //oMatrix.CommonSetting.SetCellEditable(i, column, checkBox.Checked);
+                                    if (colIndex > 1 && continuar == false)
+                                        oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(0, 128, 0));
+                                    else
+                                        oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(211, 211, 211));
+
                                     oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
                                 }
                             }
@@ -425,6 +464,11 @@ namespace AddOnCorte
                 }
             }
 
+        }
+
+        private int RGB(int red, int green, int blue)
+        {
+            return (red & 0xFF) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 16);
         }
 
         private SAPbouiCOM.Matrix Matrix0;
@@ -744,47 +788,89 @@ namespace AddOnCorte
         {
             SAPbouiCOM.Matrix oMatrix = null;
             SAPbouiCOM.EditText oEditText = null;
+            SAPbobsCOM.Recordset oRS = null;
             try
             {
                 var asdasd = pVal.InnerEvent;
                 if (pVal.FormMode == 3 && pVal.InnerEvent == false)
                 {
-                    
-                    
 
-                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
-                    double sumar = 0;
-                    for (int i = 1; i <= oMatrix.RowCount - 4; i++)
+                    oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                    oRS.DoQuery(Comunes.Consultas.ValidateCorridasDelRecibo(this.ComboBox0.Selected.Value.ToString()));
+
+                    bool continuar = true;
+                    string columnName = "U_MGS_CL_PRO" + ((column - 1).ToString());
+                    if (oRS.RecordCount > 0)
                     {
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(column).Cells.Item(i).Specific; //Cast the Cell of 
-                        sumar = sumar + double.Parse(oEditText.Value.ToString());
+                        while (oRS.EoF == false)
+                        {
+                            var asda = oRS.Fields.Item(columnName).Value.ToString().Trim();
+
+                            if (asda == "Y")
+                            {
+                                checkBox.Checked = false;
+                                continuar = false;
+                                Globales.oApp.MessageBox("La corrida ya ha sido procesada.");
+                                
+                            }
+
+
+                            oRS.MoveNext();
+                        }
+
                     }
+                    else
+                        continuar = true;
 
-                    if (sumar == 0)
+
+                    if (continuar)
                     {
-                        if(column == 12)
+                        oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                        double sumar = 0;
+                        for (int i = 1; i <= oMatrix.RowCount - 4; i++)
+                        {
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(column).Cells.Item(i).Specific; //Cast the Cell of 
+                            sumar = sumar + double.Parse(oEditText.Value.ToString());
+                        }
+
+                        if (sumar == 0)
+                        {
+                            if (column == 12)
+                            {
+                                for (int i = 1; i <= oMatrix.RowCount - 4; i++)
+                                {
+                                    oMatrix.CommonSetting.SetCellEditable(i, column, checkBox.Checked);
+                                    if(checkBox.Checked)
+                                        oMatrix.CommonSetting.SetCellBackColor(i, column, 16777215);
+                                    else
+                                        oMatrix.CommonSetting.SetCellBackColor(i, column, RGB(211, 211, 211));
+
+                                }
+                            }
+                            else
+                            {
+                                checkBox.Checked = false;
+                                Globales.oApp.MessageBox("El proceso de corrida, no es válido, porque todos los valores estan en cero.");
+                            }
+
+
+                        }
+
+                        else
                         {
                             for (int i = 1; i <= oMatrix.RowCount - 4; i++)
                             {
                                 oMatrix.CommonSetting.SetCellEditable(i, column, checkBox.Checked);
+                                if (checkBox.Checked)
+                                    oMatrix.CommonSetting.SetCellBackColor(i, column, 16777215);
+                                else
+                                    oMatrix.CommonSetting.SetCellBackColor(i, column, RGB(211, 211, 211));
                             }
                         }
-                        else
-                        {
-                            checkBox.Checked = false;
-                            Globales.oApp.MessageBox("El proceso de corrida, no es válido, porque todos los valores estan en cero.");
-                        }
-                        
-                        
                     }
-                        
-                    else
-                    {
-                        for (int i = 1; i <= oMatrix.RowCount - 4; i++)
-                        {
-                            oMatrix.CommonSetting.SetCellEditable(i, column, checkBox.Checked);
-                        }
-                    }
+
+                    
                     
                 }
             }
@@ -801,6 +887,7 @@ namespace AddOnCorte
             SAPbouiCOM.Matrix oMatrix = null;
             SAPbouiCOM.EditText oEditText = null;
             SAPbouiCOM.ComboBox oCombo = null;
+            SAPbobsCOM.Recordset oRS = null;
 
             try
             {
@@ -837,6 +924,56 @@ namespace AddOnCorte
                         oCombo.ValidValues.Add(item, item);
                     }
 
+                }
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                if (oMatrix.Columns.Count > 0)
+                {
+                    for (int colIndex = 1; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                    {
+                        bool continuar = true;
+                        if (colIndex > 1 && colIndex < oMatrix.Columns.Count - 1)
+                        {
+                            oRS.DoQuery(Comunes.Consultas.ValidateCorridasDelRecibo(this.ComboBox0.Selected.Value.ToString()));
+
+
+                            string columnName = "U_MGS_CL_PRO" + ((colIndex - 1).ToString());
+                            if (oRS.RecordCount > 0)
+                            {
+                                while (oRS.EoF == false)
+                                {
+                                    var asda = oRS.Fields.Item(columnName).Value.ToString().Trim();
+
+                                    if (asda == "Y")
+                                    {
+
+                                        continuar = false;
+
+                                    }
+
+
+                                    oRS.MoveNext();
+                                }
+
+                            }
+                            else
+                                continuar = true;
+                        }
+
+
+
+                        for (int i = 1; i <= oMatrix.RowCount; i++)
+                        {
+                            //oMatrix.CommonSetting.SetCellEditable(i, column, checkBox.Checked);
+                            if (colIndex > 1 && continuar == false)
+                                oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(0, 128, 0));
+                            else
+                                oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(211, 211, 211));
+
+                            oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
+                        }
+                    }
                 }
 
             }
