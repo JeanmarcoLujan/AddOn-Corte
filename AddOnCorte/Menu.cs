@@ -72,7 +72,7 @@ namespace AddOnCorte
             {
                 if (pVal.BeforeAction && pVal.MenuUID == "AddOnCorte.Form1")
                 {
-                    Form1 activeForm = new Form1();
+                    Form1 activeForm = new Form1(0);
                     activeForm.Show();
                 }
                 if (pVal.BeforeAction && pVal.MenuUID == "AddOnCorte.Form2")

@@ -12,8 +12,18 @@ namespace AddOnCorte
     class Form1 : UserFormBase
     {
         SAPbouiCOM.Form oForm;
-        public Form1()
+        public Form1(int corte)
         {
+            if (corte != 0)
+            {
+                oForm.Mode = SAPbouiCOM.BoFormMode.fm_FIND_MODE;
+                
+                this.EditText0.Item.Enabled = true;
+                this.EditText0.Value = corte.ToString();
+                //this.Button1.Item.Enabled = false;
+                this.Button0.Item.Click();
+                //this.EditText0.Item.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -132,17 +142,21 @@ namespace AddOnCorte
                         this.Button3.Item.Enabled = false;
                         Comunes.Funciones.AutoResizeColumnsMatrix(oForm);
                         this.Button6.Item.Enabled = false;
+                        this.EditText0.Item.Enabled = false;
                         this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
+                        
                         break;
                     case "1281":
                         var asdasd = "";
                         this.Button3.Item.Enabled = false;
+                        this.EditText0.Item.Enabled = true;
                         break;
                     case "1290":
                     case "1289":
                     case "1288":
                     case "1291":
                         var ssss = "";
+                        this.EditText0.Item.Enabled = false;
                         break;
                 }
             }
@@ -161,6 +175,7 @@ namespace AddOnCorte
             this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
             CondiconesCFLsSN();
             this.Button6.Item.Enabled = false;
+            this.EditText0.Item.Enabled = false;
             oForm.Items.Item("Item_36").Width = 350;
             oForm.Items.Item("Item_37").Left = oForm.Items.Item("Item_36").Width + oForm.Items.Item("Item_36").Left + 1;
             oForm.Items.Item("Item_38").Left = oForm.Items.Item("Item_36").Width + oForm.Items.Item("Item_36").Left + 1;

@@ -70,6 +70,7 @@
     <Compile Include="Clases\MiExcepcion.cs" />
     <Compile Include="Comunes\Consultas.cs" />
     <Compile Include="Comunes\EstructuraDatos.cs" />
+    <Compile Include="Comunes\Eventos_SBO.cs" />
     <Compile Include="Comunes\Funciones.cs" />
     <Compile Include="Comunes\FuncionesComunes.cs" />
     <Compile Include="Comunes\Metadata.cs" />
@@ -81,6 +82,7 @@
       <DependentUpon>Form3.b1f</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Forms\Frm_149.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
