@@ -1304,6 +1304,7 @@ namespace AddOnCorte
                 GenerateSalida();
                 GenerateEntrada();
                 GenerateSalidaCore();
+                CloseOrdenVenta();
 
                 //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
 
@@ -1708,6 +1709,121 @@ namespace AddOnCorte
             {
                 //Comunes.Funciones.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
                 
+                throw ex;
+                //Comunes.Funciones.RemoveRegisterUDO(docEntryUDO);
+            }
+
+            return rpta;
+        }
+        private bool CloseOrdenVenta()
+        {
+
+            SAPbobsCOM.Documents oOrder = null;
+            //SalesOpportunities
+            SAPbouiCOM.Matrix oMatrix = null;
+            int iErrCod;
+            string sErrMsg = "";
+
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            SAPbobsCOM.Recordset oRS = null;
+            bool rpta = true;
+            try
+            {
+
+
+                oOrder = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders);
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                oRS.DoQuery(Comunes.Consultas.GetUltimaCorrida(this.ComboBox0.Selected.Value));
+
+                int ultimaCorrida = 0;
+                int docEntryOV = 0;
+                bool continuar = false;
+
+                if (oRS.RecordCount > 0)
+                {
+                    ultimaCorrida = int.Parse( oRS.Fields.Item(0).Value.ToString());
+                    docEntryOV = int.Parse( oRS.Fields.Item(1).Value.ToString());
+
+                }
+                else
+                {
+                    continuar = false; rpta = false;
+                }
+
+
+
+                if (continuar)
+                {
+                    bool proceder = false;
+
+                    switch (ultimaCorrida)
+                    {
+                        case 1:
+                            proceder = this.CheckBox0.Checked;
+                            break;
+                        case 2:
+                            proceder = this.CheckBox1.Checked;
+                            break;
+                        case 3:
+                            proceder = this.CheckBox2.Checked;
+                            break;
+                        case 4:
+                            proceder = this.CheckBox3.Checked;
+                            break;
+                        case 5:
+                            proceder = this.CheckBox4.Checked;
+                            break;
+                        case 6:
+                            proceder = this.CheckBox5.Checked;
+                            break;
+                        case 7:
+                            proceder = this.CheckBox6.Checked;
+                            break;
+                        case 8:
+                            proceder = this.CheckBox7.Checked;
+                            break;
+                        case 9:
+                            proceder = this.CheckBox8.Checked;
+                            break;
+                        case 10:
+                            proceder = this.CheckBox9.Checked;
+                            break;
+
+
+                    }
+
+
+                    if (proceder)
+                    {
+                        if (oOrder.GetByKey(docEntryOV))
+                        {
+                            int closeResult = oOrder.Close();
+
+                            // Verificar el resultado del cierre
+                            if (closeResult != 0)
+                            {
+                                Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+                                rpta = false;
+
+                                throw new MiExcepcion("Orden de venta: " + sErrMsg);
+                            }
+                            else
+                            {
+                                Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se cerró la orden de venta con éxito ",
+                                 SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+                            }
+                        }
+                    }
+                    
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //Comunes.Funciones.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
                 throw ex;
                 //Comunes.Funciones.RemoveRegisterUDO(docEntryUDO);
             }
