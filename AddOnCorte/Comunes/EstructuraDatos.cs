@@ -277,6 +277,7 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFENT", "Ref entrada mercancia", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFSAC", "Ref salida core", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFETG", "Ref entrega ventas", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                //CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_REFREC", "Ref recibo producción", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
 
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ARTCORE", "Artículo core", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 50, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "OITM");
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ARTDCOR", "Descripcion artículo core", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 150, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
@@ -340,6 +341,7 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("OINV", "MGS_CL_SOLCOR", "Código solicitud corte", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("OINV", "MGS_CL_EFCO", "% Eficiencia corte", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Percentage, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("OINV", "MGS_CL_REFOVE", "Referencia orden venta", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("OINV", "MGS_CL_REFREC", "Ref recibo producción", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 //Orden de venta
                 CreaCampoMD("ORDR", "MGS_CL_911", "Es de 911?", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
 

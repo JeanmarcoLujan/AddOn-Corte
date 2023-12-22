@@ -152,7 +152,8 @@ namespace AddOnCorte
             this.DataLoadAfter += new SAPbouiCOM.Framework.FormBase.DataLoadAfterHandler(this.Form_DataLoadAfter);
             this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
             this.DataAddAfter += new SAPbouiCOM.Framework.FormBase.DataAddAfterHandler(this.Form_DataAddAfter);
-            this.DataAddBefore += new DataAddBeforeHandler(this.Form_DataAddBefore);
+            this.DataAddBefore += new SAPbouiCOM.Framework.FormBase.DataAddBeforeHandler(this.Form_DataAddBefore);
+            this.DataUpdateAfter += new DataUpdateAfterHandler(this.Form_DataUpdateAfter);
 
         }
 
@@ -2523,6 +2524,104 @@ namespace AddOnCorte
                // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
+        }
+
+        private void Form_DataUpdateAfter(ref SAPbouiCOM.BusinessObjectInfo pVal)
+        {
+            var ASDASD = pVal;
+            try
+            {
+                string xmlString = pVal.ObjectKey.ToString().Trim();
+
+                string pattern = "<DocEntry>(.*?)</DocEntry>";
+                Match match = Regex.Match(xmlString, pattern);
+                string docEntryValue = "";
+                if (match.Success)
+                {
+                    docEntryValue = match.Groups[1].Value;
+                    Console.WriteLine("Valor de DocEntry: " + docEntryValue);
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró el elemento DocEntry en la cadena XML.");
+                }
+
+
+                Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_mercancia.ToString(), "U_MGS_CL_REFSAL");
+                Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, entrada_mercancia.ToString(), "U_MGS_CL_REFENT");
+                Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_core.ToString(), "U_MGS_CL_REFSAC");
+
+
+                UpdateRefInDocumentsGenerados(int.Parse(salida1_mercancia.ToString()), 0, docEntryValue);
+                UpdateRefInDocumentsGenerados(int.Parse(entrada_mercancia.ToString()), 1, docEntryValue);
+                UpdateRefInDocumentsGenerados(int.Parse(salida1_core.ToString()), 0, docEntryValue);
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+
+        }
+
+        private void UpdateRefInDocumentsGenerados(int docEntry, int tipo, string docEntryRef)
+        {
+
+            SAPbobsCOM.Documents oInventory = null;
+            SAPbobsCOM.Recordset oRS = null;
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.EditText oEditText = null;
+
+            int iErrCod;
+            string sErrMsg = "";
+            bool rpta = true;
+            try
+            {
+                switch (tipo)
+                {
+                    case 0:
+                        oInventory = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryGenExit);
+                        break;
+                    case 1:
+                        oInventory = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryGenEntry);
+                        break;
+                }
+
+                
+                if (oInventory.GetByKey(docEntry))
+                {
+                    oInventory.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = docEntryRef;
+
+                    iErrCod = oInventory.Update();
+                    if (iErrCod != 0)
+                    {
+
+                        Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+
+                       // throw new MiExcepcion("Salida core de inventario: " + sErrMsg);
+
+                        //Globales.oApp.MessageBox("Salida de inventario: " + sErrMsg);
+                        rpta = false;
+
+                    }
+                    
+
+                }
+
+                
+
+                
+
+
+
+            }
+            catch (Exception ex)
+            {
+                // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                //throw ex;
+            }
+
+            //return rpta;
         }
     }
 }
