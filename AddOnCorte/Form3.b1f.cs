@@ -19,8 +19,18 @@ namespace AddOnCorte
         int entrada_mercancia = 0;
         int salida1_mercancia = 0;
         int salida1_core = 0;
-        public Form3()
+        public Form3(int recibo)
         {
+            if (recibo != 0)
+            {
+                oForm.Mode = SAPbouiCOM.BoFormMode.fm_FIND_MODE;
+
+                this.EditText0.Item.Enabled = true;
+                this.EditText0.Value = recibo.ToString();
+                //this.Button1.Item.Enabled = false;
+                this.Button0.Item.Click();
+                //this.EditText0.Item.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -153,8 +163,7 @@ namespace AddOnCorte
             this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
             this.DataAddAfter += new SAPbouiCOM.Framework.FormBase.DataAddAfterHandler(this.Form_DataAddAfter);
             this.DataAddBefore += new SAPbouiCOM.Framework.FormBase.DataAddBeforeHandler(this.Form_DataAddBefore);
-            this.DataUpdateAfter += new DataUpdateAfterHandler(this.Form_DataUpdateAfter);
-
+          
         }
 
         private SAPbouiCOM.EditText EditText0;
@@ -1917,6 +1926,10 @@ namespace AddOnCorte
                 Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, entrada_mercancia.ToString(), "U_MGS_CL_REFENT");
                 Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_core.ToString(), "U_MGS_CL_REFSAC");
 
+                UpdateRefInDocumentsGenerados(int.Parse(salida1_mercancia.ToString()), 0, docEntryValue);
+                UpdateRefInDocumentsGenerados(int.Parse(entrada_mercancia.ToString()), 1, docEntryValue);
+                UpdateRefInDocumentsGenerados(int.Parse(salida1_core.ToString()), 0, docEntryValue);
+
 
             }
             catch (Exception ex)
@@ -2526,43 +2539,7 @@ namespace AddOnCorte
             }
         }
 
-        private void Form_DataUpdateAfter(ref SAPbouiCOM.BusinessObjectInfo pVal)
-        {
-            var ASDASD = pVal;
-            try
-            {
-                string xmlString = pVal.ObjectKey.ToString().Trim();
-
-                string pattern = "<DocEntry>(.*?)</DocEntry>";
-                Match match = Regex.Match(xmlString, pattern);
-                string docEntryValue = "";
-                if (match.Success)
-                {
-                    docEntryValue = match.Groups[1].Value;
-                    Console.WriteLine("Valor de DocEntry: " + docEntryValue);
-                }
-                else
-                {
-                    Console.WriteLine("No se encontró el elemento DocEntry en la cadena XML.");
-                }
-
-
-                Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_mercancia.ToString(), "U_MGS_CL_REFSAL");
-                Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, entrada_mercancia.ToString(), "U_MGS_CL_REFENT");
-                Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_core.ToString(), "U_MGS_CL_REFSAC");
-
-
-                UpdateRefInDocumentsGenerados(int.Parse(salida1_mercancia.ToString()), 0, docEntryValue);
-                UpdateRefInDocumentsGenerados(int.Parse(entrada_mercancia.ToString()), 1, docEntryValue);
-                UpdateRefInDocumentsGenerados(int.Parse(salida1_core.ToString()), 0, docEntryValue);
-
-            }
-            catch (Exception ex)
-            {
-                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
-            }
-
-        }
+        
 
         private void UpdateRefInDocumentsGenerados(int docEntry, int tipo, string docEntryRef)
         {
@@ -2597,10 +2574,6 @@ namespace AddOnCorte
                     {
 
                         Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
-
-                       // throw new MiExcepcion("Salida core de inventario: " + sErrMsg);
-
-                        //Globales.oApp.MessageBox("Salida de inventario: " + sErrMsg);
                         rpta = false;
 
                     }

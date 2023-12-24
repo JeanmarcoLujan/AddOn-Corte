@@ -22,7 +22,7 @@ namespace AddOnCorte.Forms
                        // case SAPbouiCOM.BoEventTypes.et_DATASOURCE_LOAD:
                         case SAPbouiCOM.BoEventTypes.et_FORM_LOAD:
 
-                            DubujarBoton(FormUID);
+                            DubujarBoton(FormUID, pVal.FormTypeEx);
                             break;
                         case SAPbouiCOM.BoEventTypes.et_ITEM_PRESSED:
                             if (pVal.FormTypeEx == "149" || pVal.FormTypeEx == "139" || pVal.FormTypeEx == "140" || pVal.FormTypeEx == "720" || pVal.FormTypeEx == "721" || pVal.FormTypeEx == "1250000940")
@@ -97,13 +97,27 @@ namespace AddOnCorte.Forms
             }
         }
 
-        private void DubujarBoton(string s_FormUID)
+        private void DubujarBoton(string s_FormUID, string formTypeEx)
         {
             SAPbouiCOM.Form oForm = null;
 
 
             try
             {
+                string captuon_btn = "";
+                switch (formTypeEx)
+                {
+                    case "720":
+                    case "721":
+                    case "140":
+                        captuon_btn = "Recibo producción";
+                        break;
+                    default:
+                        captuon_btn = "Solicitud corte";
+                        break;
+                }
+
+
                 oForm = Clases.Globales.oApp.Forms.Item(s_FormUID);
 
                 SAPbouiCOM.Item oItem = null;
@@ -111,11 +125,12 @@ namespace AddOnCorte.Forms
 
                 oItem = oForm.Items.Add("btnProceso", SAPbouiCOM.BoFormItemTypes.it_BUTTON);
                 oButton = (SAPbouiCOM.Button)oItem.Specific;
-                oButton.Caption = "Sol. Corte";
+                oButton.Caption = captuon_btn;
 
 
                 oItem.Top = 120;
                 oItem.Left = (oItem.Width);
+                oItem.Width = 150;
 
                 switch (oForm.Mode)
                 {
@@ -150,40 +165,65 @@ namespace AddOnCorte.Forms
             {
                 oForm = Clases.Globales.oApp.Forms.Item(s_FormUID);
                 string table = "";
+                bool solicitud = true;
                 switch (formEx)
                 {
                     case "149":
                         table = "OQUT";
+                        solicitud = true;
                         break;
                     case "140":
                         table = "ODLN";
+                        solicitud = false;
                         break;
                     case "139":
                         table = "ORDR";
+                        solicitud = true;
                         break;
                     case "720":
                         table = "OIGE";
+                        solicitud = false;
                         break;
                     case "721":
                         table = "OIGN";
+                        solicitud = false;
                         break;
                     case "1250000940":
                         table = "OWTQ";
+                        solicitud = true;
                         break;
                 }
 
                 dBDataSource = oForm.DataSources.DBDataSources.Item(table);
 
-                string corteCode = dBDataSource.GetValue("U_MGS_CL_SOLCOR", 0);
-                if (corteCode != "")
+                if (solicitud)
                 {
-                    Form1 activeForm = new Form1(int.Parse(corteCode));
-                    activeForm.Show();
+                    string corteCode = dBDataSource.GetValue("U_MGS_CL_SOLCOR", 0);
+                    if (corteCode != "")
+                    {
+                        Form1 activeForm = new Form1(int.Parse(corteCode));
+                        activeForm.Show();
+                    }
+                    else
+                    {
+                        Clases.Globales.oApp.MessageBox("El documento no tiene solicitud de corte asociada.");
+                    }
                 }
                 else
                 {
-                    Clases.Globales.oApp.MessageBox("El documento no tiene solicitud de corte asociada.");
+                    string reciboProd = dBDataSource.GetValue("U_MGS_CL_REFREC", 0);
+                    if (reciboProd != "")
+                    {
+                        Form3 activeForm = new Form3(int.Parse(reciboProd));
+                        activeForm.Show();
+                    }
+                    else
+                    {
+                        Clases.Globales.oApp.MessageBox("El documento no tiene recibo de producción asociado.");
+                    }
                 }
+
+                
 
                 
 

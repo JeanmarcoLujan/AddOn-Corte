@@ -82,7 +82,7 @@ namespace AddOnCorte
                 }
                 if (pVal.BeforeAction && pVal.MenuUID == "AddOnCorte.Form3")
                 {
-                    Form3 activeForm = new Form3();
+                    Form3 activeForm = new Form3(0);
                     activeForm.Show();
                 }
             }
