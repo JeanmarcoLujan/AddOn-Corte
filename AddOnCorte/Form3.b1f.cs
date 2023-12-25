@@ -1512,25 +1512,70 @@ namespace AddOnCorte
                     ccrCod = oRS.Fields.Item(1).Value.ToString();
                 }
 
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                int contar_ancho_corridas = 0;
 
-                //oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_51").Specific;
+                if (oMatrix.Columns.Count > 0)
+                {
+
+                    double ancho = double.Parse(this.EditText15.Value.ToString());
+                    
+                    for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 2; colIndex++)
+                    {
+                        bool validar = false;
 
 
 
+                        switch (colIndex)
+                        {
+                            case 2:
+                                validar = this.CheckBox0.Checked;
+                                break;
+                            case 3:
+                                validar = this.CheckBox1.Checked;
+                                break;
+                            case 4:
+                                validar = this.CheckBox2.Checked;
+                                break;
+                            case 5:
+                                validar = this.CheckBox3.Checked;
+                                break;
+                            case 6:
+                                validar = this.CheckBox4.Checked;
+                                break;
+                            case 7:
+                                validar = this.CheckBox5.Checked;
+                                break;
+                            case 8:
+                                validar = this.CheckBox6.Checked;
+                                break;
+                            case 9:
+                                validar = this.CheckBox7.Checked;
+                                break;
+                            case 10:
+                                validar = this.CheckBox8.Checked;
+                                break;
+                            case 11:
+                                validar = this.CheckBox9.Checked;
+                                break;
+                        }
 
-               // oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                        if (validar)
+                        {
+                            double[] doubleColumnValues = Enumerable.Range(3, oMatrix.RowCount - 4)
+                            .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(i).Specific).Value))
+                            .ToArray();
+
+                            bool existeValor = doubleColumnValues.Contains(ancho); //  Array.Contains(doubleColumnValues, valorBuscado);
+                            if (existeValor)
+                                contar_ancho_corridas++;
+                        }
+
+                    }
+                }
+
                 int contar = 0;
-                //if (oMatrix.Columns.Count > 0)
-                //{
-                //    for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 2; colIndex++)
-                //    {
-                //        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
-                //        if (oEditText.Value.ToString() != "0")
-                //            contar++;
-                //    }
-                //}
-
-
                 contar += this.CheckBox0.Checked ? 1 : 0;
                 contar += this.CheckBox1.Checked ? 1 : 0;
                 contar += this.CheckBox2.Checked ? 1 : 0;
@@ -1541,52 +1586,51 @@ namespace AddOnCorte
                 contar += this.CheckBox7.Checked ? 1 : 0;
                 contar += this.CheckBox8.Checked ? 1 : 0;
                 contar += this.CheckBox9.Checked ? 1 : 0;
-               // contar += this.CheckBox10.Checked ? 1 : 0;
+                // contar += this.CheckBox10.Checked ? 1 : 0;
 
-                var casdasd = contar;
-
-                oInventoryExit.Lines.ItemCode = this.EditText21.Value.ToString();
-                oInventoryExit.Lines.Quantity = contar;
-                oInventoryExit.Lines.WarehouseCode = almacen;
-                oInventoryExit.Lines.AccountCode = "5110190";
-                oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
-                oInventoryExit.Lines.CostingCode = ccrCod;
-                oInventoryExit.Lines.Add();
-
-               
-
-
-
-                iErrCod = oInventoryExit.Add();
-                if (iErrCod != 0)
+                if (contar - contar_ancho_corridas > 0)
                 {
+                    oInventoryExit.Lines.ItemCode = this.EditText21.Value.ToString();
+                    oInventoryExit.Lines.Quantity = (contar - contar_ancho_corridas);
+                    oInventoryExit.Lines.WarehouseCode = almacen;
+                    oInventoryExit.Lines.AccountCode = "5110190";
+                    oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
+                    oInventoryExit.Lines.CostingCode = ccrCod;
+                    oInventoryExit.Lines.Add();
 
-                    Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
 
-                    throw new MiExcepcion("Salida core de inventario: " + sErrMsg);
 
-                    //Globales.oApp.MessageBox("Salida de inventario: " + sErrMsg);
-                    rpta = false;
 
+
+                    iErrCod = oInventoryExit.Add();
+                    if (iErrCod != 0)
+                    {
+
+                        Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+
+                        throw new MiExcepcion("Salida core de inventario: " + sErrMsg);
+
+                        //Globales.oApp.MessageBox("Salida de inventario: " + sErrMsg);
+                        rpta = false;
+
+                    }
+                    else
+                    {
+
+                        oInventoryExit.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+                        salida1_core = int.Parse(Globales.oCompany.GetNewObjectKey());
+
+
+
+                        //Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFSAL");
+
+                        Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la salida core con éxito",
+                        SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+                        //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+                        rpta = true;
+                    }
                 }
-                else
-                {
-
-                    oInventoryExit.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
-
-                    salida1_core = int.Parse(Globales.oCompany.GetNewObjectKey());
-
-
-
-                    //Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFSAL");
-
-                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la salida core con éxito",
-                    SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
-                    //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
-                    rpta = true;
-                }
-
-
 
 
             }
@@ -1924,11 +1968,13 @@ namespace AddOnCorte
 
                 Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_mercancia.ToString(), "U_MGS_CL_REFSAL");
                 Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, entrada_mercancia.ToString(), "U_MGS_CL_REFENT");
-                Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_core.ToString(), "U_MGS_CL_REFSAC");
+                if(salida1_core!=0)
+                    Comunes.FuncionesComunes.UpdateUDORecibo(docEntryValue, salida1_core.ToString(), "U_MGS_CL_REFSAC");
 
                 UpdateRefInDocumentsGenerados(int.Parse(salida1_mercancia.ToString()), 0, docEntryValue);
                 UpdateRefInDocumentsGenerados(int.Parse(entrada_mercancia.ToString()), 1, docEntryValue);
-                UpdateRefInDocumentsGenerados(int.Parse(salida1_core.ToString()), 0, docEntryValue);
+                if (salida1_core!=0)
+                    UpdateRefInDocumentsGenerados(int.Parse(salida1_core.ToString()), 0, docEntryValue);
 
 
             }
@@ -1960,7 +2006,7 @@ namespace AddOnCorte
 
                 double ancho = this.EditText15.Value == "" ? 0 : double.Parse(this.EditText15.Value);
 
-                for (int k = 2; k <= oMatrix.Columns.Count; k++)
+                for (int k = 2; k <= oMatrix.Columns.Count-1; k++)
                 {
                     double c1_sub = 0;
                     double c1_total = 0;
@@ -2248,7 +2294,7 @@ namespace AddOnCorte
                         oEntrega.DocDueDate = DateTime.Now.AddDays(30);
 
                         oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
-                        //oEntrega.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = this.EditText14.Value.ToString();
+                        oEntrega.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = this.EditText0.Value.ToString();
                         if (tiene_precio)
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_REFOVE").Value = docEntryOV;
                         //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
