@@ -189,5 +189,14 @@ namespace AddOnCorte.Comunes
 
             return m_sSQL.ToString();
         }
+
+        public static string GetSumQtyEntregas(string solicitud)
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('SUM_QTY_ENTREGA','{0}','','',''); ", solicitud);
+
+            return m_sSQL.ToString();
+        }
     }
 }

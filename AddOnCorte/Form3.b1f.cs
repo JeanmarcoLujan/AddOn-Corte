@@ -2275,6 +2275,7 @@ namespace AddOnCorte
                         oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
 
                         double precio = 0;
+                        double cantidadOV = 0;
                         string docEntryOV = "";
                         bool tiene_precio = false;
                         oRS.DoQuery(Comunes.Consultas.GetPrecioOrdenVenta(this.ComboBox0.Selected.Value.ToString()));
@@ -2283,6 +2284,7 @@ namespace AddOnCorte
                             tiene_precio = true;
                             precio = double.Parse(oRS.Fields.Item(0).Value.ToString());
                             docEntryOV = oRS.Fields.Item(1).Value.ToString();
+                            cantidadOV = Math.Round( double.Parse(oRS.Fields.Item(2).Value.ToString())*1.05,2);
                         }
                         else
                             tiene_precio = false;
@@ -2299,96 +2301,119 @@ namespace AddOnCorte
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_REFOVE").Value = docEntryOV;
                         //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
+                        double sumQtyEntregas = 0;
 
+                        oRS.DoQuery(Comunes.Consultas.GetSumQtyEntregas(this.ComboBox0.Selected.Value.ToString()));
+                        if (oRS.RecordCount > 0)
+                        {
+                            sumQtyEntregas = Math.Round(double.Parse(oRS.Fields.Item(0).Value.ToString()),2);
+                        }
 
 
                         oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
 
-                        
                         var asdas = oMatrix.RowCount;
-                        for (int i = 1; i <= oMatrix.RowCount; i++)
+
+                        double[] doubleColumnValues = Enumerable.Range(1, oMatrix.RowCount)
+                            .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific).Value))
+                            .ToArray();
+
+                        double suma = Math.Round(doubleColumnValues.Sum(),2);
+
+
+                        if(cantidadOV - (sumQtyEntregas + suma) > 0 && tiene_precio == true)
                         {
-
-                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
-                            double cantidad = double.Parse(oEditText.Value.ToString());
-
-                            if (cantidad != 0)
+                            for (int i = 1; i <= oMatrix.RowCount; i++)
                             {
-                                oEntrega.Lines.ItemCode = this.EditText4.Value.ToString();
 
-                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
-                                oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = oEditText.Value.ToString();
+                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
+                                double cantidad = double.Parse(oEditText.Value.ToString());
 
-                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
-                                oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = oEditText.Value.ToString();
-
-                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific;
-                                oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
-
-                                oEntrega.Lines.Quantity = cantidad;
-
-                                if(tiene_precio)
-                                    oEntrega.Lines.Price = precio;
-
-                                oEntrega.Lines.WarehouseCode = "CORTE";
-
-                                oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
-                                var sdsd = oCombo.Selected.Value.ToString();
-                                oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
-
-
-                                oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
-                                oEntrega.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
-
-                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
-                                oEntrega.Lines.BatchNumbers.Quantity =  cantidad;// double.Parse(oEditText.Value.ToString());
-
-
-                                oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
-                                if (oRS.RecordCount > 0)
+                                if (cantidad != 0)
                                 {
-                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
-                                    oEntrega.Lines.CostingCode = oRS.Fields.Item(1).Value.ToString();
+                                    oEntrega.Lines.ItemCode = this.EditText4.Value.ToString();
+
+                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
+                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = oEditText.Value.ToString();
+
+                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
+                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = oEditText.Value.ToString();
+
+                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific;
+                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
+
+                                    oEntrega.Lines.Quantity = cantidad;
+
+                                    if (tiene_precio)
+                                        oEntrega.Lines.Price = precio;
+
+                                    oEntrega.Lines.WarehouseCode = "CORTE";
+
+                                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                                    var sdsd = oCombo.Selected.Value.ToString();
+                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
+
+
+                                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                                    oEntrega.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
+
+                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                                    oEntrega.Lines.BatchNumbers.Quantity = cantidad;// double.Parse(oEditText.Value.ToString());
+
+
+                                    oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
+                                    if (oRS.RecordCount > 0)
+                                    {
+                                        oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
+                                        oEntrega.Lines.CostingCode = oRS.Fields.Item(1).Value.ToString();
+                                    }
+
+                                    oEntrega.Lines.Add();
                                 }
 
-                                oEntrega.Lines.Add();
+
+                                if (oPB.Value < 25)
+                                    oPB.Value = oPB.Value + 15;
+
+
                             }
 
 
-                            if (oPB.Value < 25)
-                                oPB.Value = oPB.Value + 15;
+
+                            iErrCod = oEntrega.Add();
+                            if (iErrCod != 0)
+                            {
+
+                                Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
 
 
-                        }
+                                Globales.oApp.MessageBox("Entrega de venta: " + sErrMsg);
 
-                        var ss1 = oEntrega.GetAsXML();
+                            }
+                            else
+                            {
 
-                        iErrCod = oEntrega.Add();
-                        if (iErrCod != 0)
-                        {
+                                oEntrega.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
 
-                            Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+                                var sfsdf = Globales.oCompany.GetNewObjectKey();
+
+                                Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
+
+                                Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
+                                SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+
+                                oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
 
 
-                            Globales.oApp.MessageBox("Entrega de venta: " + sErrMsg);
-
+                            }
                         }
                         else
                         {
-
-                            oEntrega.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
-
-                            var sfsdf = Globales.oCompany.GetNewObjectKey();
-
-                            Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
-
-                            Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
-                            SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
-
-                            oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
-
-
+                            Globales.oApp.MessageBox("No se puede generar la entrega porque, esta supera la cantidad de la orden de venta (OV) asociada, o no existe OV");
                         }
+
+
+                        
 
                         System.Threading.Thread.Sleep(1000);
                         oPB.Stop();
