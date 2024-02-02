@@ -2453,6 +2453,17 @@ namespace AddOnCorte
             SAPbouiCOM.ComboBox oCombo = null;
             try
             {
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                double resfileTotal = 0;
+                for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 2; colIndex++)
+                {
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
+                    resfileTotal = resfileTotal + double.Parse(oEditText.Value.ToString());
+                }
+
+
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
 
                 if (pVal.ColUID == "Col_5" || pVal.ColUID == "Col_6")
@@ -2510,7 +2521,7 @@ namespace AddOnCorte
 
                     this.EditText7.Value = sum_ba.ToString();
                     this.EditText8.Value = sum_bv.ToString();
-                    this.EditText9.Value = Math.Round(sum_cv, 2).ToString();
+                    this.EditText9.Value = Math.Round(sum_cv + resfileTotal, 2).ToString();
                     
                     // this.EditText8.Value = (double.Parse(this.EditText9.Value.ToString()) * 1.16).ToString();
                     //this.EditText9.Value = (100 * double.Parse(this.EditText8.Value.ToString()) / double.Parse(this.EditText16.Value.ToString())).ToString();
