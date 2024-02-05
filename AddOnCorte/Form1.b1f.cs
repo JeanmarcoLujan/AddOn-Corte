@@ -119,10 +119,11 @@ namespace AddOnCorte
         public override void OnInitializeFormEvents()
         {
             this.LoadAfter += new SAPbouiCOM.Framework.FormBase.LoadAfterHandler(this.Form_LoadAfter);
-            Clases.Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
+            AddOnCorte.Clases.Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
             this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
             this.DataLoadAfter += new SAPbouiCOM.Framework.FormBase.DataLoadAfterHandler(this.Form_DataLoadAfter);
-            this.DataAddBefore += new DataAddBeforeHandler(this.Form_DataAddBefore);
+            this.DataAddBefore += new SAPbouiCOM.Framework.FormBase.DataAddBeforeHandler(this.Form_DataAddBefore);
+            this.DataUpdateBefore += new DataUpdateBeforeHandler(this.Form_DataUpdateBefore);
 
         }
 
@@ -1889,6 +1890,23 @@ namespace AddOnCorte
                 BubbleEvent = false;
             else
                 BubbleEvent = true;
+
+        }
+
+        private void Form_DataUpdateBefore(ref SAPbouiCOM.BusinessObjectInfo pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+
+            if (this.EditText21.Value == "")
+            {
+                BubbleEvent = true;
+            }
+            else
+            {
+                BubbleEvent = false;
+                Globales.oApp.MessageBox("No es posible actualizar la solicitud, porque ya existe una oferta de venta de por medio.");
+            }
+
 
         }
     }

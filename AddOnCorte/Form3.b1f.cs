@@ -1563,7 +1563,7 @@ namespace AddOnCorte
 
                         if (validar)
                         {
-                            double[] doubleColumnValues = Enumerable.Range(3, oMatrix.RowCount - 4)
+                            double[] doubleColumnValues = Enumerable.Range(3, oMatrix.RowCount - 6)
                             .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(i).Specific).Value))
                             .ToArray();
 
@@ -1799,6 +1799,7 @@ namespace AddOnCorte
                 {
                     ultimaCorrida = int.Parse( oRS.Fields.Item(0).Value.ToString());
                     docEntryOV = int.Parse( oRS.Fields.Item(1).Value.ToString());
+                    continuar = true;
 
                 }
                 else

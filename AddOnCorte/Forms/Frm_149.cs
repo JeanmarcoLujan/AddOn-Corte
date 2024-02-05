@@ -123,14 +123,38 @@ namespace AddOnCorte.Forms
                 SAPbouiCOM.Item oItem = null;
                 SAPbouiCOM.Button oButton = null;
 
+                SAPbouiCOM.Item oItem1 = null;
+                SAPbouiCOM.Button oButton1 = null;
+                SAPbouiCOM.Matrix oMatrix = null;
+                SAPbouiCOM.ComboBox oCbo = null;
+
                 oItem = oForm.Items.Add("btnProceso", SAPbouiCOM.BoFormItemTypes.it_BUTTON);
                 oButton = (SAPbouiCOM.Button)oItem.Specific;
                 oButton.Caption = captuon_btn;
 
+                if (formTypeEx == "720" || formTypeEx == "721")
+                {
 
-                oItem.Top = 120;
-                oItem.Left = (oItem.Width);
-                oItem.Width = 150;
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("13").Specific;
+                    var asdas = oMatrix.Item.Top;
+
+                    oCbo = (SAPbouiCOM.ComboBox)oForm.Items.Item("3").Specific;
+                    var asdas1 = oCbo.Item.Top;
+
+                    oItem.Top = asdas1 + (asdas - asdas1 -5)/2;
+                    oItem.Left = (oItem.Width);
+                    oItem.Width = 150;
+
+
+
+                }
+                else
+                {
+                    oItem.Top = 120;
+                    oItem.Left = (oItem.Width);
+                    oItem.Width = 150;
+                }
+                
 
                 switch (oForm.Mode)
                 {
@@ -138,9 +162,10 @@ namespace AddOnCorte.Forms
                     case SAPbouiCOM.BoFormMode.fm_EDIT_MODE:
                     case SAPbouiCOM.BoFormMode.fm_UPDATE_MODE:
                     case SAPbouiCOM.BoFormMode.fm_OK_MODE:
+                    case SAPbouiCOM.BoFormMode.fm_ADD_MODE:
                         oItem.Enabled = true;
                         break;
-                    case SAPbouiCOM.BoFormMode.fm_ADD_MODE:
+                    
                     case SAPbouiCOM.BoFormMode.fm_FIND_MODE:
                     case SAPbouiCOM.BoFormMode.fm_PRINT_MODE:
                     case SAPbouiCOM.BoFormMode.fm_VIEW_MODE:

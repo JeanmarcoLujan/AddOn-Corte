@@ -340,7 +340,7 @@ namespace AddOnCorte.Comunes
                 //DOCUMENTO DE MARKETING
                 CreaCampoMD("OINV", "MGS_CL_SOLCOR", "Código solicitud corte", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("OINV", "MGS_CL_EFCO", "% Eficiencia corte", SAPbobsCOM.BoFieldTypes.db_Float, SAPbobsCOM.BoFldSubTypes.st_Percentage, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("OINV", "MGS_CL_REFOVE", "Referencia orden venta", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("OINV", "MGS_CL_REFOVE", "Referencia orden de venta", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "ORDR");
                 CreaCampoMD("OINV", "MGS_CL_REFREC", "Ref recibo producción", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 //Orden de venta
                 CreaCampoMD("ORDR", "MGS_CL_911", "Es de 911?", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
@@ -584,7 +584,15 @@ namespace AddOnCorte.Comunes
                 if (TipoCampo != SAPbobsCOM.BoFieldTypes.db_Date) oUserFieldsMD.EditSize = Tamano;
                 oUserFieldsMD.SubType = SubTipo;
 
-                if (tablaVinculada != "") oUserFieldsMD.LinkedTable = tablaVinculada;
+                if (tablaVinculada != "")
+                {
+                    if(tablaVinculada == "ORDR")
+                        oUserFieldsMD.LinkedSystemObject = SAPbobsCOM.UDFLinkedSystemObjectTypesEnum.ulOrders;
+                    else if (tablaVinculada == "OITM")
+                        oUserFieldsMD.LinkedSystemObject = SAPbobsCOM.UDFLinkedSystemObjectTypesEnum.ulItems;
+                    else
+                        oUserFieldsMD.LinkedTable = tablaVinculada;
+                }
                 else
                 {
                     if (validValues.Length > 0)
