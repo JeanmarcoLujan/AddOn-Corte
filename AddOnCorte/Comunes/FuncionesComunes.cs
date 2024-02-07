@@ -1,9 +1,13 @@
 ﻿using AddOnCorte.Clases;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace AddOnCorte.Comunes
 {
@@ -168,8 +172,6 @@ namespace AddOnCorte.Comunes
             }
         }
 
-
-
         public static void UpdateUDOAgendarSolicitud(string udoId, string fecha, string equipo, string serie)
         {
 
@@ -198,7 +200,6 @@ namespace AddOnCorte.Comunes
                 //return false;
             }
         }
-
 
         public static Solicitud GetUDOSolicitudAgendada(string udoId)
         {
@@ -299,6 +300,437 @@ namespace AddOnCorte.Comunes
             {
                 //Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
                 return null;
+            }
+        }
+
+        public static (bool, string) GetJsonValue(string xmlResult, string root)
+        {
+            XDocument xdoc = XDocument.Parse(xmlResult);
+
+            // Encontrar el elemento NTNT y obtener su XML interno
+            XElement ntntElement = xdoc.Descendants(root).FirstOrDefault();
+            string ntntXml = "";
+            string jsonString = "";
+            bool isList = true;
+            if (ntntElement != null)
+            {
+                // Convertir el elemento NTNT a cadena de XML
+                ntntXml = ntntElement.ToString();
+                int rowCount = ntntElement.Elements("row").Count();
+
+                if (rowCount > 1)
+                {
+                    string xmlWithoutNilAttributes = RemoveNilAttributes(ntntXml);
+
+                    jsonString = ConvertXmlToJson(xmlWithoutNilAttributes);
+                    isList = true;
+                }
+                else
+                {
+                    //XDocument xdocRow = XDocument.Parse(ntntXml);
+                    //XElement ntntElementRow = xdocRow.Descendants("Row").FirstOrDefault();
+
+                    XElement ntntElementRow = ntntElement.Element("row");
+
+                    if (ntntElementRow != null)
+                    {
+                        string xmlWithoutNilAttributes = RemoveNilAttributes(ntntElementRow.ToString());
+
+                        jsonString = ConvertXmlToJson(xmlWithoutNilAttributes);
+                        isList = false;
+                    }
+
+                }
+
+            }
+
+
+
+            return (isList, jsonString);
+        }
+
+        static string RemoveNilAttributes(string xml)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xml);
+
+            // Eliminar atributos nil="true"
+            var nodesWithNilAttributes = xmlDoc.SelectNodes("//*[@nil='true']");
+            foreach (XmlNode node in nodesWithNilAttributes)
+            {
+                var nilAttribute = node.Attributes["nil"];
+                if (nilAttribute != null)
+                {
+                    node.Attributes.Remove(nilAttribute);
+                }
+            }
+
+            return xmlDoc.OuterXml;
+        }
+
+        static string ConvertXmlToJson(string xml)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xml);
+
+            // Convertir XmlDocument a JSON
+            string jsonString = JsonConvert.SerializeXmlNode(xmlDoc, Newtonsoft.Json.Formatting.Indented);
+
+            return jsonString;
+        }
+
+        private static bool RegisterLotesUDO2_(SAPbobsCOM.Documents docu)
+        {
+            SAPbouiCOM.Form oForm = null;
+            SAPbobsCOM.Recordset oRecordSet = null;
+            SAPbouiCOM.DBDataSource dBDataSource = null;
+            SAPbobsCOM.Documents oSalidas = null;
+            try
+            {
+                //oForm = Globales.oApp.Forms.Item(formUID);
+                oRecordSet = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+
+                oSalidas = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryGenExit);
+
+                dBDataSource = oForm.DataSources.DBDataSources.Item("");
+
+                string docEntry =  dBDataSource.GetValue("DocEntry", 0);
+                string docNum = dBDataSource.GetValue("DocNum", 0);
+                string docType = dBDataSource.GetValue("DocType", 0);
+                string objType = dBDataSource.GetValue("ObjType", 0);
+                string canceled = dBDataSource.GetValue("CANCELED", 0);
+
+                if (oSalidas.GetByKey(int.Parse(docEntry))) // Replace 123 with the DocEntry of an existing document if you want to update it
+                {
+                    string xmlResult = oSalidas.GetAsXML();
+
+                    var resultado1 = FuncionesComunes.GetJsonValue(xmlResult, "BTNT");
+                    var resultado2 = FuncionesComunes.GetJsonValue(xmlResult, "IGE19");
+
+                    int valueFinalQty = canceled == "N" ? 1 : -1;
+
+                    BO lote = new BO();
+                    BTNT bTNT = new BTNT();
+                    if (resultado1.Item1)
+                        lote = JsonConvert.DeserializeObject<BO>(resultado1.Item2);
+                    else
+                    {
+                        DOC docs = JsonConvert.DeserializeObject<DOC>(resultado1.Item2);
+                        List<Row> rows = new List<Row>();
+                        rows.Add(docs.row);
+                        bTNT.row = rows;
+                        lote.BTNT = bTNT;
+                    }
+
+
+                    BO ub = new BO();
+                    IGE19 iGE19 = new IGE19();
+                    if (resultado2.Item1)
+                        ub = JsonConvert.DeserializeObject<BO>(resultado2.Item2);
+                    else
+                    {
+                        DOC docs = JsonConvert.DeserializeObject<DOC>(resultado2.Item2);
+                        List<Row> rows = new List<Row>();
+                        rows.Add(docs.row);
+                        iGE19.row = rows;
+                        ub.IGE19 = iGE19;
+                    }
+
+
+
+                    int contador = 0;
+                    List<int> linesP = new List<int>();
+
+
+
+                    for (int i = 0; i < lote.BTNT.row.Count; i++) //lote.BOM.BO.BTNT.row.Count
+                    {
+                        var loteRegister = lote.BTNT.row[i]; //lote.BOM.BO.BTNT.row[i];
+
+                        if (!linesP.Contains(loteRegister.DocLineNum))
+                            contador = 0;
+                        else
+                            contador++;
+
+
+                        oSalidas.Lines.SetCurrentLine(loteRegister.DocLineNum);
+
+                        Lote lt = new Lote();
+                        lt.MGS_CL_ARTICL = loteRegister.ItemCode;
+                        lt.MGS_CL_IDLOTE = loteRegister.DistNumber;
+                        lt.MGS_CL_CANTID = double.Parse(loteRegister.Quantity) * -1 * valueFinalQty;
+                        //lt.MGS_CL_CANTID = oSalidas.Lines.Quantity;
+                        lt.MGS_CL_LINNUM = loteRegister.DocLineNum.ToString();
+                        lt.MGS_CL_CODWHS = loteRegister.WhsCode;
+
+
+                        lt.MGS_CL_ANCHO = double.Parse(oSalidas.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value.ToString());
+                        lt.MGS_CL_LARGO = double.Parse(oSalidas.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value.ToString());
+                        // lt.MGS_CL_NUMBOB = oSalidas.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value*-1;
+
+                        lt.MGS_CL_NUMBOB = Math.Round(lt.MGS_CL_CANTID * 10000 / (lt.MGS_CL_ANCHO * lt.MGS_CL_LARGO * 2.54 * 2.54 * 12), 1);
+
+                        linesP.Add(loteRegister.DocLineNum);
+                        List<Ubicacion> ubs = new List<Ubicacion>();
+
+                        // var ubicacionesC = lote.BOM.BO.IGE19.row.Where(a => a.LineNum == loteRegister.DocLineNum).OrderBy(a => a.SnBMDAbs).ToList();
+                        // var asdasd = lote.BOM.BO.DLN19;
+                        if (ub != null)
+                        {
+                            var ubicacionesC = ub.IGE19.row.Where(a => a.LineNum == loteRegister.DocLineNum).OrderBy(a => a.SnBMDAbs).ToList();
+                            var ubis = ubicacionesC.Where(b => b.SnBMDAbs == contador).ToList();
+
+                            foreach (var u in ubis)
+                            {
+                                Ubicacion ubicacion = new Ubicacion();
+                                ubicacion.MGS_CL_UBICAC = u.BinAbs.ToString();
+                                ubicacion.MGS_CL_ARTICL = lt.MGS_CL_ARTICL;
+                                ubicacion.MGS_CL_ANCHO = lt.MGS_CL_ANCHO;
+                                ubicacion.MGS_CL_LARGO = lt.MGS_CL_LARGO;
+                                ubicacion.MGS_CL_IDLOTE = lt.MGS_CL_IDLOTE;
+                                ubicacion.MGS_CL_CANTID = double.Parse(u.Quantity.ToString()) * -1 * valueFinalQty;
+                                ubicacion.MGS_CL_NUMBOB = Math.Round(ubicacion.MGS_CL_CANTID * 10000 / (ubicacion.MGS_CL_ANCHO * ubicacion.MGS_CL_LARGO * 2.54 * 2.54 * 12), 1);
+                                ubs.Add(ubicacion);
+                            }
+                        }
+
+
+
+                        GuardarUDO(lt, null, docEntry, oSalidas.DocNum.ToString(), docType, ubs, objType);
+
+
+                    }
+
+                }
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public static bool RegisterLotesUDO3_(SAPbobsCOM.Documents docu, string tipoDetail)
+        {
+            //SAPbouiCOM.Form oForm = null;
+            SAPbobsCOM.Recordset oRecordSet = null;
+            SAPbouiCOM.DBDataSource dBDataSource = null;
+            //   SAPbobsCOM.Documents oSalidas = null;
+            try
+            {
+                //oForm = Globales.oApp.Forms.Item(formUID);
+                oRecordSet = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+
+                //oSalidas = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryGenExit);
+
+                //dBDataSource = oForm.DataSources.DBDataSources.Item(table);
+
+                string docEntry = docu.DocEntry.ToString(); // dBDataSource.GetValue("DocEntry", 0);
+                string docNum = docu.DocNum.ToString(); // dBDataSource.GetValue("DocNum", 0);
+                string docType = docu.DocType == SAPbobsCOM.BoDocumentTypes.dDocument_Items ? "I" : "S";// .ToString(); // dBDataSource.GetValue("DocType", 0);
+                string objType = docu.DocObjectCode == SAPbobsCOM.BoObjectTypes.oInventoryGenExit?"60": docu.DocObjectCode == SAPbobsCOM.BoObjectTypes.oInventoryGenEntry?"59":"15";
+
+                string canceled = docu.Cancelled == SAPbobsCOM.BoYesNoEnum.tNO ? "N" : "Y"; // .  ToString(); // dBDataSource.GetValue("CANCELED", 0);
+
+                string xmlResult = docu.GetAsXML();
+
+                var resultado1 = FuncionesComunes.GetJsonValue(xmlResult, "BTNT");
+                var resultado2 = FuncionesComunes.GetJsonValue(xmlResult, tipoDetail);
+
+                int valueFinalQty = canceled == "N" ? 1 : -1;
+
+                BO lote = new BO();
+                BTNT bTNT = new BTNT();
+                if (resultado1.Item1)
+                    lote = JsonConvert.DeserializeObject<BO>(resultado1.Item2);
+                else
+                {
+                    DOC docs = JsonConvert.DeserializeObject<DOC>(resultado1.Item2);
+                    List<Row> rows = new List<Row>();
+                    rows.Add(docs.row);
+                    bTNT.row = rows;
+                    lote.BTNT = bTNT;
+                }
+
+
+                BO ub = new BO();
+                IGE19 iGE19 = new IGE19();
+                IGN19 iGN19 = new IGN19();
+                DLN19 dLN19 = new DLN19();
+
+                if (resultado2.Item1)
+                    ub = JsonConvert.DeserializeObject<BO>(resultado2.Item2);
+                else
+                {
+                    DOC docs = JsonConvert.DeserializeObject<DOC>(resultado2.Item2);
+                    List<Row> rows = new List<Row>();
+                    rows.Add(docs.row);
+
+                    if (tipoDetail == "IGN19")
+                    {
+                        iGN19.row = rows;
+                        ub.IGN19 = iGN19;
+                    }
+                    else if (tipoDetail == "IGE19")
+                    {
+                        iGE19.row = rows;
+                        ub.IGE19 = iGE19;
+                    }
+                    else
+                    {
+                        dLN19.row = rows;
+                        ub.DLN19 = dLN19;
+                    }
+
+                    
+
+                }
+
+
+
+                int contador = 0;
+                List<int> linesP = new List<int>();
+
+
+
+                for (int i = 0; i < lote.BTNT.row.Count; i++) //lote.BOM.BO.BTNT.row.Count
+                {
+                    var loteRegister = lote.BTNT.row[i]; //lote.BOM.BO.BTNT.row[i];
+
+                    if (!linesP.Contains(loteRegister.DocLineNum))
+                        contador = 0;
+                    else
+                        contador++;
+
+
+                    docu.Lines.SetCurrentLine(loteRegister.DocLineNum);
+
+                    Lote lt = new Lote();
+                    lt.MGS_CL_ARTICL = loteRegister.ItemCode;
+                    lt.MGS_CL_IDLOTE = loteRegister.DistNumber;
+                    lt.MGS_CL_CANTID = double.Parse(loteRegister.Quantity)  * valueFinalQty * (objType == "60"?-1:1);
+                    //lt.MGS_CL_CANTID = oSalidas.Lines.Quantity;
+                    lt.MGS_CL_LINNUM = loteRegister.DocLineNum.ToString();
+                    lt.MGS_CL_CODWHS = loteRegister.WhsCode;
+
+
+                    lt.MGS_CL_ANCHO = double.Parse(docu.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value.ToString());
+                    lt.MGS_CL_LARGO = double.Parse(docu.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value.ToString());
+                    // lt.MGS_CL_NUMBOB = oSalidas.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value*-1;
+
+                    lt.MGS_CL_NUMBOB = Math.Round(lt.MGS_CL_CANTID * 10000 / (lt.MGS_CL_ANCHO * lt.MGS_CL_LARGO * 2.54 * 2.54 * 12), 1);
+
+                    linesP.Add(loteRegister.DocLineNum);
+                    List<Ubicacion> ubs = new List<Ubicacion>();
+
+                    if (ub != null)
+                    {
+                        List<Row> ubicacionesC = new List<Row>();
+
+                        if(tipoDetail == "IGN19")
+                            ubicacionesC = ub.IGN19.row.Where(a => a.LineNum == loteRegister.DocLineNum).OrderBy(a => a.SnBMDAbs).ToList();
+                        else if(tipoDetail == "IGE19")
+                            ubicacionesC = ub.IGE19.row.Where(a => a.LineNum == loteRegister.DocLineNum).OrderBy(a => a.SnBMDAbs).ToList();
+                        else
+                            ubicacionesC = ub.DLN19.row.Where(a => a.LineNum == loteRegister.DocLineNum).OrderBy(a => a.SnBMDAbs).ToList();
+
+
+                        var ubis = ubicacionesC.Where(b => b.SnBMDAbs == contador).ToList();
+
+                        foreach (var u in ubis)
+                        {
+                            Ubicacion ubicacion = new Ubicacion();
+                            ubicacion.MGS_CL_UBICAC = u.BinAbs.ToString();
+                            ubicacion.MGS_CL_ARTICL = lt.MGS_CL_ARTICL;
+                            ubicacion.MGS_CL_ANCHO = lt.MGS_CL_ANCHO;
+                            ubicacion.MGS_CL_LARGO = lt.MGS_CL_LARGO;
+                            ubicacion.MGS_CL_IDLOTE = lt.MGS_CL_IDLOTE;
+                            ubicacion.MGS_CL_CANTID = double.Parse(u.Quantity.ToString())  * valueFinalQty* (objType == "60" ? -1 : 1);
+                            ubicacion.MGS_CL_NUMBOB = Math.Round(ubicacion.MGS_CL_CANTID * 10000 / (ubicacion.MGS_CL_ANCHO * ubicacion.MGS_CL_LARGO * 2.54 * 2.54 * 12), 1);
+                            ubs.Add(ubicacion);
+                        }
+                    }
+
+
+
+                    GuardarUDO(lt, null, docEntry, docu.DocNum.ToString(), docType, ubs, objType);
+
+
+                }
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public static bool GuardarUDO( Lote lt, Detalle dt, string docEntry, string docNum, string docType, List<Ubicacion> ub, string objType)
+        {
+            SAPbobsCOM.GeneralService oGeneralService = null;
+            SAPbobsCOM.GeneralData oGeneralData = null;
+            SAPbobsCOM.GeneralData oChild = null;
+            SAPbobsCOM.GeneralDataCollection oChildren = null;
+            SAPbobsCOM.GeneralDataParams oGeneralParams = null;
+            SAPbobsCOM.CompanyService oCompanyService = null;
+            string s_Message = "";
+            string s_CardCode = "";
+            string s_TotalPago = "";
+
+            try
+            {
+                oCompanyService = Globales.oCompany.GetCompanyService();
+                oGeneralService = oCompanyService.GetGeneralService("MGS_CL_LOTBOC");
+                oGeneralData = ((SAPbobsCOM.GeneralData)(oGeneralService.GetDataInterface(SAPbobsCOM.GeneralServiceDataInterfaces.gsGeneralData)));
+
+
+                oGeneralData.SetProperty("U_MGS_CL_FECCON", DateTime.Now.ToShortDateString());
+                oGeneralData.SetProperty("U_MGS_CL_ARTICL", lt.MGS_CL_ARTICL);
+                oGeneralData.SetProperty("U_MGS_CL_ANCHO", lt.MGS_CL_ANCHO);
+                oGeneralData.SetProperty("U_MGS_CL_LARGO", lt.MGS_CL_LARGO);
+                oGeneralData.SetProperty("U_MGS_CL_IDLOTE", lt.MGS_CL_IDLOTE);
+                oGeneralData.SetProperty("U_MGS_CL_CANTID", lt.MGS_CL_CANTID);
+                oGeneralData.SetProperty("U_MGS_CL_NUMBOB", lt.MGS_CL_NUMBOB);
+                oGeneralData.SetProperty("U_MGS_CL_CODWHS", lt.MGS_CL_CODWHS);
+                oGeneralData.SetProperty("U_MGS_CL_LINNUM", lt.MGS_CL_LINNUM);
+                oGeneralData.SetProperty("U_MGS_CL_DOCTYP", docType);
+                oGeneralData.SetProperty("U_MGS_CL_DOCENT", docEntry);
+                oGeneralData.SetProperty("U_MGS_CL_DOCNUM", docNum);
+                oGeneralData.SetProperty("U_MGS_CL_OBJTYP", objType);
+                oGeneralData.SetProperty("U_MGS_CL_REUSER", Globales.oCompany.UserName);
+
+
+                oChildren = oGeneralData.Child("MGS_CL_LOTBOU");
+
+                foreach (Ubicacion b in ub)
+                {
+                    oChild = oChildren.Add();
+                    oChild.SetProperty("U_MGS_CL_UBICAC", b.MGS_CL_UBICAC);
+                    oChild.SetProperty("U_MGS_CL_ARTICL", b.MGS_CL_ARTICL);
+                    oChild.SetProperty("U_MGS_CL_ANCHO", b.MGS_CL_ANCHO);
+                    oChild.SetProperty("U_MGS_CL_LARGO", b.MGS_CL_LARGO);
+                    oChild.SetProperty("U_MGS_CL_IDLOTE", b.MGS_CL_IDLOTE);
+                    oChild.SetProperty("U_MGS_CL_CANTID", b.MGS_CL_CANTID);
+                    oChild.SetProperty("U_MGS_CL_NUMBOB", b.MGS_CL_NUMBOB);
+
+                }
+
+
+                oGeneralParams = oGeneralService.Add(oGeneralData);
+                //s_Message = "Se ha guardado la informacion";
+                //Conexion.Conexion_SBO.m_SBO_Appl.MessageBox(s_Message, 1, "Aceptar", "", "");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                return false;
             }
         }
 

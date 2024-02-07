@@ -1446,6 +1446,9 @@ namespace AddOnCorte
                         salida1_mercancia = int.Parse(Globales.oCompany.GetNewObjectKey());
                         //Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFSAL");
 
+                        FuncionesComunes.RegisterLotesUDO3_(oInventoryExit, "IGE19");
+
+
                         Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la salida con éxito",
                         SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
 
@@ -1746,6 +1749,7 @@ namespace AddOnCorte
                     entrada_mercancia = int.Parse(Globales.oCompany.GetNewObjectKey());
 
                     // Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFENT");
+                    FuncionesComunes.RegisterLotesUDO3_(oSalesOpportunity, "IGN19");
 
                     Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrada de mercancía con éxito ",
                     SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
@@ -2399,6 +2403,8 @@ namespace AddOnCorte
                                 var sfsdf = Globales.oCompany.GetNewObjectKey();
 
                                 Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
+
+                                FuncionesComunes.RegisterLotesUDO3_(oEntrega, "DLN19");
 
                                 Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
                                 SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
