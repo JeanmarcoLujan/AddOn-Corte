@@ -212,7 +212,7 @@ namespace AddOnCorte
                     oGrid.Columns.Item("AlmacenOrigen").TitleObject.Caption = "Almacén origen";
                     oGrid.Columns.Item("AlmacenOrigen").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;
                     ((SAPbouiCOM.ComboBoxColumn)oGrid.Columns.Item("AlmacenOrigen")).DisplayType = SAPbouiCOM.BoComboDisplayType.cdt_Description;
-                    //oGrid.Columns.Item("FechaCorte").Type = SAPbouiCOM.BoGridColumnType.gct_Date;
+                    //oGrid.Columns.Item("FechaCorte").Type = SAPbouiCOM.BoGridColumnType.;
 
                     oGrid.Columns.Item("Equipo").TitleObject.Caption = "Equipo";
                     oGrid.Columns.Item("Equipo").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;

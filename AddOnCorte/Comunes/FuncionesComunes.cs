@@ -612,7 +612,7 @@ namespace AddOnCorte.Comunes
                     Lote lt = new Lote();
                     lt.MGS_CL_ARTICL = loteRegister.ItemCode;
                     lt.MGS_CL_IDLOTE = loteRegister.DistNumber;
-                    lt.MGS_CL_CANTID = double.Parse(loteRegister.Quantity)  * valueFinalQty * (objType == "60"?-1:1);
+                    lt.MGS_CL_CANTID = double.Parse(loteRegister.Quantity) * valueFinalQty * (objType != "59"?-1:1);
                     //lt.MGS_CL_CANTID = oSalidas.Lines.Quantity;
                     lt.MGS_CL_LINNUM = loteRegister.DocLineNum.ToString();
                     lt.MGS_CL_CODWHS = loteRegister.WhsCode;
@@ -649,7 +649,7 @@ namespace AddOnCorte.Comunes
                             ubicacion.MGS_CL_ANCHO = lt.MGS_CL_ANCHO;
                             ubicacion.MGS_CL_LARGO = lt.MGS_CL_LARGO;
                             ubicacion.MGS_CL_IDLOTE = lt.MGS_CL_IDLOTE;
-                            ubicacion.MGS_CL_CANTID = double.Parse(u.Quantity.ToString())  * valueFinalQty* (objType == "60" ? -1 : 1);
+                            ubicacion.MGS_CL_CANTID = double.Parse(u.Quantity.ToString())  * valueFinalQty* (objType != "59" ? -1 : 1);
                             ubicacion.MGS_CL_NUMBOB = Math.Round(ubicacion.MGS_CL_CANTID * 10000 / (ubicacion.MGS_CL_ANCHO * ubicacion.MGS_CL_LARGO * 2.54 * 2.54 * 12), 1);
                             ubs.Add(ubicacion);
                         }
