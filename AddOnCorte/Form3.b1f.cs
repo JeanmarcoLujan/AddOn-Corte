@@ -171,7 +171,7 @@ namespace AddOnCorte
         private void OnCustomInitialize()
         {
             oForm = Application.SBO_Application.Forms.Item(this.UIAPIRawForm.UniqueID);
-            Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0);
+            Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0, false, "");
             Clases.Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
             this.Button2.Item.Enabled = false;
 
@@ -189,7 +189,7 @@ namespace AddOnCorte
 
                     case "1282":
                         //oForm.DataSources.UserDataSources.Item("UD_0").Value = "sdfsd";
-
+                        Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0, false, "");
                         this.Button2.Item.Enabled = false;
                         oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
                         if (oMatrix.Columns.Count > 0)
@@ -280,181 +280,188 @@ namespace AddOnCorte
 
 
                     var asd = this.ComboBox0.Selected.Value;
-                    Solicitud sol = Comunes.FuncionesComunes.GetUDOSolicitudAgendada(asd);
 
-                    if(sol != null)
+                    if (asd != "")
                     {
-                        this.EditText2.Value = sol.MGS_CL_CLIE;
-                        this.EditText3.Value = sol.MGS_CL_CLID;
-                        this.EditText4.Value = sol.MGS_CL_ARTC;
-                        this.EditText5.Value = sol.MGS_CL_ARTD;
-                        this.EditText10.Value = DateTime.Now.ToString("yyyyMMdd");
-                        
-                        this.EditText15.Value = sol.MGS_CL_MTANC;
-                        this.EditText16.Value = sol.MGS_CL_MTLAR;
-                        this.EditText17.Value = sol.MGS_CL_MTCANT;
+                        Solicitud sol = Comunes.FuncionesComunes.GetUDOSolicitudAgendada(asd);
 
-                        
-
-                        //oCheckBox = (SAPbouiCOM.CheckBox)oForm.Items.Item("Item_29").Specific;
-                        //oCheckBox.Checked = true;
-
-                        oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_51").Specific;
-                        oMatrix.Clear();
-
-                        foreach (SolicitudDetalle item in sol.Detalle)
+                        if (sol != null)
                         {
-                            
-                            oMatrix.AddRow();
-                            oMatrix.FlushToDataSource();
-                            //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
-                            //else bAddNewRow = false;
-                            oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCOMAST");
+                            this.EditText2.Value = sol.MGS_CL_CLIE;
+                            this.EditText3.Value = sol.MGS_CL_CLID;
+                            this.EditText4.Value = sol.MGS_CL_ARTC;
+                            this.EditText5.Value = sol.MGS_CL_ARTD;
+                            this.EditText10.Value = DateTime.Now.ToString("yyyyMMdd");
+
+                            this.EditText15.Value = sol.MGS_CL_MTANC;
+                            this.EditText16.Value = sol.MGS_CL_MTLAR;
+                            this.EditText17.Value = sol.MGS_CL_MTCANT;
 
 
-                            var sdsd = oDBDataSource.Size - 1;
-                            oDBDataSource.Offset = oDBDataSource.Size - 1;
-                            oDBDataSource.SetValue("U_MGS_CL_LOTE", oDBDataSource.Size - 1, item.MGS_CL_LOTE );
-                            oDBDataSource.SetValue("U_MGS_CL_ANCM", oDBDataSource.Size - 1, item.MGS_CL_ANCM);
-                            oDBDataSource.SetValue("U_MGS_CL_MLAR", oDBDataSource.Size - 1, item.MGS_CL_MLAR );
-                            oDBDataSource.SetValue("U_MGS_CL_MNBO", oDBDataSource.Size - 1, item.MGS_CL_MNBO);
-                            oDBDataSource.SetValue("U_MGS_CL_MCAN", oDBDataSource.Size - 1, item.MGS_CL_MCAN);
 
-                            DateTime fecha;
-                            if (DateTime.TryParseExact(item.MGS_CL_FECADM, posiblesFormatos, null, System.Globalization.DateTimeStyles.None, out fecha))
+                            //oCheckBox = (SAPbouiCOM.CheckBox)oForm.Items.Item("Item_29").Specific;
+                            //oCheckBox.Checked = true;
+
+                            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_51").Specific;
+                            oMatrix.Clear();
+
+                            foreach (SolicitudDetalle item in sol.Detalle)
                             {
-                                oDBDataSource.SetValue("U_MGS_CL_FECADM", oDBDataSource.Size - 1, fecha.ToString("yyyyMMdd"));
-                            }
 
-                            //var ssss = item.MGS_CL_FECADM;
-                            ////DateTime fecha = DateTime.ParseExact(item.MGS_CL_FECADM, "dd/MM/yyyy", null);
-                            //DateTime fecha = DateTime.ParseExact(item.MGS_CL_FECADM, "MM/dd/yyyy hh:mm:ss tt", null);
-                            //string fechaFormateada = fecha.ToString("yyyyMMdd");
-
-                            
-                            oDBDataSource.SetValue("U_MGS_CL_FIFO", oDBDataSource.Size - 1, item.MGS_CL_FIFO);
-
-                            oMatrix.LoadFromDataSource();
-                            oMatrix.AutoResizeColumns();
-                        }
+                                oMatrix.AddRow();
+                                oMatrix.FlushToDataSource();
+                                //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
+                                //else bAddNewRow = false;
+                                oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCOMAST");
 
 
-                        oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
-                        oMatrix.Clear();
+                                var sdsd = oDBDataSource.Size - 1;
+                                oDBDataSource.Offset = oDBDataSource.Size - 1;
+                                oDBDataSource.SetValue("U_MGS_CL_LOTE", oDBDataSource.Size - 1, item.MGS_CL_LOTE);
+                                oDBDataSource.SetValue("U_MGS_CL_ANCM", oDBDataSource.Size - 1, item.MGS_CL_ANCM);
+                                oDBDataSource.SetValue("U_MGS_CL_MLAR", oDBDataSource.Size - 1, item.MGS_CL_MLAR);
+                                oDBDataSource.SetValue("U_MGS_CL_MNBO", oDBDataSource.Size - 1, item.MGS_CL_MNBO);
+                                oDBDataSource.SetValue("U_MGS_CL_MCAN", oDBDataSource.Size - 1, item.MGS_CL_MCAN);
 
-                        var ASSDS = sol.DetalleCorridas[0];
-                        int contar_corridas = 0;
-                        int cc = 0;
-                        foreach (CorridasDetalle item in sol.DetalleCorridas)
-                        {
-                            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
-                            oMatrix.AddRow();
-                            oMatrix.FlushToDataSource();
-                            //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
-                            //else bAddNewRow = false;
-                            oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCORRID");
-                            if(cc == 0)
-                            {
-                                if (item.MGS_CL_C1.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C2.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C3.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C4.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C5.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C6.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C7.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C8.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C9.ToString() != "0")
-                                    contar_corridas++;
-                                if (item.MGS_CL_C10.ToString() != "0")
-                                    contar_corridas++;
-                            }
-
-                            cc++;
-
-                            
-
-                            var sdsd = oDBDataSource.Size - 1;
-                            oDBDataSource.Offset = oDBDataSource.Size - 1;
-                            oDBDataSource.SetValue("U_MGS_CL_TITU", oDBDataSource.Size - 1, item.MGS_CL_TITU);
-                            oDBDataSource.SetValue("U_MGS_CL_C1", oDBDataSource.Size - 1, item.MGS_CL_C1);
-                            oDBDataSource.SetValue("U_MGS_CL_C2", oDBDataSource.Size - 1, item.MGS_CL_C2);
-                            oDBDataSource.SetValue("U_MGS_CL_C3", oDBDataSource.Size - 1, item.MGS_CL_C3);
-                            oDBDataSource.SetValue("U_MGS_CL_C4", oDBDataSource.Size - 1, item.MGS_CL_C4);
-                            oDBDataSource.SetValue("U_MGS_CL_C5", oDBDataSource.Size - 1, item.MGS_CL_C5);
-                            oDBDataSource.SetValue("U_MGS_CL_C6", oDBDataSource.Size - 1, item.MGS_CL_C6);
-                            oDBDataSource.SetValue("U_MGS_CL_C7", oDBDataSource.Size - 1, item.MGS_CL_C7);
-                            oDBDataSource.SetValue("U_MGS_CL_C8", oDBDataSource.Size - 1, item.MGS_CL_C8);
-                            oDBDataSource.SetValue("U_MGS_CL_C9", oDBDataSource.Size - 1, item.MGS_CL_C9);
-                            oDBDataSource.SetValue("U_MGS_CL_C10", oDBDataSource.Size - 1, item.MGS_CL_C10);
-                            oDBDataSource.SetValue("U_MGS_CL_C11", oDBDataSource.Size - 1,"0");
-
-                            oMatrix.LoadFromDataSource();
-                            oMatrix.AutoResizeColumns();
-                        }
-
-                        Form_ResizeAfter(pVal);
-                        oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-
-
-
-                        oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
-                        if (oMatrix.Columns.Count > 0)
-                        {
-                            for (int colIndex = 1; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
-                            {
-                                bool continuar = true;
-                                if (colIndex > 1 && colIndex< oMatrix.Columns.Count-1)
+                                DateTime fecha;
+                                if (DateTime.TryParseExact(item.MGS_CL_FECADM, posiblesFormatos, null, System.Globalization.DateTimeStyles.None, out fecha))
                                 {
-                                    oRS.DoQuery(Comunes.Consultas.ValidateCorridasDelRecibo(this.ComboBox0.Selected.Value.ToString()));
+                                    oDBDataSource.SetValue("U_MGS_CL_FECADM", oDBDataSource.Size - 1, fecha.ToString("yyyyMMdd"));
+                                }
 
-                                    
-                                    string columnName = "U_MGS_CL_PRO" + ((colIndex - 1).ToString());
-                                    if (oRS.RecordCount > 0)
+                                //var ssss = item.MGS_CL_FECADM;
+                                ////DateTime fecha = DateTime.ParseExact(item.MGS_CL_FECADM, "dd/MM/yyyy", null);
+                                //DateTime fecha = DateTime.ParseExact(item.MGS_CL_FECADM, "MM/dd/yyyy hh:mm:ss tt", null);
+                                //string fechaFormateada = fecha.ToString("yyyyMMdd");
+
+
+                                oDBDataSource.SetValue("U_MGS_CL_FIFO", oDBDataSource.Size - 1, item.MGS_CL_FIFO);
+
+                                oMatrix.LoadFromDataSource();
+                                oMatrix.AutoResizeColumns();
+                            }
+
+
+                            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                            oMatrix.Clear();
+
+                            var ASSDS = sol.DetalleCorridas[0];
+                            int contar_corridas = 0;
+                            int cc = 0;
+                            foreach (CorridasDetalle item in sol.DetalleCorridas)
+                            {
+                                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                                oMatrix.AddRow();
+                                oMatrix.FlushToDataSource();
+                                //if (!bItsTheSameLine) oDBDataSource.InsertRecord(index);
+                                //else bAddNewRow = false;
+                                oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCORRID");
+                                if (cc == 0)
+                                {
+                                    if (item.MGS_CL_C1.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C2.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C3.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C4.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C5.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C6.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C7.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C8.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C9.ToString() != "0")
+                                        contar_corridas++;
+                                    if (item.MGS_CL_C10.ToString() != "0")
+                                        contar_corridas++;
+                                }
+
+                                cc++;
+
+
+
+                                var sdsd = oDBDataSource.Size - 1;
+                                oDBDataSource.Offset = oDBDataSource.Size - 1;
+                                oDBDataSource.SetValue("U_MGS_CL_TITU", oDBDataSource.Size - 1, item.MGS_CL_TITU);
+                                oDBDataSource.SetValue("U_MGS_CL_C1", oDBDataSource.Size - 1, item.MGS_CL_C1);
+                                oDBDataSource.SetValue("U_MGS_CL_C2", oDBDataSource.Size - 1, item.MGS_CL_C2);
+                                oDBDataSource.SetValue("U_MGS_CL_C3", oDBDataSource.Size - 1, item.MGS_CL_C3);
+                                oDBDataSource.SetValue("U_MGS_CL_C4", oDBDataSource.Size - 1, item.MGS_CL_C4);
+                                oDBDataSource.SetValue("U_MGS_CL_C5", oDBDataSource.Size - 1, item.MGS_CL_C5);
+                                oDBDataSource.SetValue("U_MGS_CL_C6", oDBDataSource.Size - 1, item.MGS_CL_C6);
+                                oDBDataSource.SetValue("U_MGS_CL_C7", oDBDataSource.Size - 1, item.MGS_CL_C7);
+                                oDBDataSource.SetValue("U_MGS_CL_C8", oDBDataSource.Size - 1, item.MGS_CL_C8);
+                                oDBDataSource.SetValue("U_MGS_CL_C9", oDBDataSource.Size - 1, item.MGS_CL_C9);
+                                oDBDataSource.SetValue("U_MGS_CL_C10", oDBDataSource.Size - 1, item.MGS_CL_C10);
+                                oDBDataSource.SetValue("U_MGS_CL_C11", oDBDataSource.Size - 1, "0");
+
+                                oMatrix.LoadFromDataSource();
+                                oMatrix.AutoResizeColumns();
+                            }
+
+                            Form_ResizeAfter(pVal);
+                            oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+
+
+                            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                            if (oMatrix.Columns.Count > 0)
+                            {
+                                for (int colIndex = 1; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                                {
+                                    bool continuar = true;
+                                    if (colIndex > 1 && colIndex < oMatrix.Columns.Count - 1)
                                     {
-                                        while (oRS.EoF == false)
+                                        oRS.DoQuery(Comunes.Consultas.ValidateCorridasDelRecibo(this.ComboBox0.Selected.Value.ToString()));
+
+
+                                        string columnName = "U_MGS_CL_PRO" + ((colIndex - 1).ToString());
+                                        if (oRS.RecordCount > 0)
                                         {
-                                            var asda = oRS.Fields.Item(columnName).Value.ToString().Trim();
-
-                                            if (asda == "Y")
+                                            while (oRS.EoF == false)
                                             {
+                                                var asda = oRS.Fields.Item(columnName).Value.ToString().Trim();
 
-                                                continuar = false;
+                                                if (asda == "Y")
+                                                {
 
+                                                    continuar = false;
+
+                                                }
+
+
+                                                oRS.MoveNext();
                                             }
 
-
-                                            oRS.MoveNext();
                                         }
-
+                                        else
+                                            continuar = true;
                                     }
-                                    else
-                                        continuar = true;
-                                }
-                                    
 
 
-                                for (int i = 1; i <= oMatrix.RowCount ; i++)
-                                {
-                                    //oMatrix.CommonSetting.SetCellEditable(i, column, checkBox.Checked);
-                                    if (colIndex > 1 && continuar == false)
-                                        oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(0, 128, 0));
-                                    else
-                                        oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(211, 211, 211));
 
-                                    oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
+                                    for (int i = 1; i <= oMatrix.RowCount; i++)
+                                    {
+                                        //oMatrix.CommonSetting.SetCellEditable(i, column, checkBox.Checked);
+                                        if (colIndex > 1 && continuar == false)
+                                            oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(0, 128, 0));
+                                        else
+                                            oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(211, 211, 211));
+
+                                        oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
+                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
+
+
+                    
 
                     oPB.Stop();
                     Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
@@ -901,6 +908,8 @@ namespace AddOnCorte
 
             try
             {
+                var asd = this.ComboBox0.Value.ToString();
+                Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0, true, this.ComboBox0.Value.ToString());
 
                 this.Button2.Item.Enabled = true;
 
@@ -2196,6 +2205,10 @@ namespace AddOnCorte
                         //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(i).Specific; //Cast the Cell of 
                         c1_sub = c1_sub + double.Parse(oEditText.Value.ToString());
+
+
+
+
                         oMatrix.FlushToDataSource();
 
                     }
@@ -2283,6 +2296,7 @@ namespace AddOnCorte
                         double cantidadOV = 0;
                         string docEntryOV = "";
                         bool tiene_precio = false;
+                        var asdasd = this.ComboBox0.Selected.Value.ToString();
                         oRS.DoQuery(Comunes.Consultas.GetPrecioOrdenVenta(this.ComboBox0.Selected.Value.ToString()));
                         if (oRS.RecordCount > 0)
                         {

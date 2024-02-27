@@ -166,13 +166,13 @@ namespace AddOnCorte.Comunes
 
         }
 
-        public static void CbxSolCorte(ref SAPbouiCOM.Form oForm, SAPbouiCOM.Application SBOApp, SAPbouiCOM.ComboBox oComboBox)
+        public static void CbxSolCorte(ref SAPbouiCOM.Form oForm, SAPbouiCOM.Application SBOApp, SAPbouiCOM.ComboBox oComboBox, bool all, string solicitud)
         {
 
             try
             {
                 InsertValidValues(ref oComboBox
-                                                , Comunes.Consultas.GetCortesCmb()
+                                                , all ? Comunes.Consultas.GetCortesCmbAll(solicitud): Comunes.Consultas.GetCortesCmb()
                                                 , "Value", "Desc", bSetValueDefault: true);
             }
             catch

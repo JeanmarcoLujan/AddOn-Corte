@@ -311,7 +311,7 @@ namespace AddOnCorte
             catch (Exception ex)
             {
                // oForm.Freeze(false);
-                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+               // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
             }
         }
 
