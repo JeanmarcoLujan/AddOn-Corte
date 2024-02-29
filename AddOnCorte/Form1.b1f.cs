@@ -322,6 +322,19 @@ namespace AddOnCorte
             try
             {
                 bool continuar = true;
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                oItem = oForm.Items.Item("Item_36");
+
+                oForm.PaneLevel = 1;
+                oGrid = (SAPbouiCOM.Grid)oItem.Specific;
+
+                oGrid.DataTable = oForm.DataSources.DataTables.Item("dt_lt");
+
+                for (int i = oGrid.Rows.Count - 1; i >= 0; i--)
+                {
+                    oGrid.DataTable.Rows.Remove(i);
+                }
 
                 if (this.EditText4.Value == "")
                 {
@@ -329,23 +342,36 @@ namespace AddOnCorte
                     continuar = false;
                 }
 
+                if (this.EditText4.Value != "")
+                {
+                    oRS.DoQuery(Comunes.Consultas.ValidateArticulo(this.EditText4.Value.ToString()));
+                    if (oRS.RecordCount > 0)
+                    {
+                        continuar = true;
+                    }
+                    else
+                    {
+                        continuar = false;
+                        Globales.oApp.MessageBox("Es artículo, debe ser esta configurado para requerir ancho y largo, por ende no es posible continuar con el proceso. ");
+                        
+                    }
+                }
+
                 if (continuar == true && pVal.FormMode == 3)
                 {
-                    oItem = oForm.Items.Item("Item_36");
+                    //oItem = oForm.Items.Item("Item_36");
 
                     oForm.PaneLevel = 1;
-                    oGrid = (SAPbouiCOM.Grid)oItem.Specific;
+                    //oGrid = (SAPbouiCOM.Grid)oItem.Specific;
 
-                    oGrid.DataTable = oForm.DataSources.DataTables.Item("dt_lt");
+                    //oGrid.DataTable = oForm.DataSources.DataTables.Item("dt_lt");
 
-
-
-                    oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-
-                    
+                    //for (int i = oGrid.Rows.Count - 1; i >= 0; i--)
+                    //{
+                    //    oGrid.DataTable.Rows.Remove(i);
+                    //}
 
                     oGrid.DataTable.ExecuteQuery(Comunes.Consultas.GetAllLotesByItem(this.EditText4.Value.ToString()));
-
                     
                     oGrid.Columns.Item("Lote").Editable = false;
 
@@ -386,6 +412,11 @@ namespace AddOnCorte
 
         }
 
+        static void ClearGrid(SAPbouiCOM.Grid grid)
+        {
+            // Elimina todas las filas de la grilla
+            
+        }
         private void Button1_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
         {
             SAPbouiCOM.Matrix oMatrix = null;

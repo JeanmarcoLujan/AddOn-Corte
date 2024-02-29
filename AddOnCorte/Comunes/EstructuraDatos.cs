@@ -346,7 +346,7 @@ namespace AddOnCorte.Comunes
                 CreaCampoMD("ORDR", "MGS_CL_911", "Es de 911?", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
 
                 //ALMACEN
-                CreaCampoMD("OWHS", "MGS_CL_ALMAGE", "Válido para agenda", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
+                CreaCampoMD("OWHS", "MGS_CL_ALMAGE", "Válido para agenda corte?", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
                 CreaCampoMD("OWHS", "MGS_CL_ALMMER", "Es de merma?", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
 
             }
