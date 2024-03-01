@@ -123,7 +123,8 @@ namespace AddOnCorte
             this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
             this.DataLoadAfter += new SAPbouiCOM.Framework.FormBase.DataLoadAfterHandler(this.Form_DataLoadAfter);
             this.DataAddBefore += new SAPbouiCOM.Framework.FormBase.DataAddBeforeHandler(this.Form_DataAddBefore);
-            this.DataUpdateBefore += new DataUpdateBeforeHandler(this.Form_DataUpdateBefore);
+            this.DataUpdateBefore += new SAPbouiCOM.Framework.FormBase.DataUpdateBeforeHandler(this.Form_DataUpdateBefore);
+            
 
         }
 
@@ -134,32 +135,69 @@ namespace AddOnCorte
             SAPbouiCOM.EditText oEditText = null;
             try
             {
-                switch (pVal.MenuUID)
-                {
 
-                    case "1282":
-                        //oForm.DataSources.UserDataSources.Item("UD_0").Value = "sdfsd";
-                        
-                        this.Button3.Item.Enabled = false;
-                        Comunes.Funciones.AutoResizeColumnsMatrix(oForm);
-                        this.Button6.Item.Enabled = false;
-                        this.EditText0.Item.Enabled = false;
-                        this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
-                        
-                        break;
-                    case "1281":
-                        var asdasd = "";
-                        this.Button3.Item.Enabled = false;
-                        this.EditText0.Item.Enabled = true;
-                        break;
-                    case "1290":
-                    case "1289":
-                    case "1288":
-                    case "1291":
-                        var ssss = "";
-                        this.EditText0.Item.Enabled = false;
-                        break;
+                if (pVal.BeforeAction)
+                {
+                    switch (pVal.MenuUID)
+                    {
+
+                        case "1285":
+                            BubbleEvent = false;
+                            Globales.oApp.MessageBox("No es posible reestablecer, una vez cancelada la solicitud.");
+                            BubbleEvent = true;
+                            break;
+                        case "1284":
+                            if (validateDocCancel(this.EditText21.Value))
+                            {
+                                if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la solicitud de corte?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
+                                    BubbleEvent = true;
+                                else
+                                    BubbleEvent = false;
+                            }
+                            else
+                            {
+                                BubbleEvent = false;
+                                Globales.oApp.MessageBox("No es posible cancelar la solicitud, porque ya se generó la 'Oferta de venta'. ");
+                            }
+                            break;
+                    }
                 }
+                else
+                {
+                    switch (pVal.MenuUID)
+                    {
+
+                        case "1282":
+                            //oForm.DataSources.UserDataSources.Item("UD_0").Value = "sdfsd";
+
+                            this.Button3.Item.Enabled = false;
+                            Comunes.Funciones.AutoResizeColumnsMatrix(oForm);
+                            this.Button6.Item.Enabled = false;
+                            this.EditText0.Item.Enabled = false;
+                            this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
+
+                            break;
+                        case "1281":
+                            var asdasd = "";
+                            this.Button3.Item.Enabled = false;
+                            this.EditText0.Item.Enabled = true;
+                            break;
+                        case "1290":
+                        case "1289":
+                        case "1288":
+                        case "1291":
+                            var ssss = "";
+                            this.EditText0.Item.Enabled = false;
+                            break;
+                        case "1284":
+                            Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "C", "U_MGS_CL_ESTD");
+                            break;
+                    }
+                }
+
+
+
+                
             }
             catch (Exception ex)
             {
@@ -1503,21 +1541,32 @@ namespace AddOnCorte
                     if (oSalesOpportunity.GetByKey(int.Parse( this.EditText21.Value.ToString())))
                     {
                         //salesOrder.UserFields.Fields.Item("U_Motivo_Cancelacion").Value = "Motivo de cancelación"; // Puedes especificar un motivo de cancelación opcional.
-
+                        var asdas = oSalesOpportunity.Cancelled;
+                        
                         if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la oferta de ventas?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
                         {
-                            if (oSalesOpportunity.Cancel() == 0)
+                            if (oSalesOpportunity.Cancelled == SAPbobsCOM.BoYesNoEnum.tNO)
                             {
-                                Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "", "U_MGS_CL_OFEV");
-                                oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
-                                Globales.oApp.MessageBox("Oferta de venta cancelada con éxito.");
+                                if (oSalesOpportunity.Cancel() == 0)
+                                {
+                                    Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "", "U_MGS_CL_OFEV");
+                                    oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+                                    Globales.oApp.MessageBox("Oferta de venta cancelada con éxito.");
 
-                               
+
+                                }
+                                else
+                                {
+                                    Globales.oApp.MessageBox($"Error al cancelar la oferta de venta: {Globales.oCompany.GetLastErrorDescription()}");
+                                }
                             }
                             else
                             {
-                                Globales.oApp.MessageBox($"Error al cancelar la oferta de venta: {Globales.oCompany.GetLastErrorDescription()}");
+                                Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "", "U_MGS_CL_OFEV");
+                                oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+                                Globales.oApp.MessageBox("La oferta de venta ya estaba cancelada, por ende se actualizó el campo.");
                             }
+                            
                         }
                     }
                     else
@@ -1960,5 +2009,48 @@ namespace AddOnCorte
 
 
         }
+
+
+        private bool validateDocCancel(string oferta)
+        {
+            SAPbobsCOM.Recordset oRS = null;
+            bool rs = true;
+            try
+            {
+
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                if (oferta == "")
+                {
+                    rs = true;
+                }
+                else
+                {
+                    oRS.DoQuery(Comunes.Consultas.ValidateDocCancel(this.EditText4.Value.ToString()));
+                    if (oRS.RecordCount > 0)
+                    {
+                        rs = true;
+                    }
+                    else
+                    {
+                        rs = false;
+                    }
+                }
+
+
+                
+            }
+            catch (Exception ex)
+            {
+                rs = false;
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+            return true;
+        }
+
+
+
+
+        
     }
 }

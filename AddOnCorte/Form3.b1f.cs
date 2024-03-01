@@ -2551,6 +2551,7 @@ namespace AddOnCorte
 
                     this.EditText7.Value = sum_ba.ToString();
                     this.EditText8.Value = sum_bv.ToString();
+                   // this.EditText9.Value = Math.Round(sum_cv + resfileTotal, 2).ToString();
                     this.EditText9.Value = Math.Round(sum_cv + resfileTotal, 2).ToString();
                     
                     // this.EditText8.Value = (double.Parse(this.EditText9.Value.ToString()) * 1.16).ToString();

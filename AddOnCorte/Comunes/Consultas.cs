@@ -224,5 +224,14 @@ namespace AddOnCorte.Comunes
 
             return m_sSQL.ToString();
         }
+
+        public static string ValidateDocCancel(string oferta)
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('VALID_OFERTA','{0}','','',''); ", oferta);
+
+            return m_sSQL.ToString();
+        }
     }
 }
