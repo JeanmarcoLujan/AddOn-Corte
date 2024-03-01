@@ -1365,7 +1365,8 @@ namespace AddOnCorte
                 double ancho = this.EditText2.Value == "" ? 0 : double.Parse(this.EditText2.Value);
                 int cont_slit = 0;
 
-                for (int k = 2; k < 12; k++)
+                //for (int k = 2; k < 12; k++)
+                for (int k = 2; k <= oMatrix.Columns.Count - 1; k++)
                 {
                     double c1_sub = 0;
                     double c1_total = 0;
@@ -1378,7 +1379,8 @@ namespace AddOnCorte
                     c1_largo = double.Parse(oEditText.Value.ToString());
 
 
-                    for (int i = 2; i <= 17; i++)
+                    //for (int i = 2; i <= 17; i++)
+                    for (int i = 2; i <= oMatrix.RowCount - 4; i++)
                     {
 
                         //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
@@ -1388,7 +1390,7 @@ namespace AddOnCorte
 
 
 
-                        if (i > 2 && i<17)
+                        if (i > 2 && i < oMatrix.RowCount - 4)
                         {
                             oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i+1).Specific; //Cast the Cell of 
                             string valor1 = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
@@ -1421,7 +1423,7 @@ namespace AddOnCorte
 
                 if (cont_slit > 0)
                 {
-                    Globales.oApp.MessageBox("Los slits, deben llenarse de forma consecutiva, no debe haber slits con valores ceros o vacios entre medios.");
+                    Globales.oApp.MessageBox("Los slits, deben llenarse de forma consecutiva, no debe haber slits con valores ceros o vacios entre medio.");
                 }
 
                 oForm.Freeze(false);
