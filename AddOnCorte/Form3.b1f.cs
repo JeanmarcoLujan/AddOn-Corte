@@ -150,6 +150,11 @@ namespace AddOnCorte
             this.StaticText39 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_1").Specific));
             this.EditText31 = ((SAPbouiCOM.EditText)(this.GetItem("Item_97").Specific));
             this.LinkedButton4 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_98").Specific));
+            this.Button3 = ((SAPbouiCOM.Button)(this.GetItem("Item_41").Specific));
+            this.Button3.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button3_PressedAfter);
+            this.StaticText13 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_42").Specific));
+            this.EditText11 = ((SAPbouiCOM.EditText)(this.GetItem("Item_43").Specific));
+            this.LinkedButton5 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_44").Specific));
             this.OnCustomInitialize();
 
         }
@@ -174,6 +179,7 @@ namespace AddOnCorte
             Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0, false, "");
             Clases.Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
             this.Button2.Item.Enabled = false;
+            this.Button3.Item.Enabled = false;
 
         }
 
@@ -191,6 +197,7 @@ namespace AddOnCorte
                         //oForm.DataSources.UserDataSources.Item("UD_0").Value = "sdfsd";
                         Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0, false, "");
                         this.Button2.Item.Enabled = false;
+                        this.Button3.Item.Enabled = false;
                         oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
                         if (oMatrix.Columns.Count > 0)
                         {
@@ -618,7 +625,7 @@ namespace AddOnCorte
 
                             // Recorrer las filas de la columna y contar los valores repetidos
                             Dictionary<string, int> columnValueCount = new Dictionary<string, int>();
-                            for (int rowIndex = 3; rowIndex <= oMatrix.RowCount - 4; rowIndex++)
+                            for (int rowIndex = 2; rowIndex <= oMatrix.RowCount - 4; rowIndex++) //PARA INCLUIR EL RESFILE.
                             {
                                 //string cellValue = oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific.Value;
 
@@ -912,6 +919,7 @@ namespace AddOnCorte
                 Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0, true, this.ComboBox0.Value.ToString());
 
                 this.Button2.Item.Enabled = true;
+                this.Button3.Item.Enabled = true;
 
                 List<string> listaLotes = new List<string>();
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_51").Specific;
@@ -2539,6 +2547,7 @@ namespace AddOnCorte
                         sum_cv = sum_cv + double.Parse(oEditText.Value.ToString());
                     }
 
+                    //sum_rcan + Math.Round(double.Parse(item.CellValue) * item.LargoValue * item.Count * 2.54 * 2.54 * 12 / 10000, 2);
 
                     this.EditText7.Value = sum_ba.ToString();
                     this.EditText8.Value = sum_bv.ToString();
@@ -2684,11 +2693,6 @@ namespace AddOnCorte
 
                 }
 
-                
-
-                
-
-
 
             }
             catch (Exception ex)
@@ -2699,5 +2703,191 @@ namespace AddOnCorte
 
             //return rpta;
         }
+
+        private SAPbouiCOM.Button Button3;
+
+        private void Button3_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            SAPbobsCOM.Documents oEntrega = null;
+            //SalesOpportunities
+            SAPbouiCOM.Matrix oMatrix = null;
+            int iErrCod;
+            string sErrMsg = "";
+            SAPbouiCOM.ProgressBar oPB = null;
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            SAPbobsCOM.Recordset oRS = null;
+            SAPbobsCOM.StockTransfer oTransferReq = null;
+
+
+            try
+            {
+                if (this.EditText31.Value != "" && this.EditText31.Value != null)
+                {
+                    if (this.EditText11.Value != "" && this.EditText11.Value != null)
+                    {
+                        Globales.oApp.MessageBox("La solicitud de traslado ya fue generada, por ende, no es posible llevar a cabo este proceso nuevamente.");
+                    }
+                    else
+                    {
+                        if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la solicitud de traslado?", 1, "Continuar", "Cancelar", "") == 1)
+                        {
+
+                            oTransferReq = (SAPbobsCOM.StockTransfer)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryTransferRequest);
+                            oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                            //Solicitud sol = Comunes.FuncionesComunes.GetUDOSolicitudAgendada(agendado.DocEntry);
+                            string almacenTo = "";
+                            oRS.DoQuery(Comunes.Consultas.GetAlmacenOfTrasferenciaAgenda(this.ComboBox0.Selected.Value.ToString()));
+                            if (oRS.RecordCount > 0)
+                            {
+                                almacenTo = oRS.Fields.Item(0).Value.ToString();
+                            }
+
+                            oTransferReq.CardCode = this.EditText2.Value;
+                            oTransferReq.DocDate = DateTime.Now;
+                            oTransferReq.TaxDate = DateTime.Now;
+                            oTransferReq.DueDate = DateTime.Now.AddDays(30); ;
+
+                            oTransferReq.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
+                            oTransferReq.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = this.EditText0.Value.ToString();
+
+                            oTransferReq.FromWarehouse = "CORTE"; // agendado.Almacen.ToString();
+                            oTransferReq.ToWarehouse = almacenTo;
+
+                            string modelo = "";
+                            string ccrCod = "";
+                            oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
+                            if (oRS.RecordCount > 0)
+                            {
+                                modelo = oRS.Fields.Item(0).Value.ToString();
+                                ccrCod = oRS.Fields.Item(1).Value.ToString();
+                            }
+
+                            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+
+                            double[] doubleColumnValues = Enumerable.Range(1, oMatrix.RowCount)
+                                    .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(i).Specific).Value))
+                                    .ToArray();
+
+                            double suma = doubleColumnValues.Sum();
+
+                            if (suma > 0)
+                            {
+                                for (int i = 1; i <= oMatrix.RowCount; i++)
+                                {
+                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(i).Specific;
+                                    double cantidad = double.Parse(oEditText.Value.ToString());
+
+                                    if (cantidad != 0)
+                                    {
+                                        oTransferReq.Lines.ItemCode = this.EditText4.Value.ToString();
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
+                                        oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = oEditText.Value.ToString();
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
+                                        oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = oEditText.Value.ToString();
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(i).Specific;
+                                        oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
+
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(i).Specific;
+                                        int columnValue6 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(i).Specific;
+                                        int columnValue4 = int.Parse(oEditText.Value.ToString());
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                                        double columnValue5 = double.Parse(oEditText.Value.ToString());
+
+                                        string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue6, 2)).ToString();
+
+
+
+                                        oTransferReq.Lines.Quantity =  double.Parse(calculo);
+
+                                        oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
+                                        oTransferReq.Lines.DistributionRule = ccrCod;
+                                        oTransferReq.Lines.FromWarehouseCode = "CORTE";
+                                        oTransferReq.Lines.WarehouseCode = almacenTo;
+
+
+
+                                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                                        oTransferReq.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                                        oTransferReq.Lines.BatchNumbers.Quantity =   double.Parse(calculo.ToString());// double.Parse(oEditText.Value.ToString());
+
+                                        oTransferReq.Lines.Add();
+                                    }
+                                }
+
+                            }
+
+
+
+                            iErrCod = oTransferReq.Add();
+                            if (iErrCod != 0)
+                            {
+
+                                Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+                                Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Error al generar la solicitud de traslado " + sErrMsg,
+                                SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
+
+                            }
+                            else
+                            {
+
+                                oTransferReq.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+                                var sfsdf = Globales.oCompany.GetNewObjectKey();
+
+                                Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFSTR");
+
+
+
+                                Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la solicitud de traslado",
+                                SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+
+                                //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+                                oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+
+                            }
+                        }
+                    }
+
+                    
+
+                }
+                else
+                {
+                    Globales.oApp.MessageBox("Debe generar la entrega antes, para proceder con esta acción.");
+                }
+
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                if (oPB != null)
+                {
+                    oPB.Stop();
+                    Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+                }
+                //Comunes.Funciones.RemoveRegisterUDO(docEntryUDO);
+            }
+
+        }
+
+        private SAPbouiCOM.StaticText StaticText13;
+        private SAPbouiCOM.EditText EditText11;
+        private SAPbouiCOM.LinkedButton LinkedButton5;
     }
 }
