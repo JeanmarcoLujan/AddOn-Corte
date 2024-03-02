@@ -2047,7 +2047,7 @@ namespace AddOnCorte
                 rs = false;
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
             }
-            return true;
+            return rs;
         }
 
 

@@ -2246,11 +2246,11 @@ namespace AddOnCorte
 
                     if (c1_sub != 0)
                     {
-                        totalCorridasReal = totalCorridasReal + double.Parse( (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString());
+                        totalCorridasReal = totalCorridasReal + double.Parse((Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString());
                     }
                 }
 
-                
+
 
 
 
@@ -2267,6 +2267,13 @@ namespace AddOnCorte
             if (Math.Abs(totalMaster - totalCorridas) > 1)
                 oListErr.Add("Los totales de las Corridas seleccionadas y el Resumen deben ser iguales.");
 
+            var resultado = ValidateEntregaEnRecibosAnteriores();
+            if (!resultado.Item1)
+            {
+                string msm = "Existe " + resultado.Item2.ToString() +" recibo(s) de producción que deben estar entregados y que se registraron anteriormente, asociados a la solicitud de corte que especifico ( Nro. sol. " + this.ComboBox0.Selected.Value.ToString() + " ).";
+                oListErr.Add(msm);
+            }
+                
             //oForm.Freeze(false);
 
             //oPB.Stop();
@@ -2280,7 +2287,7 @@ namespace AddOnCorte
                     msmValidate = msmValidate + " > " + msm + "\n";
                 }
 
-                Globales.oApp.MessageBox("La siguiente informacion es obligatoria: \n" + msmValidate);
+                Globales.oApp.MessageBox("Revisar la siguiente informacion que puede ser obigatoria: \n" + msmValidate);
             }
 
             if (oListErr.Count > 0)
@@ -2913,5 +2920,39 @@ namespace AddOnCorte
         private SAPbouiCOM.StaticText StaticText13;
         private SAPbouiCOM.EditText EditText11;
         private SAPbouiCOM.LinkedButton LinkedButton5;
+
+
+        private (bool, int) ValidateEntregaEnRecibosAnteriores()
+        {
+            SAPbobsCOM.Recordset oRS = null;
+            bool rs = true;
+            int result = 0;
+            try
+            {
+
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                if (this.ComboBox0.Selected != null)
+                {
+                    oRS.DoQuery(Comunes.Consultas.ValidateEntregaEnRecibosAnteriores(this.ComboBox0.Selected.Value.ToString()));
+                    if (oRS.RecordCount > 0)
+                    {
+                        result= int.Parse(oRS.Fields.Item(0).Value.ToString());
+                        if (result == 0)
+                            rs = true;
+                        else
+                            rs = false;
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                rs = false;
+                result = 0;
+                //Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+            return (rs, result);
+        }
     }
 }
