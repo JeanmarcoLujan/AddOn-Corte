@@ -88,7 +88,7 @@ namespace AddOnCorte.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1.0.1.3.
+        ///   Looks up a localized string similar to 1.0.1.5.
         /// </summary>
         internal static string VersionAddon {
             get {
