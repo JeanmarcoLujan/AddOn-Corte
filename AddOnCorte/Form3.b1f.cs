@@ -577,6 +577,7 @@ namespace AddOnCorte
 
                     // Recorrer las columnas de la matriz
                     int contar_marcado = 0;
+                    double resfileCan = 0;
                     for (int colIndex = 2; colIndex <= columnCount - 1; colIndex++)
                     {
                         bool validar = false;
@@ -623,9 +624,15 @@ namespace AddOnCorte
                             oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
                             string largo = oEditText.Value.ToString();
 
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
+                            string refile = oEditText.Value.ToString();
+
+                            resfileCan = resfileCan + Math.Round(double.Parse(refile) * double.Parse(largo) * 1 * 2.54 * 2.54 * 12 / 10000, 2);
+
+
                             // Recorrer las filas de la columna y contar los valores repetidos
                             Dictionary<string, int> columnValueCount = new Dictionary<string, int>();
-                            for (int rowIndex = 2; rowIndex <= oMatrix.RowCount - 4; rowIndex++) //PARA INCLUIR EL RESFILE.
+                            for (int rowIndex = 3; rowIndex <= oMatrix.RowCount - 4; rowIndex++) //PARA INCLUIR EL RESFILE.
                             {
                                 //string cellValue = oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific.Value;
 
@@ -711,7 +718,7 @@ namespace AddOnCorte
                     
 
                     this.EditText1.Value = sum_count.ToString();
-                    this.EditText6.Value = sum_rcan.ToString();
+                    this.EditText6.Value = (sum_rcan + resfileCan).ToString();
                     this.EditText7.Value = "0";
                     this.EditText8.Value = "0";
                     this.EditText9.Value = "0";

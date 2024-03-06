@@ -499,12 +499,15 @@ namespace AddOnCorte
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
                 oMatrix.Clear();
                 bool continuar = false;
+                List<double> anchos = new List<double>();
+
                 for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_lt").Rows.Count; i++)
                 {
                     if (oForm.DataSources.DataTables.Item("dt_lt").GetValue("Seleccion", i).ToString().Equals("Y"))
                     {
                         if (oForm.DataSources.DataTables.Item("dt_lt").GetValue("Fifo", i).ToString() == "1")
                             continuar = true;
+                        anchos.Add(double.Parse(oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_ANCHO", i).ToString()));
                     }
                 }
 
@@ -513,6 +516,33 @@ namespace AddOnCorte
                     if (Globales.oApp.MessageBox("No ha seleccionado el lote más antiguo, ¿Desea continuar con el proceso?", 1, "Continuar", "Cancelar", "") == 1)
                         continuar = true;
                 }
+
+                if (anchos.Count > 0)
+                {
+
+
+                    // Comparar cada elemento con el primero de la lista
+                    int cont1 = 0;
+                    double primerElemento = anchos[0];
+                    for (int i = 1; i < anchos.Count; i++)
+                    {
+                        if (anchos[i] != primerElemento)
+                        {
+                            cont1++;
+
+                        }
+                    }
+
+                    if (cont1 > 0)
+                    {
+                        continuar = false;
+                        Globales.oApp.MessageBox("Ha seleccionado lotes, cuyos anchos son diferentes, por consiguiente no puede seguir con el proceso, los anchos de los lotes siempre deben ser iguales.");
+                    }
+                    else
+                        continuar = true;
+                }
+                else
+                    continuar = false;
 
                 for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_lt").Rows.Count; i++)
                 {
@@ -570,9 +600,13 @@ namespace AddOnCorte
                     }
                 }
 
-                this.EditText2.Value = (total_ancho/cont).ToString();
-                this.EditText13.Value = total_largo.ToString();
-                this.EditText14.Value = total_cantidad.ToString();
+                if (anchos.Count > 0)
+                {
+                    this.EditText2.Value = (total_ancho / cont).ToString();
+                    this.EditText13.Value = total_largo.ToString();
+                    this.EditText14.Value = total_cantidad.ToString();
+                }
+                
 
                 //oDBDataSource.SetValue("U_MGS_CL_LOTE", cont - 1, "Total");
 
@@ -800,6 +834,8 @@ namespace AddOnCorte
                     int columnCount = oMatrix.Columns.Count;
                     List<ColumnValueCount> valueCounts = new List<ColumnValueCount>();
 
+                    double resfileCan = 0;
+
                     // Recorrer las columnas de la matriz
                     for (int colIndex = 2; colIndex <= columnCount - 1; colIndex++)
                     {
@@ -807,6 +843,11 @@ namespace AddOnCorte
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
                         string largo = oEditText.Value.ToString();
+
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
+                        string refile = oEditText.Value.ToString();
+
+                        resfileCan = resfileCan + Math.Round(double.Parse(refile) * double.Parse(largo) * 1 * 2.54 * 2.54 * 12 / 10000, 2);
 
                         // Recorrer las filas de la columna y contar los valores repetidos
                         Dictionary<string, int> columnValueCount = new Dictionary<string, int>();
@@ -891,7 +932,7 @@ namespace AddOnCorte
                     }
 
                     this.EditText15.Value = sum_count.ToString();
-                    this.EditText16.Value = sum_rcan.ToString();
+                    this.EditText16.Value = (sum_rcan + resfileCan).ToString();
                     this.EditText17.Value = "0";
                     this.EditText18.Value = "0";
                     this.EditText19.Value = "0";
