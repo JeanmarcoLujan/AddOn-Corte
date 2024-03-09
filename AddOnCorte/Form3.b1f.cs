@@ -169,7 +169,6 @@ namespace AddOnCorte
             this.DataAddAfter += new SAPbouiCOM.Framework.FormBase.DataAddAfterHandler(this.Form_DataAddAfter);
             this.DataAddBefore += new SAPbouiCOM.Framework.FormBase.DataAddBeforeHandler(this.Form_DataAddBefore);
             this.DataUpdateAfter += new SAPbouiCOM.Framework.FormBase.DataUpdateAfterHandler(this.Form_DataUpdateAfter);
-           
 
         }
 
@@ -182,10 +181,13 @@ namespace AddOnCorte
             Clases.Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
             this.Button2.Item.Enabled = false;
             this.Button3.Item.Enabled = false;
+            
+            ChangeEnableItems(true);
             this.EditText3.Item.Enabled = false;
             this.EditText5.Item.Enabled = false;
-
         }
+
+
 
         public void m_SBO_Appl_MenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent)
         {
@@ -225,6 +227,7 @@ namespace AddOnCorte
                         this.EditText0.Item.Enabled = true;
                         this.EditText3.Item.Enabled = true;
                         this.EditText5.Item.Enabled = true;
+                        ChangeEnableItems(true);
                         break;
                     case "1290":
                     case "1289":
