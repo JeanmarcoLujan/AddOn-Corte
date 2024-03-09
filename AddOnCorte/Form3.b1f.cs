@@ -168,7 +168,9 @@ namespace AddOnCorte
             this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
             this.DataAddAfter += new SAPbouiCOM.Framework.FormBase.DataAddAfterHandler(this.Form_DataAddAfter);
             this.DataAddBefore += new SAPbouiCOM.Framework.FormBase.DataAddBeforeHandler(this.Form_DataAddBefore);
-          
+            this.DataUpdateAfter += new SAPbouiCOM.Framework.FormBase.DataUpdateAfterHandler(this.Form_DataUpdateAfter);
+           
+
         }
 
         private SAPbouiCOM.EditText EditText0;
@@ -180,6 +182,8 @@ namespace AddOnCorte
             Clases.Globales.oApp.MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.m_SBO_Appl_MenuEvent);
             this.Button2.Item.Enabled = false;
             this.Button3.Item.Enabled = false;
+            this.EditText3.Item.Enabled = false;
+            this.EditText5.Item.Enabled = false;
 
         }
 
@@ -195,9 +199,13 @@ namespace AddOnCorte
 
                     case "1282":
                         //oForm.DataSources.UserDataSources.Item("UD_0").Value = "sdfsd";
+                        ChangeEnableItems(true);
                         Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0, false, "");
                         this.Button2.Item.Enabled = false;
                         this.Button3.Item.Enabled = false;
+                        this.EditText0.Item.Enabled = false;
+                        this.EditText3.Item.Enabled = false;
+                        this.EditText5.Item.Enabled = false;
                         oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
                         if (oMatrix.Columns.Count > 0)
                         {
@@ -214,12 +222,16 @@ namespace AddOnCorte
 
                         break;
                     case "1281":
-                        
+                        this.EditText0.Item.Enabled = true;
+                        this.EditText3.Item.Enabled = true;
+                        this.EditText5.Item.Enabled = true;
                         break;
                     case "1290":
                     case "1289":
                     case "1288":
                     case "1291":
+                        //ChangeEnableItems(true);
+                        this.EditText0.Item.Enabled = false;
                         var ssss = "";
                         break;
                 }
@@ -922,6 +934,8 @@ namespace AddOnCorte
 
             try
             {
+                ChangeEnableItems(false);
+                
                 var asd = this.ComboBox0.Value.ToString();
                 Funciones.CbxSolCorte(ref oForm, Globales.oApp, this.ComboBox0, true, this.ComboBox0.Value.ToString());
 
@@ -2961,5 +2975,52 @@ namespace AddOnCorte
             }
             return (rs, result);
         }
+
+        private void ChangeEnableItems(bool state)
+        {
+            SAPbouiCOM.Matrix oMatrix = null;
+            try
+            {
+                this.ComboBox0.Item.Enabled = state;
+                this.EditText4.Item.Enabled = state;
+                this.EditText2.Item.Enabled = state;
+                this.EditText21.Item.Enabled = state;
+                this.EditText22.Item.Enabled = state;
+                this.EditText20.Item.Enabled = state;
+                this.EditText10.Item.Enabled = state;
+                this.EditText3.Item.Enabled = state;
+                this.EditText5.Item.Enabled = state;
+
+
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+                if (oMatrix.Columns.Count > 0)
+                {
+                    for (int colIndex = 1; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                    {
+
+                        for (int i = 1; i <= oMatrix.RowCount; i++)
+                        {
+                            if(colIndex == 1 || colIndex == 7)
+                                oMatrix.CommonSetting.SetCellEditable(i, colIndex, state);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+            
+        }
+
+        private void Form_DataUpdateAfter(ref SAPbouiCOM.BusinessObjectInfo pVal)
+        {
+            //throw new System.NotImplementedException();
+            oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+
+        }
+
+        
     }
 }
