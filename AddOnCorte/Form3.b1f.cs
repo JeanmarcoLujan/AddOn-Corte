@@ -1420,6 +1420,7 @@ namespace AddOnCorte
                     oInventoryExit.DocDate = DateTime.Now;
                     oInventoryExit.TaxDate = DateTime.Now;
                     oInventoryExit.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
+                    oInventoryExit.UserFields.Fields.Item("U_MGS_CL_MOTSAL").Value = "01";
 
                     string modelo = "";
                     string ccrCod = "";
@@ -1531,6 +1532,7 @@ namespace AddOnCorte
                 oInventoryExit.DocDate = DateTime.Now;
                 oInventoryExit.TaxDate = DateTime.Now;
                 oInventoryExit.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
+                oInventoryExit.UserFields.Fields.Item("U_MGS_CL_MOTSAL").Value = "01";
 
                 int validarItem = 0;
                 oRS.DoQuery(Comunes.Consultas.ValidateArticuloLotes(this.EditText21.Value.ToString()));
@@ -1708,6 +1710,7 @@ namespace AddOnCorte
                 oSalesOpportunity.TaxDate = DateTime.Now;
                 oSalesOpportunity.DocDate = DateTime.Now;
                 oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
+                oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_MOTENT").Value = "01";
 
 
                 //oSalesOpportunity.DocumentReferences.ReferencedObjectType = SAPbobsCOM.ReferencedObjectTypeEnum.rot_SalesOrder;
@@ -2357,6 +2360,7 @@ namespace AddOnCorte
                         double precio = 0;
                         double cantidadOV = 0;
                         string docEntryOV = "";
+                        string indicator = "";
                         bool tiene_precio = false;
                         var asdasd = this.ComboBox0.Selected.Value.ToString();
                         oRS.DoQuery(Comunes.Consultas.GetPrecioOrdenVenta(this.ComboBox0.Selected.Value.ToString()));
@@ -2366,6 +2370,7 @@ namespace AddOnCorte
                             precio = double.Parse(oRS.Fields.Item(0).Value.ToString());
                             docEntryOV = oRS.Fields.Item(1).Value.ToString();
                             cantidadOV = Math.Round( double.Parse(oRS.Fields.Item(2).Value.ToString())*1.05,2);
+                            indicator = oRS.Fields.Item(3).Value.ToString(); ;
                         }
                         else
                             tiene_precio = false;
@@ -2375,6 +2380,8 @@ namespace AddOnCorte
                         oEntrega.TaxDate = DateTime.Now;
                         oEntrega.DocDate = DateTime.Now;
                         oEntrega.DocDueDate = DateTime.Now.AddDays(30);
+                        oEntrega.Indicator = indicator;
+                        //SP 360
 
                         oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
                         oEntrega.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = this.EditText0.Value.ToString();
