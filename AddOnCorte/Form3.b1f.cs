@@ -2355,7 +2355,7 @@ namespace AddOnCorte
                         oPB.Value = 10;
 
 
-                        CloseOrdenVenta();
+                        
 
 
 
@@ -2493,6 +2493,8 @@ namespace AddOnCorte
                                 Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
 
                                 FuncionesComunes.RegisterLotesUDO3_(oEntrega, "DLN19");
+
+                                CloseOrdenVenta();
 
                                 Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
                                 SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
