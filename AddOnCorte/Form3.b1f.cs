@@ -1355,7 +1355,7 @@ namespace AddOnCorte
                 GenerateSalida();
                 GenerateEntrada();
                 GenerateSalidaCore();
-                CloseOrdenVenta();
+                
 
                 //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
 
@@ -2354,6 +2354,11 @@ namespace AddOnCorte
                         oPB.Text = "Generando la entrega de venta";
                         oPB.Value = 10;
 
+
+                        CloseOrdenVenta();
+
+
+
                         oEntrega = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDeliveryNotes);
                         oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
 
@@ -2519,7 +2524,7 @@ namespace AddOnCorte
             }
             catch (Exception ex)
             {
-                //Comunes.Funciones.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
                 if (oPB != null)
                 {
                     oPB.Stop();
