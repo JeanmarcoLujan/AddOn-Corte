@@ -2579,6 +2579,12 @@ namespace AddOnCorte
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(pVal.Row).Specific;
                     double columnValue5 = double.Parse(oEditText.Value.ToString());
 
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(pVal.Row).Specific;
+                    double columnValue2 = double.Parse(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(pVal.Row).Specific;
+                    double columnValue3 = double.Parse(oEditText.Value.ToString());
+
                     oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(pVal.Row).Specific;
                     var columnValue1 = oCombo.Selected;
 
@@ -2592,7 +2598,8 @@ namespace AddOnCorte
                         columnValue6 = columnValue4 - columnValue7;
 
                     oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCORESU");
-                    string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue7, 2)).ToString();
+                    //string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue7, 2)).ToString();
+                    string calculo = Math.Round(columnValue2*columnValue3*columnValue7*2.54*2.54*12/10000, 2).ToString();
                     if (columnValue1 != null)
                         oDBDataSource.SetValue("U_MGS_CL_LOTE", pVal.Row - 1, columnValue1.Value.ToString());
                     oDBDataSource.SetValue("U_MGS_CL_RBOA", pVal.Row - 1, columnValue6.ToString());
@@ -3018,7 +3025,7 @@ namespace AddOnCorte
 
                         for (int i = 1; i <= oMatrix.RowCount; i++)
                         {
-                            if(colIndex == 1 || colIndex == 7)
+                            if (colIndex == 1 || colIndex == 7)
                                 oMatrix.CommonSetting.SetCellEditable(i, colIndex, state);
                         }
                     }
