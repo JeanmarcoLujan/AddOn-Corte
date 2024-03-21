@@ -637,10 +637,10 @@ namespace AddOnCorte
                             string columnName = oMatrix.Columns.Item(colIndex).TitleObject.Caption;
 
                             oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
-                            string largo = oEditText.Value.ToString();
+                            string largo = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
 
                             oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
-                            string refile = oEditText.Value.ToString();
+                            string refile = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
 
                             resfileCan = resfileCan + Math.Round(double.Parse(refile) * double.Parse(largo) * 1 * 2.54 * 2.54 * 12 / 10000, 2);
 
@@ -652,7 +652,7 @@ namespace AddOnCorte
                                 //string cellValue = oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific.Value;
 
                                 oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific;
-                                string cellValue = oEditText.Value.ToString();
+                                string cellValue = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
                                 double cellValueD = double.Parse(cellValue);
                                 if (cellValueD > 0.00001)
                                 {
@@ -1115,6 +1115,12 @@ namespace AddOnCorte
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(pVal.Row).Specific;
                     int columnValue4 = int.Parse(oEditText.Value.ToString());
 
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(pVal.Row).Specific;
+                    int columnValue2 = int.Parse(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(pVal.Row).Specific;
+                    int columnValue3 = int.Parse(oEditText.Value.ToString());
+
 
 
                     if ((columnValue6 + columnValue7) > columnValue4)
@@ -1128,7 +1134,10 @@ namespace AddOnCorte
                         var columnValue1 = oCombo.Selected;
 
                         oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCORESU");
-                        string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue7, 2)).ToString();
+                       // string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue7, 2)).ToString();
+
+                        string calculo = Math.Round(columnValue2 * columnValue3 * columnValue6 * 2.54 * 2.54 * 12 / 10000, 2).ToString();
+
                         if (columnValue1 != null)
                             oDBDataSource.SetValue("U_MGS_CL_LOTE", pVal.Row - 1, columnValue1.Value.ToString());
                         oDBDataSource.SetValue("U_MGS_CL_RBOA", pVal.Row - 1, columnValue6.ToString());
@@ -2047,11 +2056,18 @@ namespace AddOnCorte
             SAPbouiCOM.DBDataSource oDBDataSource = null;
             SAPbouiCOM.Column oColumn = null;
             SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ProgressBar oPB = null;
             try
             {
-                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
 
                 oForm.Freeze(true);
+                oPB = Globales.oApp.StatusBar.CreateProgressBar("Obteniendo los totales...", 27, true);
+                oPB.Text = "Obteniendo los totales...";
+                oPB.Value = 5;
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                //oForm.Freeze(true);
 
                 double ancho = this.EditText15.Value == "" ? 0 : double.Parse(this.EditText15.Value);
                 int cont_slit = 0;
@@ -2066,8 +2082,9 @@ namespace AddOnCorte
                     //c1_total = double.Parse(oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(1).Specific; //Cast the Cell of 
-                    c1_largo = double.Parse(oEditText.Value.ToString());
-
+                    c1_largo = double.Parse(oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString());
+                    if (c1_largo.ToString() == "0")
+                        oEditText.Value = "0";
 
                     for (int i = 2; i <= oMatrix.RowCount-4; i++)
                     {
@@ -2076,6 +2093,8 @@ namespace AddOnCorte
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i).Specific; //Cast the Cell of 
                         string valor = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
                         c1_sub = c1_sub + double.Parse(valor);
+                        if (valor == "0")
+                            oEditText.Value = "0";
 
 
                         if (i > 2 && i < oMatrix.RowCount - 4)
@@ -2110,8 +2129,22 @@ namespace AddOnCorte
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
                         oEditText.Value = (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString();
                     }
+                    else
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
+                        oEditText.Value = "0";
 
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
+                        oEditText.Value = "0";
 
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
+                        oEditText.Value = "0";
+
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
+                        oEditText.Value = "0";
+                    }
+
+                    oPB.Value = oPB.Value + 1;
                 }
 
                 if (cont_slit > 0)
@@ -2119,13 +2152,23 @@ namespace AddOnCorte
                     Globales.oApp.MessageBox("Los slits, deben llenarse de forma consecutiva, no debe haber slits con valores ceros o vacios entre medio.");
                 }
 
+                System.Threading.Thread.Sleep(1000);
+                oPB.Stop();
+                Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
                 oForm.Freeze(false);
+
+               // oForm.Freeze(false);
 
 
             }
             catch (Exception ex)
             {
                 oForm.Freeze(false);
+                if (oPB != null)
+                {
+                    oPB.Stop();
+                    Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+                }
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
@@ -2344,179 +2387,198 @@ namespace AddOnCorte
 
             try
             {
-                if (this.EditText31.Value != "" && this.EditText31.Value != null)
-                    Globales.oApp.MessageBox("La entrega ya se generó, no es posible volverlo a generar.");
-                else
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+
+
+                double[] doubleColumnValues1 = Enumerable.Range(1, oMatrix.RowCount)
+                    .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific).Value))
+                    .ToArray();
+
+                double sumav = doubleColumnValues1.Sum();
+
+                if(sumav > double.Epsilon)
                 {
-                    if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la entrega de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
+                    if (this.EditText31.Value != "" && this.EditText31.Value != null)
+                        Globales.oApp.MessageBox("La entrega ya se generó, no es posible volverlo a generar.");
+                    else
                     {
-                        oPB = Clases.Globales.oApp.StatusBar.CreateProgressBar("Generando la entrega de venta", 27, true);
-                        oPB.Text = "Generando la entrega de venta";
-                        oPB.Value = 10;
-
-
-                        
-
-
-
-                        oEntrega = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDeliveryNotes);
-                        oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-
-                        double precio = 0;
-                        double cantidadOV = 0;
-                        string docEntryOV = "";
-                        string indicator = "";
-                        bool tiene_precio = false;
-                        var asdasd = this.ComboBox0.Selected.Value.ToString();
-                        oRS.DoQuery(Comunes.Consultas.GetPrecioOrdenVenta(this.ComboBox0.Selected.Value.ToString()));
-                        if (oRS.RecordCount > 0)
+                        if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la entrega de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
                         {
-                            tiene_precio = true;
-                            precio = double.Parse(oRS.Fields.Item(0).Value.ToString());
-                            docEntryOV = oRS.Fields.Item(1).Value.ToString();
-                            cantidadOV = Math.Round( double.Parse(oRS.Fields.Item(2).Value.ToString())*1.05,2);
-                            indicator = oRS.Fields.Item(3).Value.ToString(); ;
-                        }
-                        else
-                            tiene_precio = false;
-                        
-
-                        oEntrega.CardCode = this.EditText2.Value;
-                        oEntrega.TaxDate = DateTime.Now;
-                        oEntrega.DocDate = DateTime.Now;
-                        oEntrega.DocDueDate = DateTime.Now.AddDays(30);
-                        oEntrega.Indicator = indicator;
-                        //SP 360
-
-                        oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
-                        oEntrega.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = this.EditText0.Value.ToString();
-                        if (tiene_precio)
-                            oEntrega.UserFields.Fields.Item("U_MGS_CL_REFOVE").Value = docEntryOV;
-                        //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
-
-                        double sumQtyEntregas = 0;
-
-                        oRS.DoQuery(Comunes.Consultas.GetSumQtyEntregas(this.ComboBox0.Selected.Value.ToString()));
-                        if (oRS.RecordCount > 0)
-                        {
-                            sumQtyEntregas = Math.Round(double.Parse(oRS.Fields.Item(0).Value.ToString()),2);
-                        }
+                            oPB = Clases.Globales.oApp.StatusBar.CreateProgressBar("Generando la entrega de venta", 27, true);
+                            oPB.Text = "Generando la entrega de venta";
+                            oPB.Value = 10;
 
 
-                        oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
-
-                        var asdas = oMatrix.RowCount;
-
-                        double[] doubleColumnValues = Enumerable.Range(1, oMatrix.RowCount)
-                            .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific).Value))
-                            .ToArray();
-
-                        double suma = Math.Round(doubleColumnValues.Sum(),2);
 
 
-                        if(cantidadOV - (sumQtyEntregas + suma) > 0 && tiene_precio == true)
-                        {
-                            for (int i = 1; i <= oMatrix.RowCount; i++)
+
+
+                            oEntrega = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDeliveryNotes);
+                            oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                            double precio = 0;
+                            double cantidadOV = 0;
+                            string docEntryOV = "";
+                            string indicator = "";
+                            bool tiene_precio = false;
+                            var asdasd = this.ComboBox0.Selected.Value.ToString();
+                            oRS.DoQuery(Comunes.Consultas.GetPrecioOrdenVenta(this.ComboBox0.Selected.Value.ToString()));
+                            if (oRS.RecordCount > 0)
                             {
+                                tiene_precio = true;
+                                precio = double.Parse(oRS.Fields.Item(0).Value.ToString());
+                                docEntryOV = oRS.Fields.Item(1).Value.ToString();
+                                cantidadOV = Math.Round(double.Parse(oRS.Fields.Item(2).Value.ToString()) * 1.05, 2);
+                                indicator = oRS.Fields.Item(3).Value.ToString(); ;
+                            }
+                            else
+                                tiene_precio = false;
 
-                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
-                                double cantidad = double.Parse(oEditText.Value.ToString());
 
-                                if (cantidad != 0)
+                            oEntrega.CardCode = this.EditText2.Value;
+                            oEntrega.TaxDate = DateTime.Now;
+                            oEntrega.DocDate = DateTime.Now;
+                            oEntrega.DocDueDate = DateTime.Now.AddDays(30);
+                            oEntrega.Indicator = indicator;
+                            //SP 360
+
+                            oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
+                            oEntrega.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = this.EditText0.Value.ToString();
+                            if (tiene_precio)
+                                oEntrega.UserFields.Fields.Item("U_MGS_CL_REFOVE").Value = docEntryOV;
+                            //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
+
+                            double sumQtyEntregas = 0;
+
+                            oRS.DoQuery(Comunes.Consultas.GetSumQtyEntregas(this.ComboBox0.Selected.Value.ToString()));
+                            if (oRS.RecordCount > 0)
+                            {
+                                sumQtyEntregas = Math.Round(double.Parse(oRS.Fields.Item(0).Value.ToString()), 2);
+                            }
+
+
+                            // oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+
+
+                            double[] doubleColumnValues = Enumerable.Range(1, oMatrix.RowCount)
+                                .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific).Value))
+                                .ToArray();
+
+                            double suma = Math.Round(doubleColumnValues.Sum(), 2);
+
+
+                            if (cantidadOV - (sumQtyEntregas + suma) > 0 && tiene_precio == true)
+                            {
+                                for (int i = 1; i <= oMatrix.RowCount; i++)
                                 {
-                                    oEntrega.Lines.ItemCode = this.EditText4.Value.ToString();
 
-                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
-                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = oEditText.Value.ToString();
+                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
+                                    double cantidad = double.Parse(oEditText.Value.ToString());
 
-                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
-                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = oEditText.Value.ToString();
-
-                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific;
-                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
-
-                                    oEntrega.Lines.Quantity = cantidad;
-
-                                    if (tiene_precio)
-                                        oEntrega.Lines.Price = precio;
-
-                                    oEntrega.Lines.WarehouseCode = "CORTE";
-
-                                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
-                                    var sdsd = oCombo.Selected.Value.ToString();
-                                    oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
-
-
-                                    oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
-                                    oEntrega.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
-
-                                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
-                                    oEntrega.Lines.BatchNumbers.Quantity = cantidad;// double.Parse(oEditText.Value.ToString());
-
-
-                                    oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
-                                    if (oRS.RecordCount > 0)
+                                    if (cantidad != 0)
                                     {
-                                        oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
-                                        oEntrega.Lines.CostingCode = oRS.Fields.Item(1).Value.ToString();
+                                        oEntrega.Lines.ItemCode = this.EditText4.Value.ToString();
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
+                                        oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LARGO").Value = oEditText.Value.ToString();
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
+                                        oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_ANCHO").Value = oEditText.Value.ToString();
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific;
+                                        oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
+
+                                        oEntrega.Lines.Quantity = cantidad;
+
+                                        if (tiene_precio)
+                                            oEntrega.Lines.Price = precio;
+
+                                        oEntrega.Lines.WarehouseCode = "CORTE";
+
+                                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                                        var sdsd = oCombo.Selected.Value.ToString();
+                                        oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
+
+
+                                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                                        oEntrega.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
+                                        oEntrega.Lines.BatchNumbers.Quantity = cantidad;// double.Parse(oEditText.Value.ToString());
+
+
+                                        oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
+                                        if (oRS.RecordCount > 0)
+                                        {
+                                            oEntrega.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = oRS.Fields.Item(0).Value.ToString();
+                                            oEntrega.Lines.CostingCode = oRS.Fields.Item(1).Value.ToString();
+                                        }
+
+                                        oEntrega.Lines.Add();
                                     }
 
-                                    oEntrega.Lines.Add();
+
+                                    if (oPB.Value < 25)
+                                        oPB.Value = oPB.Value + 15;
+
+
                                 }
 
 
-                                if (oPB.Value < 25)
-                                    oPB.Value = oPB.Value + 15;
+
+                                iErrCod = oEntrega.Add();
+                                if (iErrCod != 0)
+                                {
+
+                                    Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
 
 
-                            }
+                                    Globales.oApp.MessageBox("Entrega de venta: " + sErrMsg);
+
+                                }
+                                else
+                                {
+
+                                    oEntrega.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+                                    var sfsdf = Globales.oCompany.GetNewObjectKey();
+
+                                    Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
+
+                                    FuncionesComunes.RegisterLotesUDO3_(oEntrega, "DLN19");
+
+                                    CloseOrdenVenta();
+
+                                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
+                                    SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+
+                                    oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
 
 
-
-                            iErrCod = oEntrega.Add();
-                            if (iErrCod != 0)
-                            {
-
-                                Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
-
-
-                                Globales.oApp.MessageBox("Entrega de venta: " + sErrMsg);
-
+                                }
                             }
                             else
                             {
-
-                                oEntrega.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
-
-                                var sfsdf = Globales.oCompany.GetNewObjectKey();
-
-                                Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
-
-                                FuncionesComunes.RegisterLotesUDO3_(oEntrega, "DLN19");
-
-                                CloseOrdenVenta();
-
-                                Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
-                                SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
-
-                                oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
-
-
+                                Globales.oApp.MessageBox("No se puede generar la entrega porque, esta supera la cantidad de la orden de venta (OV) asociada, o no existe OV");
                             }
+
+
+
+
+                            System.Threading.Thread.Sleep(1000);
+                            oPB.Stop();
+                            Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
                         }
-                        else
-                        {
-                            Globales.oApp.MessageBox("No se puede generar la entrega porque, esta supera la cantidad de la orden de venta (OV) asociada, o no existe OV");
-                        }
-
-
-                        
-
-                        System.Threading.Thread.Sleep(1000);
-                        oPB.Stop();
-                        Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
                     }
                 }
+                else
+                {
+                    Globales.oApp.MessageBox("No hay bobinas para la venta, por ende no puede generar la entrega.");
+                }
+
+
+                
                 
                     
 
@@ -2673,6 +2735,12 @@ namespace AddOnCorte
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(j).Specific;
                     double columnValue5 = double.Parse(oEditText.Value.ToString());
 
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(j).Specific;
+                    double columnValue2 = double.Parse(oEditText.Value.ToString());
+
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(j).Specific;
+                    double columnValue3 = double.Parse(oEditText.Value.ToString());
+
                     oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(j).Specific;
                     var columnValue1 = oCombo.Selected;
 
@@ -2686,7 +2754,8 @@ namespace AddOnCorte
                         columnValue6 = columnValue4 - columnValue7;
 
                     oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCORESU");
-                    string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue7, 2)).ToString();
+                   // string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue7, 2)).ToString();
+                    string calculo = Math.Round(columnValue2 * columnValue3 * columnValue7 * 2.54 * 2.54 * 12 / 10000, 2).ToString();
                     if (columnValue1 != null)
                         oDBDataSource.SetValue("U_MGS_CL_LOTE", j- 1, columnValue1.Value.ToString());
                     oDBDataSource.SetValue("U_MGS_CL_RBOA", j - 1, columnValue6.ToString());
@@ -2798,7 +2867,17 @@ namespace AddOnCorte
 
             try
             {
-                if (this.EditText31.Value != "" && this.EditText31.Value != null)
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+
+                double[] doubleColumnValues1 = Enumerable.Range(1, oMatrix.RowCount)
+                            .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(i).Specific).Value))
+                            .ToArray();
+
+                double sumv = doubleColumnValues1.Sum();
+
+               
+
+                if ( (this.EditText31.Value != "" && this.EditText31.Value != null) || sumv == 0.0 )
                 {
                     if (this.EditText11.Value != "" && this.EditText11.Value != null)
                     {
@@ -2806,6 +2885,9 @@ namespace AddOnCorte
                     }
                     else
                     {
+                        
+
+
                         if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la solicitud de traslado?", 1, "Continuar", "Cancelar", "") == 1)
                         {
 
@@ -2840,7 +2922,7 @@ namespace AddOnCorte
                                 ccrCod = oRS.Fields.Item(1).Value.ToString();
                             }
 
-                            oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
+                            //oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
 
                             double[] doubleColumnValues = Enumerable.Range(1, oMatrix.RowCount)
                                     .Select(i => Convert.ToDouble(((SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(i).Specific).Value))
@@ -2875,10 +2957,19 @@ namespace AddOnCorte
                                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(i).Specific;
                                         int columnValue4 = int.Parse(oEditText.Value.ToString());
 
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
+                                        int columnValue2 = int.Parse(oEditText.Value.ToString());
+
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
+                                        int columnValue3 = int.Parse(oEditText.Value.ToString());
+
                                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
                                         double columnValue5 = double.Parse(oEditText.Value.ToString());
 
-                                        string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue6, 2)).ToString();
+                                        //string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue6, 2)).ToString();
+
+
+                                        string calculo = Math.Round(columnValue2 * columnValue3 * columnValue6 * 2.54 * 2.54 * 12 / 10000, 2).ToString();
 
 
 

@@ -837,15 +837,15 @@ namespace AddOnCorte
                     double resfileCan = 0;
 
                     // Recorrer las columnas de la matriz
-                    for (int colIndex = 2; colIndex <= columnCount - 1; colIndex++)
+                    for (int colIndex = 2; colIndex <= columnCount - 2; colIndex++)
                     {
                         string columnName = oMatrix.Columns.Item(colIndex).TitleObject.Caption;
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(1).Specific;
-                        string largo = oEditText.Value.ToString();
+                        string largo = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
-                        string refile = oEditText.Value.ToString();
+                        string refile = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
 
                         resfileCan = resfileCan + Math.Round(double.Parse(refile) * double.Parse(largo) * 1 * 2.54 * 2.54 * 12 / 10000, 2);
 
@@ -856,7 +856,7 @@ namespace AddOnCorte
                             //string cellValue = oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific.Value;
 
                             oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(rowIndex).Specific;
-                            string cellValue = oEditText.Value.ToString();
+                            string cellValue = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
 
                             double cellValueD = double.Parse(cellValue);
 
@@ -1397,11 +1397,19 @@ namespace AddOnCorte
             SAPbouiCOM.DBDataSource oDBDataSource = null;
             SAPbouiCOM.Column oColumn = null;
             SAPbouiCOM.EditText oEditText = null;
+
+            SAPbouiCOM.ProgressBar oPB = null;
+           
             try
             {
+                oForm.Freeze(true);
+                oPB = Globales.oApp.StatusBar.CreateProgressBar("Obteniendo los totales...", 27, true);
+                oPB.Text = "Obteniendo los totales...";
+                oPB.Value = 5;
+
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
 
-                oForm.Freeze(true);
+                //oForm.Freeze(true);
 
                 double ancho = this.EditText2.Value == "" ? 0 : double.Parse(this.EditText2.Value);
                 int cont_slit = 0;
@@ -1417,7 +1425,9 @@ namespace AddOnCorte
                     //c1_total = double.Parse(oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(1).Specific; //Cast the Cell of 
-                    c1_largo = double.Parse(oEditText.Value.ToString());
+                    c1_largo = double.Parse(oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString());
+                    if (c1_largo.ToString() == "0")
+                        oEditText.Value = "0";
 
 
                     //for (int i = 2; i <= 17; i++)
@@ -1428,17 +1438,24 @@ namespace AddOnCorte
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i).Specific; //Cast the Cell of 
                         string valor = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
                         c1_sub = c1_sub + double.Parse(valor);
-
+                        if (valor == "0")
+                            oEditText.Value = "0";
 
 
                         if (i > 2 && i < oMatrix.RowCount - 4)
                         {
                             oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i+1).Specific; //Cast the Cell of 
                             string valor1 = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
+                            
 
                             if (valor == "0" && valor1 != "0")
                                 cont_slit++;
+
+                            //if (oPB.Value < 15)
+                             
                         }
+
+                        
 
                         oMatrix.FlushToDataSource();
 
@@ -1458,7 +1475,21 @@ namespace AddOnCorte
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
                         oEditText.Value = (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString();
                     }
+                    else
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
+                        oEditText.Value = "0";
 
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
+                        oEditText.Value = "0";
+
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
+                        oEditText.Value = "0";
+
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
+                        oEditText.Value = "0";
+                    }
+                    oPB.Value = oPB.Value + 1;
 
                 }
 
@@ -1467,6 +1498,9 @@ namespace AddOnCorte
                     Globales.oApp.MessageBox("Los slits, deben llenarse de forma consecutiva, no debe haber slits con valores ceros o vacios entre medio.");
                 }
 
+                System.Threading.Thread.Sleep(1000);
+                oPB.Stop();
+                Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
                 oForm.Freeze(false);
 
 
@@ -1474,6 +1508,11 @@ namespace AddOnCorte
             catch (Exception ex)
             {
                 oForm.Freeze(false);
+                if (oPB != null)
+                {
+                    oPB.Stop();
+                    Comunes.FuncionesComunes.LiberarObjetoGenerico(oPB);
+                }
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
