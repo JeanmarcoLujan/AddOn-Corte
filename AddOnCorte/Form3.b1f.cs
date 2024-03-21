@@ -2612,7 +2612,7 @@ namespace AddOnCorte
             SAPbouiCOM.ComboBox oCombo = null;
             try
             {
-
+                /*
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
 
                 double resfileTotal = 0;
@@ -2621,6 +2621,58 @@ namespace AddOnCorte
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
                     resfileTotal = resfileTotal + double.Parse(oEditText.Value.ToString());
                 }
+                */
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                int columnCount = oMatrix.Columns.Count;
+                double resfileTotal = 0;
+                for (int colIndex = 2; colIndex <= columnCount - 2; colIndex++)
+                {
+                    bool validar = false;
+                    switch (colIndex)
+                    {
+                        case 2:
+                            validar = this.CheckBox0.Checked;
+                            break;
+                        case 3:
+                            validar = this.CheckBox1.Checked;
+                            break;
+                        case 4:
+                            validar = this.CheckBox2.Checked;
+                            break;
+                        case 5:
+                            validar = this.CheckBox3.Checked;
+                            break;
+                        case 6:
+                            validar = this.CheckBox4.Checked;
+                            break;
+                        case 7:
+                            validar = this.CheckBox5.Checked;
+                            break;
+                        case 8:
+                            validar = this.CheckBox6.Checked;
+                            break;
+                        case 9:
+                            validar = this.CheckBox7.Checked;
+                            break;
+                        case 10:
+                            validar = this.CheckBox8.Checked;
+                            break;
+                        case 11:
+                            validar = this.CheckBox9.Checked;
+                            break;
+                    }
+
+                    if (validar)
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
+                        resfileTotal = resfileTotal + double.Parse(oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString());
+                    }
+                }
+
+
+
 
 
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
@@ -2633,7 +2685,7 @@ namespace AddOnCorte
                     int columnValue6 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(pVal.Row).Specific;
-                    int columnValue7 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
+                    int columnValue7 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(pVal.Row).Specific;
                     int columnValue4 = int.Parse(oEditText.Value.ToString());
@@ -2717,6 +2769,68 @@ namespace AddOnCorte
             SAPbouiCOM.ComboBox oCombo = null;
             try
             {
+                /*
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                double resfileTotal = 0;
+                for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 2; colIndex++)
+                {
+                    oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
+                    resfileTotal = resfileTotal + double.Parse(oEditText.Value.ToString());
+                }
+                */
+
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+
+                int columnCount = oMatrix.Columns.Count;
+                double resfileTotal = 0;
+                for (int colIndex = 2; colIndex <= columnCount - 2; colIndex++)
+                {
+                    bool validar = false;
+                    switch (colIndex)
+                    {
+                        case 2:
+                            validar = this.CheckBox0.Checked;
+                            break;
+                        case 3:
+                            validar = this.CheckBox1.Checked;
+                            break;
+                        case 4:
+                            validar = this.CheckBox2.Checked;
+                            break;
+                        case 5:
+                            validar = this.CheckBox3.Checked;
+                            break;
+                        case 6:
+                            validar = this.CheckBox4.Checked;
+                            break;
+                        case 7:
+                            validar = this.CheckBox5.Checked;
+                            break;
+                        case 8:
+                            validar = this.CheckBox6.Checked;
+                            break;
+                        case 9:
+                            validar = this.CheckBox7.Checked;
+                            break;
+                        case 10:
+                            validar = this.CheckBox8.Checked;
+                            break;
+                        case 11:
+                            validar = this.CheckBox9.Checked;
+                            break;
+                    }
+
+                    if (validar)
+                    {
+                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific;
+                        resfileTotal = resfileTotal + double.Parse(oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString());
+                    }
+                }
+
+
+
+
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
 
                 for (int j = 1; j <= oMatrix.RowCount; j++)
@@ -2727,7 +2841,9 @@ namespace AddOnCorte
                     int columnValue6 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(7).Cells.Item(j).Specific;
-                    int columnValue7 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString());
+                    int columnValue7 = FuncionesComunes.ValidateNumberInt(oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString());
+                    //if(oEditText.Value.ToString() == "")
+
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(4).Cells.Item(j).Specific;
                     int columnValue4 = int.Parse(oEditText.Value.ToString());
@@ -2779,7 +2895,7 @@ namespace AddOnCorte
 
                     this.EditText7.Value = sum_ba.ToString();
                     this.EditText8.Value = sum_bv.ToString();
-                    this.EditText9.Value = Math.Round(sum_cv, 2).ToString();
+                    this.EditText9.Value = Math.Round(sum_cv+resfileTotal, 2).ToString();
                     //this.EditText12.Value = (Math.Round(sum_cv, 2) * double.Parse(this.EditText11.Value.ToString())).ToString();
                     //this.EditText13.Value = (double.Parse(this.EditText12.Value.ToString()) * 1.16).ToString();
                     //this.EditText14.Value = (100 * double.Parse(this.EditText9.Value.ToString()) / double.Parse(this.EditText6.Value.ToString())).ToString();
