@@ -1116,10 +1116,10 @@ namespace AddOnCorte
                     int columnValue4 = int.Parse(oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(pVal.Row).Specific;
-                    int columnValue2 = int.Parse(oEditText.Value.ToString());
+                    double columnValue2 = double.Parse(oEditText.Value.ToString());
 
                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(pVal.Row).Specific;
-                    int columnValue3 = int.Parse(oEditText.Value.ToString());
+                    double columnValue3 = double.Parse(oEditText.Value.ToString());
 
 
 
@@ -1136,7 +1136,7 @@ namespace AddOnCorte
                         oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCORESU");
                        // string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue7, 2)).ToString();
 
-                        string calculo = Math.Round(columnValue2 * columnValue3 * columnValue6 * 2.54 * 2.54 * 12 / 10000, 2).ToString();
+                        string calculo = Math.Round(columnValue2 * columnValue3 * columnValue7 * 2.54 * 2.54 * 12 / 10000, 2).ToString();
 
                         if (columnValue1 != null)
                             oDBDataSource.SetValue("U_MGS_CL_LOTE", pVal.Row - 1, columnValue1.Value.ToString());
@@ -1430,6 +1430,7 @@ namespace AddOnCorte
                     oInventoryExit.TaxDate = DateTime.Now;
                     oInventoryExit.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
                     oInventoryExit.UserFields.Fields.Item("U_MGS_CL_MOTSAL").Value = "01";
+                    oInventoryExit.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
                     string modelo = "";
                     string ccrCod = "";
@@ -1542,6 +1543,7 @@ namespace AddOnCorte
                 oInventoryExit.TaxDate = DateTime.Now;
                 oInventoryExit.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
                 oInventoryExit.UserFields.Fields.Item("U_MGS_CL_MOTSAL").Value = "01";
+                oInventoryExit.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
                 int validarItem = 0;
                 oRS.DoQuery(Comunes.Consultas.ValidateArticuloLotes(this.EditText21.Value.ToString()));
@@ -1557,6 +1559,9 @@ namespace AddOnCorte
                 {
                     almacen = oRS.Fields.Item(0).Value.ToString();
                 }
+
+                almacen = "CORTE";
+
 
                 string modelo = "";
                 string ccrCod = "";
@@ -1720,6 +1725,7 @@ namespace AddOnCorte
                 oSalesOpportunity.DocDate = DateTime.Now;
                 oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
                 oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_MOTENT").Value = "01";
+                oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
 
                 //oSalesOpportunity.DocumentReferences.ReferencedObjectType = SAPbobsCOM.ReferencedObjectTypeEnum.rot_SalesOrder;
@@ -2421,6 +2427,7 @@ namespace AddOnCorte
                             double cantidadOV = 0;
                             string docEntryOV = "";
                             string indicator = "";
+                            string trnspCode = "";
                             bool tiene_precio = false;
                             var asdasd = this.ComboBox0.Selected.Value.ToString();
                             oRS.DoQuery(Comunes.Consultas.GetPrecioOrdenVenta(this.ComboBox0.Selected.Value.ToString()));
@@ -2430,7 +2437,8 @@ namespace AddOnCorte
                                 precio = double.Parse(oRS.Fields.Item(0).Value.ToString());
                                 docEntryOV = oRS.Fields.Item(1).Value.ToString();
                                 cantidadOV = Math.Round(double.Parse(oRS.Fields.Item(2).Value.ToString()) * 1.05, 2);
-                                indicator = oRS.Fields.Item(3).Value.ToString(); ;
+                                indicator = oRS.Fields.Item(3).Value.ToString();
+                                trnspCode = oRS.Fields.Item(4).Value.ToString();
                             }
                             else
                                 tiene_precio = false;
@@ -2441,10 +2449,13 @@ namespace AddOnCorte
                             oEntrega.DocDate = DateTime.Now;
                             oEntrega.DocDueDate = DateTime.Now.AddDays(30);
                             oEntrega.Indicator = indicator;
+                            oEntrega.TransportationCode = int.Parse(trnspCode);
                             //SP 360
 
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = this.EditText0.Value.ToString();
+                            oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
+                            
                             if (tiene_precio)
                                 oEntrega.UserFields.Fields.Item("U_MGS_CL_REFOVE").Value = docEntryOV;
                             //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
@@ -3074,10 +3085,10 @@ namespace AddOnCorte
                                         int columnValue4 = int.Parse(oEditText.Value.ToString());
 
                                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(2).Cells.Item(i).Specific;
-                                        int columnValue2 = int.Parse(oEditText.Value.ToString());
+                                        double columnValue2 = double.Parse(oEditText.Value.ToString());
 
                                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(3).Cells.Item(i).Specific;
-                                        int columnValue3 = int.Parse(oEditText.Value.ToString());
+                                        double columnValue3 = double.Parse(oEditText.Value.ToString());
 
                                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
                                         double columnValue5 = double.Parse(oEditText.Value.ToString());
