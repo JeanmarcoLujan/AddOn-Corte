@@ -242,5 +242,23 @@ namespace AddOnCorte.Comunes
 
             return m_sSQL.ToString();
         }
+
+        public static string GetNumAtCardDoc(string indicator, string series)
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('NUMATCARD','{0}','{1}','',''); ", indicator, series);
+
+            return m_sSQL.ToString();
+        }
+
+        public static string GetNroCon(string indicator, string series)
+        {
+            m_sSQL.Length = 0;
+
+            m_sSQL.AppendFormat(" CALL MGS_HDB_PE_SP_ADDON_CORTE_GETVALUE ('NROCON','{0}','{1}','',''); ", indicator, series);
+
+            return m_sSQL.ToString();
+        }
     }
 }

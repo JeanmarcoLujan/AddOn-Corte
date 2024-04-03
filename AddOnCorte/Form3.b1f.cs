@@ -2393,7 +2393,7 @@ namespace AddOnCorte
 
             try
             {
-
+               // UpdateEntrega(34);
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
 
 
@@ -2448,8 +2448,10 @@ namespace AddOnCorte
                             oEntrega.TaxDate = DateTime.Now;
                             oEntrega.DocDate = DateTime.Now;
                             oEntrega.DocDueDate = DateTime.Now.AddDays(30);
-                            oEntrega.Indicator = indicator;
-                            oEntrega.TransportationCode = int.Parse(trnspCode);
+                            if(indicator!="")
+                                oEntrega.Indicator = indicator;
+                            if(trnspCode!="")
+                                oEntrega.TransportationCode = int.Parse(trnspCode);
                             //SP 360
 
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
@@ -2553,11 +2555,13 @@ namespace AddOnCorte
 
                                     oEntrega.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
 
-                                    var sfsdf = Globales.oCompany.GetNewObjectKey();
+                                   
 
                                     Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
 
                                     FuncionesComunes.RegisterLotesUDO3_(oEntrega, "DLN19");
+
+                                    UpdateEntrega(oEntrega.DocEntry);
 
                                     CloseOrdenVenta();
 
@@ -2588,14 +2592,6 @@ namespace AddOnCorte
                     Globales.oApp.MessageBox("No hay bobinas para la venta, por ende no puede generar la entrega.");
                 }
 
-
-                
-                
-                    
-
-                
-
-
             }
             catch (Exception ex)
             {
@@ -2607,6 +2603,69 @@ namespace AddOnCorte
                 }
                 //Comunes.Funciones.RemoveRegisterUDO(docEntryUDO);
             }
+
+        }
+
+
+        private void UpdateEntrega(int docEntry)
+        {
+            SAPbobsCOM.Documents oEntrega = null;
+
+            SAPbobsCOM.Recordset oRS = null;
+        
+            int iErrCod;
+            string sErrMsg = "";
+            try
+            {
+                oEntrega = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDeliveryNotes);
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                oEntrega.GetByKey(docEntry);
+
+                string numAtcard = "-1";
+                string nrocon = "-1";
+
+                var asdasd = oEntrega.Series;
+                var asdasd123 = oEntrega.Indicator;
+
+                oRS.DoQuery(Comunes.Consultas.GetNumAtCardDoc( oEntrega.Indicator, oEntrega.Series.ToString()));
+                if (oRS.RecordCount > 0)
+                {
+                    numAtcard = oRS.Fields.Item(0).Value.ToString();
+                }
+
+                oRS.DoQuery(Comunes.Consultas.GetNroCon(oEntrega.Indicator, oEntrega.Series.ToString()));
+                if (oRS.RecordCount > 0)
+                {
+                    nrocon = oRS.Fields.Item(0).Value.ToString();
+                }
+
+
+                if (numAtcard != "-1" && nrocon != "-1" && oEntrega.Indicator == "01")
+                {
+                    oEntrega.NumAtCard = numAtcard;
+                    oEntrega.UserFields.Fields.Item("U_MGS_LC_NROCON").Value = nrocon;
+
+                    iErrCod = oEntrega.Update();
+                    if (iErrCod != 0)
+                    {
+
+                        Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+
+                        Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Actualizar la entrega NutAtCard, NroCon : " + sErrMsg,
+                                SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
+
+
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+
 
         }
 
