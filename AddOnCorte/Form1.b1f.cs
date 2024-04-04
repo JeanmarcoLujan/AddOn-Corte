@@ -1191,9 +1191,10 @@ namespace AddOnCorte
 
                         oSalesOpportunity.Lines.Quantity = cantidad;
 
-                        oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
-                        var sdsd = oCombo.Selected.Value.ToString();
-                        oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
+                        //Almacenar el lote a nivel de linea, en la oferta de venta.
+                        //oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
+                        //var sdsd = oCombo.Selected.Value.ToString();
+                        //oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_LOTE").Value = oCombo.Selected.Value.ToString();
 
                         oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
                         if (oRS.RecordCount > 0)
