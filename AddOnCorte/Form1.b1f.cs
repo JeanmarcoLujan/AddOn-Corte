@@ -837,7 +837,7 @@ namespace AddOnCorte
                     double resfileCan = 0;
 
                     // Recorrer las columnas de la matriz
-                    for (int colIndex = 2; colIndex <= columnCount - 2; colIndex++)
+                    for (int colIndex = 2; colIndex <= columnCount - 1; colIndex++)
                     {
                         string columnName = oMatrix.Columns.Item(colIndex).TitleObject.Caption;
 
