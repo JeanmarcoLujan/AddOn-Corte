@@ -416,6 +416,9 @@ namespace AddOnCorte
                     oGrid.Columns.Item("Seleccion").Type = SAPbouiCOM.BoGridColumnType.gct_CheckBox;
                     oGrid.Columns.Item("Seleccion").TitleObject.Caption = "Check";
 
+                    oGrid.Columns.Item("WhsCode").TitleObject.Caption = "Almacén";
+                    oGrid.Columns.Item("WhsCode").Editable = false;
+
                     oGrid.Columns.Item("U_MGS_CL_ANCHO").TitleObject.Caption = "Ancho";
                     oGrid.Columns.Item("U_MGS_CL_ANCHO").Editable = false;
 

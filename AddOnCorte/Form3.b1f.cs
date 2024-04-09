@@ -2415,11 +2415,6 @@ namespace AddOnCorte
                             oPB.Text = "Generando la entrega de venta";
                             oPB.Value = 10;
 
-
-
-
-
-
                             oEntrega = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDeliveryNotes);
                             oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
 
@@ -2453,6 +2448,11 @@ namespace AddOnCorte
                             if(trnspCode!="")
                                 oEntrega.TransportationCode = int.Parse(trnspCode);
                             //SP 360
+
+                            if (indicator == "01")
+                                oEntrega.Series = 77;
+                            else
+                                oEntrega.Series = 84;
 
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = this.EditText0.Value.ToString();
