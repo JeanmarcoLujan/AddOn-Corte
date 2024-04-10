@@ -147,18 +147,25 @@ namespace AddOnCorte
                             BubbleEvent = true;
                             break;
                         case "1284":
-                            if (validateDocCancel(this.EditText21.Value))
+                            if (Globales.oApp.Forms.ActiveForm.BusinessObject.Type.ToString() == "MGS_CL_COCABE")
                             {
-                                if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la solicitud de corte?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
-                                    BubbleEvent = true;
+                                if (validateDocCancel(this.EditText21.Value))
+                                {
+                                    var asdad = oForm;
+                                    if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la solicitud de corte?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
+                                        BubbleEvent = true;
+                                    else
+                                        BubbleEvent = false;
+                                }
                                 else
+                                {
                                     BubbleEvent = false;
+                                    Globales.oApp.MessageBox("No es posible cancelar la solicitud, porque ya se generó la 'Oferta de venta'. ");
+                                }
                             }
-                            else
-                            {
-                                BubbleEvent = false;
-                                Globales.oApp.MessageBox("No es posible cancelar la solicitud, porque ya se generó la 'Oferta de venta'. ");
-                            }
+
+
+                            
                             break;
                     }
                 }
@@ -175,12 +182,13 @@ namespace AddOnCorte
                             this.Button6.Item.Enabled = false;
                             this.EditText0.Item.Enabled = false;
                             this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
-
+                            this.EditText4.Item.Enabled = true;
                             break;
                         case "1281":
                             var asdasd = "";
                             this.Button3.Item.Enabled = false;
                             this.EditText0.Item.Enabled = true;
+                            this.EditText4.Item.Enabled = true;
                             break;
                         case "1290":
                         case "1289":
@@ -188,6 +196,7 @@ namespace AddOnCorte
                         case "1291":
                             var ssss = "";
                             this.EditText0.Item.Enabled = false;
+                            this.EditText4.Item.Enabled = false;
                             break;
                         case "1284":
                             Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "C", "U_MGS_CL_ESTD");
@@ -220,7 +229,7 @@ namespace AddOnCorte
             oForm.Items.Item("Item_38").Left = oForm.Items.Item("Item_36").Width + oForm.Items.Item("Item_36").Left + 1;
             oForm.Items.Item("Item_16").Left = oForm.Items.Item("Item_38").Width + oForm.Items.Item("Item_38").Left + 5;
 
-
+            this.EditText4.Item.Enabled = true;
         }
 
         private SAPbouiCOM.StaticText StaticText0;
@@ -1288,6 +1297,8 @@ namespace AddOnCorte
                 }else
                     this.Button6.Item.Enabled = true;
 
+                this.EditText4.Item.Enabled = false;
+
                 List<string> listaLotes = new List<string>();
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
 
@@ -2132,7 +2143,11 @@ namespace AddOnCorte
                 }
                 else
                 {
-                    oRS.DoQuery(Comunes.Consultas.ValidateDocCancel(this.EditText4.Value.ToString()));
+
+
+                    var asdasd = this.EditText4.Value;
+
+                    oRS.DoQuery(Comunes.Consultas.ValidateDocCancel(this.EditText21.Value.ToString()));
                     if (oRS.RecordCount > 0)
                     {
                         rs = true;
