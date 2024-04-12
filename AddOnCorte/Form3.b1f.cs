@@ -3152,14 +3152,20 @@ namespace AddOnCorte
                                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
                                         double columnValue5 = double.Parse(oEditText.Value.ToString());
 
+                                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
+                                        double columnValue8 = double.Parse(oEditText.Value.ToString());
+
+
                                         //string calculo = (Math.Round((columnValue5 / columnValue4) * columnValue6, 2)).ToString();
 
 
-                                        string calculo = Math.Round(columnValue2 * columnValue3 * columnValue6 * 2.54 * 2.54 * 12 / 10000, 2).ToString();
+                                       // string calculo = Math.Round(columnValue2 * columnValue3 * columnValue6 * 2.54 * 2.54 * 12 / 10000, 2).ToString();
+
+                                        double  calculo1 = Math.Round( columnValue5 - columnValue8,2);
 
 
-
-                                        oTransferReq.Lines.Quantity =  double.Parse(calculo);
+                                        //oTransferReq.Lines.Quantity =  double.Parse(calculo);
+                                        oTransferReq.Lines.Quantity =  calculo1;
 
                                         oTransferReq.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
                                         oTransferReq.Lines.DistributionRule = ccrCod;
@@ -3172,7 +3178,8 @@ namespace AddOnCorte
                                         oTransferReq.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();
 
                                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(5).Cells.Item(i).Specific;
-                                        oTransferReq.Lines.BatchNumbers.Quantity =   double.Parse(calculo.ToString());// double.Parse(oEditText.Value.ToString());
+                                       // oTransferReq.Lines.BatchNumbers.Quantity =   double.Parse(calculo1.ToString());// double.Parse(oEditText.Value.ToString());
+                                        oTransferReq.Lines.BatchNumbers.Quantity =   calculo1;// double.Parse(oEditText.Value.ToString());
 
                                         oTransferReq.Lines.Add();
                                     }
