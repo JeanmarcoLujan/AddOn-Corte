@@ -957,6 +957,7 @@ namespace AddOnCorte
 
                 }
 
+                listaLotes = listaLotes.Distinct().ToList();
 
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
 
@@ -2393,7 +2394,11 @@ namespace AddOnCorte
 
             try
             {
-               // UpdateEntrega(34);
+
+
+               // UpdateEntrega(2717);
+
+                // UpdateEntrega(34);
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
 
 
@@ -2449,8 +2454,33 @@ namespace AddOnCorte
                                 oEntrega.TransportationCode = int.Parse(trnspCode);
                             //SP 360
 
+                            string numAtcard = "-1";
+                            string nrocon = "-1";
+
                             if (indicator == "01")
+                            {
                                 oEntrega.Series = 77;
+                                oRS.DoQuery(Comunes.Consultas.GetNumAtCardDoc(indicator,"77"));
+                                if (oRS.RecordCount > 0)
+                                {
+                                    numAtcard = oRS.Fields.Item(0).Value.ToString();
+                                }
+
+                                oRS.DoQuery(Comunes.Consultas.GetNroCon(indicator, "77"));
+                                if (oRS.RecordCount > 0)
+                                {
+                                    nrocon = oRS.Fields.Item(0).Value.ToString();
+                                }
+
+
+                                if (numAtcard != "-1" && nrocon != "-1")
+                                {
+                                    oEntrega.NumAtCard = numAtcard;
+                                    oEntrega.UserFields.Fields.Item("U_MGS_LC_NROCON").Value = nrocon;
+                                }
+
+                            }
+                            
                             else
                                 oEntrega.Series = 84;
 
@@ -2462,6 +2492,8 @@ namespace AddOnCorte
                                 oEntrega.UserFields.Fields.Item("U_MGS_CL_REFOVE").Value = docEntryOV;
                             //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
+
+
                             double sumQtyEntregas = 0;
 
                             oRS.DoQuery(Comunes.Consultas.GetSumQtyEntregas(this.ComboBox0.Selected.Value.ToString()));
@@ -2469,6 +2501,7 @@ namespace AddOnCorte
                             {
                                 sumQtyEntregas = Math.Round(double.Parse(oRS.Fields.Item(0).Value.ToString()), 2);
                             }
+
 
 
                             // oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
@@ -2561,7 +2594,7 @@ namespace AddOnCorte
 
                                     FuncionesComunes.RegisterLotesUDO3_(oEntrega, "DLN19");
 
-                                    UpdateEntrega(oEntrega.DocEntry);
+                                    //UpdateEntrega(oEntrega.DocEntry);
 
                                     CloseOrdenVenta();
 

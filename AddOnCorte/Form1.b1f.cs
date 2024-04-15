@@ -1311,6 +1311,8 @@ namespace AddOnCorte
 
                 }
 
+                listaLotes = listaLotes.Distinct().ToList();
+
 
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
 

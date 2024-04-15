@@ -96,6 +96,7 @@ namespace AddOnCorte
         {
             oForm = Application.SBO_Application.Forms.Item(this.UIAPIRawForm.UniqueID);
             this.ComboBox0.Select(0, SAPbouiCOM.BoSearchKey.psk_Index);
+           // this.ComboBox0.Selected.Value = "A";
             ListSolicitudes();
 
         }
@@ -175,10 +176,10 @@ namespace AddOnCorte
                 oGrid = ((SAPbouiCOM.Grid)oForm.Items.Item("Item_0").Specific);
                 oGrid.DataTable = oForm.DataSources.DataTables.Item("dt_gr");
 
-                if (this.ComboBox0.Value.ToString() != "")
+                if (this.ComboBox0.Selected.Value.ToString() != "")
                 {
 
-                    if (this.ComboBox0.Value.ToString() == "A")
+                    if (this.ComboBox0.Selected.Value.ToString() == "A")
                     {
                         this.Button1.Item.Enabled = true;
                         this.Button2.Item.Enabled = false;
@@ -190,7 +191,7 @@ namespace AddOnCorte
                     }
 
 
-                    oGrid.DataTable.ExecuteQuery(Comunes.Consultas.GetSolicitudesAgenda(this.ComboBox0.Value));
+                    oGrid.DataTable.ExecuteQuery(Comunes.Consultas.GetSolicitudesAgenda(this.ComboBox0.Selected.Value));
 
 
                     oGrid.Columns.Item("Codigo").Editable = false;
@@ -226,6 +227,10 @@ namespace AddOnCorte
 
                     oGrid.Columns.Item("Indicador").Editable = false;
                     oGrid.Columns.Item("Indicador").TitleObject.Caption = "Indicador 911";
+
+                    oGrid.Columns.Item("Ancho").Editable = false;
+                    oGrid.Columns.Item("Largo").Editable = false;
+                    oGrid.Columns.Item("Cantidad(m2)").Editable = false;
 
                     if (this.ComboBox0.Value.ToString() == "A")
                     {
