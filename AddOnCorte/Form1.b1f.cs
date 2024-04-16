@@ -109,6 +109,9 @@ namespace AddOnCorte
             this.Button5.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button5_PressedAfter);
             this.Button6 = ((SAPbouiCOM.Button)(this.GetItem("Item_60").Specific));
             this.Button6.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button6_PressedAfter);
+            this.CheckBox0 = ((SAPbouiCOM.CheckBox)(this.GetItem("Item_61").Specific));
+            this.CheckBox0.PressedAfter += new SAPbouiCOM._ICheckBoxEvents_PressedAfterEventHandler(this.CheckBox0_PressedAfter);
+            this.StaticText23 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_62").Specific));
             this.OnCustomInitialize();
 
         }
@@ -183,12 +186,14 @@ namespace AddOnCorte
                             this.EditText0.Item.Enabled = false;
                             this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
                             this.EditText4.Item.Enabled = true;
+                            this.CheckBox0.Item.Enabled = true;
                             break;
                         case "1281":
                             var asdasd = "";
                             this.Button3.Item.Enabled = false;
                             this.EditText0.Item.Enabled = true;
                             this.EditText4.Item.Enabled = true;
+                            this.CheckBox0.Item.Enabled = false;
                             break;
                         case "1290":
                         case "1289":
@@ -197,6 +202,7 @@ namespace AddOnCorte
                             var ssss = "";
                             this.EditText0.Item.Enabled = false;
                             this.EditText4.Item.Enabled = false;
+                            this.CheckBox0.Item.Enabled = false;
                             break;
                         case "1284":
                             Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "C", "U_MGS_CL_ESTD");
@@ -580,6 +586,7 @@ namespace AddOnCorte
                         oDBDataSource.SetValue("U_MGS_CL_MLAR", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_LARGO", i).ToString());
                         oDBDataSource.SetValue("U_MGS_CL_MNBO", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_BOBINA", i).ToString());
                         oDBDataSource.SetValue("U_MGS_CL_MCAN", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_CANT", i).ToString());
+                        oDBDataSource.SetValue("U_MGS_CL_ALMC", oDBDataSource.Size - 1, oForm.DataSources.DataTables.Item("dt_lt").GetValue("WhsCode", i).ToString());
 
 
                         //var asdasd34 = oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_FECHA", i).ToString();
@@ -1298,6 +1305,7 @@ namespace AddOnCorte
                     this.Button6.Item.Enabled = true;
 
                 this.EditText4.Item.Enabled = false;
+                this.CheckBox0.Item.Enabled = false;
 
                 List<string> listaLotes = new List<string>();
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
@@ -1341,6 +1349,11 @@ namespace AddOnCorte
                     for (int i = 1; i <= oMatrix.RowCount; i++)
                     {
                         oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
+
+                        if (this.CheckBox0.Checked)
+                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                        else
+                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
                         //oMatrix.CommonSetting.SetCellEditable(19, colIndex, false);
                         //oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
                         //oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
@@ -1698,10 +1711,22 @@ namespace AddOnCorte
                     {
                         for (int i = 1; i <= oMatrix.RowCount; i++)
                         {
+                            
+
                             if (i > 17)
                                 oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
                             else
                                 oMatrix.CommonSetting.SetCellEditable(i, colIndex, true);
+
+                            if (i == 2)
+                            {
+                                oMatrix.CommonSetting.SetCellEditable(2, colIndex, CheckBox0.Checked);
+                                if (CheckBox0.Checked)
+                                    oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                                else
+                                    oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
+                            }
+                               
                         }
 
 
@@ -2171,9 +2196,52 @@ namespace AddOnCorte
             return rs;
         }
 
+        private SAPbouiCOM.CheckBox CheckBox0;
+        private SAPbouiCOM.StaticText StaticText23;
+
+        private void CheckBox0_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            //throw new System.NotImplementedException();
 
 
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.EditText oEditText = null;
+            try
+            {
 
-        
+                if (pVal.FormMode == 3)
+                {
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                    for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                    {
+                        oMatrix.CommonSetting.SetCellEditable(2, colIndex, CheckBox0.Checked);
+                        if(CheckBox0.Checked)
+                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                        else
+                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
+
+                        if (!CheckBox0.Checked)
+                        {
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
+                        }
+                        
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+
+        }
+
+        private int RGB(int red, int green, int blue)
+        {
+            return (red & 0xFF) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 16);
+        }
     }
 }

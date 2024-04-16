@@ -155,6 +155,10 @@ namespace AddOnCorte
             this.StaticText13 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_42").Specific));
             this.EditText11 = ((SAPbouiCOM.EditText)(this.GetItem("Item_43").Specific));
             this.LinkedButton5 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_44").Specific));
+            this.StaticText14 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_45").Specific));
+            this.StaticText15 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_46").Specific));
+            this.CheckBox12 = ((SAPbouiCOM.CheckBox)(this.GetItem("Item_47").Specific));
+            this.CheckBox12.PressedAfter += new SAPbouiCOM._ICheckBoxEvents_PressedAfterEventHandler(this.CheckBox12_PressedAfter);
             this.OnCustomInitialize();
 
         }
@@ -344,6 +348,7 @@ namespace AddOnCorte
                                 oDBDataSource.SetValue("U_MGS_CL_MLAR", oDBDataSource.Size - 1, item.MGS_CL_MLAR);
                                 oDBDataSource.SetValue("U_MGS_CL_MNBO", oDBDataSource.Size - 1, item.MGS_CL_MNBO);
                                 oDBDataSource.SetValue("U_MGS_CL_MCAN", oDBDataSource.Size - 1, item.MGS_CL_MCAN);
+                                oDBDataSource.SetValue("U_MGS_CL_ALMC", oDBDataSource.Size - 1, item.MGS_CL_ALMC);
 
                                 DateTime fecha;
                                 if (DateTime.TryParseExact(item.MGS_CL_FECADM, posiblesFormatos, null, System.Globalization.DateTimeStyles.None, out fecha))
@@ -806,6 +811,11 @@ namespace AddOnCorte
                                 oMatrix.CommonSetting.SetCellEditable(19, colIndex, false);
                                 oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
                                 oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
+
+                                if (this.CheckBox12.Checked)
+                                    oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                                else
+                                    oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
                             }
                         }
                     }
@@ -1022,6 +1032,11 @@ namespace AddOnCorte
                                 oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(0, 128, 0));
                             else
                                 oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(211, 211, 211));
+
+                            if (this.CheckBox12.Checked)
+                                oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                            else
+                                oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
 
                             oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
                         }
@@ -3362,6 +3377,46 @@ namespace AddOnCorte
 
         }
 
-        
+        private SAPbouiCOM.StaticText StaticText14;
+        private SAPbouiCOM.StaticText StaticText15;
+        private SAPbouiCOM.CheckBox CheckBox12;
+
+        private void CheckBox12_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.EditText oEditText = null;
+            try
+            {
+
+                if (pVal.FormMode == 3)
+                {
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                    for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
+                    {
+                        oMatrix.CommonSetting.SetCellEditable(2, colIndex, this.CheckBox12.Checked);
+                        if (this.CheckBox12.Checked)
+                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                        else
+                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
+
+                        if (!this.CheckBox12.Checked)
+                        {
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
+                        }
+
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+            }
+
+        }
     }
 }
