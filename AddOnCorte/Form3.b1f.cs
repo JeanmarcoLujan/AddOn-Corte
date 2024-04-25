@@ -159,6 +159,12 @@ namespace AddOnCorte
             this.StaticText15 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_46").Specific));
             this.CheckBox12 = ((SAPbouiCOM.CheckBox)(this.GetItem("Item_47").Specific));
             this.CheckBox12.PressedAfter += new SAPbouiCOM._ICheckBoxEvents_PressedAfterEventHandler(this.CheckBox12_PressedAfter);
+            this.StaticText16 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_48").Specific));
+            this.StaticText40 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_99").Specific));
+            this.EditText12 = ((SAPbouiCOM.EditText)(this.GetItem("Item_100").Specific));
+            this.EditText12.KeyDownAfter += new SAPbouiCOM._IEditTextEvents_KeyDownAfterEventHandler(this.EditText12_KeyDownAfter);
+            this.EditText13 = ((SAPbouiCOM.EditText)(this.GetItem("Item_101").Specific));
+            this.LinkedButton6 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_102").Specific));
             this.OnCustomInitialize();
 
         }
@@ -322,6 +328,7 @@ namespace AddOnCorte
                             this.EditText15.Value = sol.MGS_CL_MTANC;
                             this.EditText16.Value = sol.MGS_CL_MTLAR;
                             this.EditText17.Value = sol.MGS_CL_MTCANT;
+                            this.CheckBox12.Checked = sol.MGS_CL_RESFILE;
 
 
 
@@ -1539,6 +1546,8 @@ namespace AddOnCorte
 
             return rpta;
         }
+
+        /*
         private bool GenerateSalidaCore()
         {
 
@@ -1667,7 +1676,7 @@ namespace AddOnCorte
                 if (contar - contar_ancho_corridas > 0)
                 {
                     oInventoryExit.Lines.ItemCode = this.EditText21.Value.ToString();
-                    oInventoryExit.Lines.Quantity = (contar - contar_ancho_corridas);
+                    oInventoryExit.Lines.Quantity =   (contar - contar_ancho_corridas);
                     oInventoryExit.Lines.WarehouseCode = almacen;
                     oInventoryExit.Lines.AccountCode = "5110190";
                     oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
@@ -1707,6 +1716,124 @@ namespace AddOnCorte
                         rpta = true;
                     }
                 }
+
+
+            }
+            catch (Exception ex)
+            {
+                // Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                throw ex;
+            }
+
+            return rpta;
+        }
+
+        */
+
+        private bool GenerateSalidaCore()
+        {
+
+            SAPbobsCOM.Documents oInventoryExit = null;
+            SAPbobsCOM.Recordset oRS = null;
+            SAPbouiCOM.Matrix oMatrix = null;
+            SAPbouiCOM.EditText oEditText = null;
+
+            int iErrCod;
+            string sErrMsg = "";
+            bool rpta = true;
+            try
+            {
+                oInventoryExit = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInventoryGenExit);
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                int NumCore = int.Parse(this.EditText12.Value.ToString() == "" ? "0" : this.EditText12.Value.ToString());
+                string ItemCore = this.EditText21.Value.ToString();
+
+                if(ItemCore!="" && NumCore > 0)
+                {
+                    oInventoryExit.DocDate = DateTime.Now;
+                    oInventoryExit.TaxDate = DateTime.Now;
+                    oInventoryExit.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Value.ToString();
+                    oInventoryExit.UserFields.Fields.Item("U_MGS_CL_MOTSAL").Value = "01";
+                    oInventoryExit.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
+
+                    int validarItem = 0;
+                    oRS.DoQuery(Comunes.Consultas.ValidateArticuloLotes(this.EditText21.Value.ToString()));
+                    if (oRS.RecordCount == 0)
+                    {
+                        throw new MiExcepcion("Salida core de inventario: " + "El artículo es gestionado por lotes");
+                    }
+
+
+                    string almacen = "";
+                    oRS.DoQuery(Comunes.Consultas.GetAlmacenCore());
+                    if (oRS.RecordCount > 0)
+                    {
+                        almacen = oRS.Fields.Item(0).Value.ToString();
+                    }
+
+                    almacen = "CORTE";
+
+
+                    string modelo = "";
+                    string ccrCod = "";
+                    oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText21.Value.ToString()));
+                    if (oRS.RecordCount > 0)
+                    {
+                        modelo = oRS.Fields.Item(0).Value.ToString();
+                        ccrCod = oRS.Fields.Item(1).Value.ToString();
+                    }
+
+                    oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
+                    int contar_ancho_corridas = 0;
+
+
+
+
+
+
+                    oInventoryExit.Lines.ItemCode = this.EditText21.Value.ToString();
+                    oInventoryExit.Lines.Quantity = NumCore; // (contar - contar_ancho_corridas);
+                    oInventoryExit.Lines.WarehouseCode = almacen;
+                    oInventoryExit.Lines.AccountCode = "5110190";
+                    oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
+                    oInventoryExit.Lines.CostingCode = ccrCod;
+                    oInventoryExit.Lines.Add();
+
+                    iErrCod = oInventoryExit.Add();
+                    if (iErrCod != 0)
+                    {
+
+                        Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+
+                        throw new MiExcepcion("Salida core de inventario: " + sErrMsg);
+
+                        //Globales.oApp.MessageBox("Salida de inventario: " + sErrMsg);
+                        rpta = false;
+
+                    }
+                    else
+                    {
+
+                        oInventoryExit.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+                        salida1_core = int.Parse(Globales.oCompany.GetNewObjectKey());
+
+
+
+                        //Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value, Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFSAL");
+
+                        Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la salida core con éxito",
+                        SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+                        //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+                        rpta = true;
+                    }
+                }
+                else
+                    rpta = true;
+
+
+
 
 
             }
@@ -2240,8 +2367,11 @@ namespace AddOnCorte
                 oListErr.Add("Debe seleccionar un artículo");
 
             string itemCodeCore = this.EditText21.Value;
-            if (itemCodeCore == "")
-                oListErr.Add("Debe seleccionar un artículo core");
+            int NumCore = int.Parse(this.EditText12.Value.ToString() == ""?"0":this.EditText12.Value.ToString());
+            //if (itemCodeCore == "" && NumCore > 0)
+            //    oListErr.Add("Debe seleccionar un artículo core");
+            if ((itemCodeCore == "" && NumCore > 0) || (itemCodeCore != "" && NumCore == 0))
+                oListErr.Add("Debe seleccionar un artículo core y especificar la cantidad de cores");
 
             oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_3").Specific;
             if (oMatrix.RowCount == 0)
@@ -3346,6 +3476,7 @@ namespace AddOnCorte
                 this.EditText10.Item.Enabled = state;
                 this.EditText3.Item.Enabled = state;
                 this.EditText5.Item.Enabled = state;
+                this.EditText12.Item.Enabled = state;
 
 
 
@@ -3416,6 +3547,44 @@ namespace AddOnCorte
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
 
             }
+
+        }
+
+        private SAPbouiCOM.StaticText StaticText16;
+        private SAPbouiCOM.StaticText StaticText40;
+        private SAPbouiCOM.EditText EditText12;
+        private SAPbouiCOM.EditText EditText13;
+        private SAPbouiCOM.LinkedButton LinkedButton6;
+
+        
+        private void EditText12_KeyDownAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            string valor = this.EditText12.Value; // El valor que deseas validar
+
+            int resultado;
+            if (valor != "")
+            {
+                if (int.TryParse(valor, out resultado))
+                {
+
+
+                    if (resultado < 0)
+                    {
+                        this.EditText12.Value = "";
+                        Globales.oApp.MessageBox("El valor especificado debe ser entero y positivo");
+
+                    }
+
+                }
+                else
+                {
+                    // La conversión falló, valor no es un número entero
+                    this.EditText12.Value = "";
+                    Globales.oApp.MessageBox("El valor especificado debe ser entero");
+                }
+            }
+
+            
 
         }
     }

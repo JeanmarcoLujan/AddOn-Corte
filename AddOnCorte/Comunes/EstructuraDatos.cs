@@ -306,6 +306,10 @@ namespace AddOnCorte.Comunes
 
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_RESFILE", "Aplica resfile", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, new string[] { "Y", "N" }, new string[] { "SI", "NO" }, "N", null);
 
+                //nuevo campos
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_CANTCO", "Cantidad cores", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ENTREL", "Entrega relacionada", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+
 
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_LOTE", "Lote master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_ANCM", "Ancho Master (in)", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
