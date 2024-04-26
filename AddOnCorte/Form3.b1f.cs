@@ -328,7 +328,11 @@ namespace AddOnCorte
                             this.EditText15.Value = sol.MGS_CL_MTANC;
                             this.EditText16.Value = sol.MGS_CL_MTLAR;
                             this.EditText17.Value = sol.MGS_CL_MTCANT;
-                            this.CheckBox12.Checked = sol.MGS_CL_RESFILE;
+
+                            oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_RCOCABE");
+                            oDBDataSource.SetValue("U_MGS_CL_RESFILE", oDBDataSource.Size - 1, sol.MGS_CL_RESFILE);
+
+                            //this.CheckBox12.Checked = true; // sol.MGS_CL_RESFILE;
 
 
 
@@ -477,6 +481,8 @@ namespace AddOnCorte
                                     }
 
 
+                                   // oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
+                                    
 
                                     for (int i = 1; i <= oMatrix.RowCount; i++)
                                     {
@@ -484,10 +490,25 @@ namespace AddOnCorte
                                         if (colIndex > 1 && continuar == false)
                                             oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(0, 128, 0));
                                         else
-                                            oMatrix.CommonSetting.SetCellBackColor(i, colIndex, RGB(211, 211, 211));
+                                            oMatrix.CommonSetting.SetCellBackColor(i, colIndex, -1); //RGB(211, 211, 211)
 
                                         oMatrix.CommonSetting.SetCellEditable(i, colIndex, false);
+
+
+                                            
                                     }
+
+                                    //if (this.CheckBox12.Checked)
+                                    //{
+                                    //    oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                                    //    //oMatrix.CommonSetting.SetCellEditable(2, colIndex, true);
+                                    //}
+                                    //else
+                                    //{
+                                    //    oMatrix.CommonSetting.SetCellBackColor(2, colIndex, -1);
+                                    //    //oMatrix.CommonSetting.SetCellEditable(2, colIndex, false);
+                                    //}
+                                        
                                 }
                             }
 
@@ -819,10 +840,55 @@ namespace AddOnCorte
                                 oMatrix.CommonSetting.SetCellEditable(20, colIndex, false);
                                 oMatrix.CommonSetting.SetCellEditable(21, colIndex, false);
 
-                                if (this.CheckBox12.Checked)
-                                    oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
-                                else
-                                    oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
+                                if (colIndex != 1)
+                                {
+
+                                    bool validar = false;
+                                    switch (colIndex)
+                                    {
+                                        case 2:
+                                            validar = this.CheckBox0.Checked;
+                                            break;
+                                        case 3:
+                                            validar = this.CheckBox1.Checked;
+                                            break;
+                                        case 4:
+                                            validar = this.CheckBox2.Checked;
+                                            break;
+                                        case 5:
+                                            validar = this.CheckBox3.Checked;
+                                            break;
+                                        case 6:
+                                            validar = this.CheckBox4.Checked;
+                                            break;
+                                        case 7:
+                                            validar = this.CheckBox5.Checked;
+                                            break;
+                                        case 8:
+                                            validar = this.CheckBox6.Checked;
+                                            break;
+                                        case 9:
+                                            validar = this.CheckBox7.Checked;
+                                            break;
+                                        case 10:
+                                            validar = this.CheckBox8.Checked;
+                                            break;
+                                        case 11:
+                                            validar = this.CheckBox9.Checked;
+                                            break;
+                                    }
+
+                                    if (validar)
+                                    {
+                                        if (this.CheckBox12.Checked)
+                                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                                        else
+                                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, -1);
+                                    }
+
+                                        
+                                }
+                                
                             }
                         }
                     }
@@ -907,9 +973,24 @@ namespace AddOnCorte
                                     if(checkBox.Checked)
                                         oMatrix.CommonSetting.SetCellBackColor(i, column, 16777215);
                                     else
-                                        oMatrix.CommonSetting.SetCellBackColor(i, column, RGB(211, 211, 211));
+                                        oMatrix.CommonSetting.SetCellBackColor(i, column,-1); // RGB(211, 211, 211)
 
                                 }
+
+                                if (this.CheckBox12.Checked)
+                                {
+                                    oMatrix.CommonSetting.SetCellBackColor(2, column, RGB(255, 255, 0));
+                                    oMatrix.CommonSetting.SetCellEditable(2, column, checkBox.Checked);
+                                    if (!checkBox.Checked)
+                                        oMatrix.CommonSetting.SetCellBackColor(2, column, -1);
+                                }
+
+                                else
+                                {
+                                    oMatrix.CommonSetting.SetCellBackColor(2, column, -1);
+                                    oMatrix.CommonSetting.SetCellEditable(2, column, false);
+                                }
+
                             }
                             else
                             {
@@ -928,7 +1009,21 @@ namespace AddOnCorte
                                 if (checkBox.Checked)
                                     oMatrix.CommonSetting.SetCellBackColor(i, column, 16777215);
                                 else
-                                    oMatrix.CommonSetting.SetCellBackColor(i, column, RGB(211, 211, 211));
+                                    oMatrix.CommonSetting.SetCellBackColor(i, column, -1 );
+                            }
+
+                            if (this.CheckBox12.Checked)
+                            {
+                                oMatrix.CommonSetting.SetCellBackColor(2, column, RGB(255, 255, 0));
+                                oMatrix.CommonSetting.SetCellEditable(2, column, checkBox.Checked);
+                                if(!checkBox.Checked)
+                                    oMatrix.CommonSetting.SetCellBackColor(2, column, -1);
+                            }
+
+                            else
+                            {
+                                oMatrix.CommonSetting.SetCellBackColor(2, column, -1);
+                                oMatrix.CommonSetting.SetCellEditable(2, column, false);
                             }
                         }
                     }
@@ -3525,17 +3620,66 @@ namespace AddOnCorte
                     oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
                     for (int colIndex = 2; colIndex <= oMatrix.Columns.Count - 1; colIndex++)
                     {
-                        oMatrix.CommonSetting.SetCellEditable(2, colIndex, this.CheckBox12.Checked);
-                        if (this.CheckBox12.Checked)
-                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
-                        else
-                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
-
-                        if (!this.CheckBox12.Checked)
+                        bool validar = false;
+                        switch (colIndex)
                         {
-                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific; //Cast the Cell of 
-                            oEditText.Value = "0";
+                            case 2:
+                                validar = this.CheckBox0.Checked;
+                                break;
+                            case 3:
+                                validar = this.CheckBox1.Checked;
+                                break;
+                            case 4:
+                                validar = this.CheckBox2.Checked;
+                                break;
+                            case 5:
+                                validar = this.CheckBox3.Checked;
+                                break;
+                            case 6:
+                                validar = this.CheckBox4.Checked;
+                                break;
+                            case 7:
+                                validar = this.CheckBox5.Checked;
+                                break;
+                            case 8:
+                                validar = this.CheckBox6.Checked;
+                                break;
+                            case 9:
+                                validar = this.CheckBox7.Checked;
+                                break;
+                            case 10:
+                                validar = this.CheckBox8.Checked;
+                                break;
+                            case 11:
+                                validar = this.CheckBox9.Checked;
+                                break;
                         }
+
+                        if (validar)
+                        {
+                            oMatrix.CommonSetting.SetCellEditable(2, colIndex, this.CheckBox12.Checked);
+                            if (this.CheckBox12.Checked)
+                                oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(255, 255, 0));
+                            else
+                            {
+                                // oMatrix.CommonSetting.SetCellBackColor(2, colIndex, RGB(211, 211, 211));
+                                oMatrix.CommonSetting.SetCellBackColor(2, colIndex, -1);
+                            }
+
+
+                            if (!this.CheckBox12.Checked)
+                            {
+                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(colIndex).Cells.Item(2).Specific; //Cast the Cell of 
+                                oEditText.Value = "0";
+                            }
+                        }
+
+                        if(!this.CheckBox12.Checked)
+                            oMatrix.CommonSetting.SetCellBackColor(2, colIndex, -1);
+
+
+
+
 
                     }
                 }

@@ -78,7 +78,7 @@ namespace AddOnCorte.Clases
         public string MGS_CL_MTLAR { get; set; }
         public string MGS_CL_MTCANT { get; set; }
         public string MGS_CL_OFEV { get; set; }
-        public bool MGS_CL_RESFILE { get; set; }
+        public string MGS_CL_RESFILE { get; set; }
         public DateTime MGS_CL_AFECOR { get; set; }
         public List<SolicitudDetalle> Detalle { get; set; }
         public List<CorridasDetalle> DetalleCorridas { get; set; }

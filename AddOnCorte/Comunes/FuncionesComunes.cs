@@ -237,7 +237,7 @@ namespace AddOnCorte.Comunes
                     solicitud.MGS_CL_MTLAR = oGeneralData.GetProperty("U_MGS_CL_MTLAR").ToString();
                     solicitud.MGS_CL_MTCANT = oGeneralData.GetProperty("U_MGS_CL_MTCANT").ToString();
                     solicitud.MGS_CL_OFEV = oGeneralData.GetProperty("U_MGS_CL_OFEV").ToString();
-                    solicitud.MGS_CL_RESFILE = oGeneralData.GetProperty("U_MGS_CL_RESFILE").ToString() == "N"?false: true;
+                    solicitud.MGS_CL_RESFILE = oGeneralData.GetProperty("U_MGS_CL_RESFILE").ToString();
                     solicitud.MGS_CL_AFECOR = DateTime.Parse( oGeneralData.GetProperty("U_MGS_CL_AFECOR").ToString());
 
                     oChildren = oGeneralData.Child("MGS_CL_COMAST");
