@@ -2330,48 +2330,65 @@ namespace AddOnCorte
                     if (c1_largo.ToString() == "0")
                         oEditText.Value = "0";
 
-                    for (int i = 2; i <= oMatrix.RowCount-4; i++)
+                    if (c1_largo != 0)
                     {
-
-                        //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i).Specific; //Cast the Cell of 
-                        string valor = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
-                        c1_sub = c1_sub + double.Parse(valor);
-                        if (valor == "0")
-                            oEditText.Value = "0";
-
-
-                        if (i > 2 && i < oMatrix.RowCount - 4)
+                        for (int i = 2; i <= oMatrix.RowCount - 4; i++)
                         {
-                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i + 1).Specific; //Cast the Cell of 
-                            string valor1 = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
 
-                            if (valor == "0" && valor1 != "0")
-                                cont_slit++;
+                            //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i).Specific; //Cast the Cell of 
+                            string valor = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
+                            c1_sub = c1_sub + double.Parse(valor);
+                            if (valor == "0")
+                                oEditText.Value = "0";
+
+
+                            if (i > 2 && i < oMatrix.RowCount - 4)
+                            {
+                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i + 1).Specific; //Cast the Cell of 
+                                string valor1 = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
+
+                                if (valor == "0" && valor1 != "0")
+                                    cont_slit++;
+                            }
+
+
+
+                            oMatrix.FlushToDataSource();
+
+
+
+
                         }
 
+                        if (c1_sub != 0)
+                        {
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
+                            oEditText.Value = Math.Round(c1_sub, 2).ToString();
 
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
+                            oEditText.Value = Math.Round((c1_sub + c1_total), 2).ToString();
 
-                        oMatrix.FlushToDataSource();
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
+                            oEditText.Value = Math.Round((ancho - (c1_sub + c1_total)), 2).ToString();
 
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
+                            oEditText.Value = (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString();
+                        }
+                        else
+                        {
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
 
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
 
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
 
-                    }
-
-                    if (c1_sub != 0)
-                    {
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
-                        oEditText.Value =Math.Round( c1_sub,2).ToString();
-
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
-                        oEditText.Value = Math.Round((c1_sub + c1_total),2).ToString();
-
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
-                        oEditText.Value = Math.Round( (ancho - (c1_sub + c1_total)),2).ToString();
-
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
-                        oEditText.Value = (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString();
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
+                        }
                     }
                     else
                     {
@@ -2387,6 +2404,8 @@ namespace AddOnCorte
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
                         oEditText.Value = "0";
                     }
+
+                    
 
                     oPB.Value = oPB.Value + 1;
                 }

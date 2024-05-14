@@ -518,6 +518,7 @@ namespace AddOnCorte
                 oMatrix.Clear();
                 bool continuar = false;
                 List<double> anchos = new List<double>();
+                List<string> almacenes = new List<string>();
 
                 for (int i = 0; i < oForm.DataSources.DataTables.Item("dt_lt").Rows.Count; i++)
                 {
@@ -526,6 +527,7 @@ namespace AddOnCorte
                         if (oForm.DataSources.DataTables.Item("dt_lt").GetValue("Fifo", i).ToString() == "1")
                             continuar = true;
                         anchos.Add(double.Parse(oForm.DataSources.DataTables.Item("dt_lt").GetValue("U_MGS_CL_ANCHO", i).ToString()));
+                        almacenes.Add(oForm.DataSources.DataTables.Item("dt_lt").GetValue("WhsCode", i).ToString());
                     }
                 }
 
@@ -558,6 +560,15 @@ namespace AddOnCorte
                     }
                     else
                         continuar = true;
+
+                    if (almacenes.All(x => x == almacenes[0]))
+                        continuar = true;
+                    else
+                    {
+                        continuar = false;
+                        Globales.oApp.MessageBox("Los lotes seleccionados, deben pertenecer al mismo almacén.");
+                    }
+
                 }
                 else
                     continuar = false;
@@ -708,7 +719,8 @@ namespace AddOnCorte
 
             if (continuar)
             {
-      
+                //GenerateOferta(out oListErr);
+
                 if (this.EditText21.Value == "")
                 {
                     if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la oferta de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
@@ -1183,6 +1195,9 @@ namespace AddOnCorte
                 oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_EFCO").Value = this.EditText11.Value.ToString();
                 oSalesOpportunity.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
 
+                oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_16").Specific;
+                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(6).Cells.Item(1).Specific;
+                string almacen = oEditText.Value.ToString();
 
 
                 oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_18").Specific;
@@ -1209,6 +1224,9 @@ namespace AddOnCorte
                         oSalesOpportunity.Lines.UserFields.Fields.Item("U_MGS_CL_CANBOB").Value = oEditText.Value.ToString();
 
                         oSalesOpportunity.Lines.Quantity = cantidad;
+
+                        if(almacen!="")
+                            oSalesOpportunity.Lines.WarehouseCode = almacen;
 
                         //Almacenar el lote a nivel de linea, en la oferta de venta.
                         //oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
@@ -1459,51 +1477,66 @@ namespace AddOnCorte
                     if (c1_largo.ToString() == "0")
                         oEditText.Value = "0";
 
-
-                    //for (int i = 2; i <= 17; i++)
-                    for (int i = 2; i <= oMatrix.RowCount - 4; i++)
+                    if (c1_largo != 0)
                     {
-
-                        //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i).Specific; //Cast the Cell of 
-                        string valor = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
-                        c1_sub = c1_sub + double.Parse(valor);
-                        if (valor == "0")
-                            oEditText.Value = "0";
-
-
-                        if (i > 2 && i < oMatrix.RowCount - 4)
+                        for (int i = 2; i <= oMatrix.RowCount - 4; i++)
                         {
-                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i+1).Specific; //Cast the Cell of 
-                            string valor1 = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
-                            
 
-                            if (valor == "0" && valor1 != "0")
-                                cont_slit++;
+                            //oDBDataSource = oForm.DataSources.DBDataSources.Item("@MGS_CL_CORRID");
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i).Specific; //Cast the Cell of 
+                            string valor = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
+                            c1_sub = c1_sub + double.Parse(valor);
+                            if (valor == "0")
+                                oEditText.Value = "0";
 
-                            //if (oPB.Value < 15)
-                             
+
+                            if (i > 2 && i < oMatrix.RowCount - 4)
+                            {
+                                oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(i + 1).Specific; //Cast the Cell of 
+                                string valor1 = oEditText.Value.ToString() == "" ? "0" : oEditText.Value.ToString();
+
+
+                                if (valor == "0" && valor1 != "0")
+                                    cont_slit++;
+
+                                //if (oPB.Value < 15)
+
+                            }
+
+
+
+                            oMatrix.FlushToDataSource();
+
                         }
 
-                        
+                        if (c1_sub != 0)
+                        {
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
+                            oEditText.Value = Math.Round(c1_sub, 2).ToString();
 
-                        oMatrix.FlushToDataSource();
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
+                            oEditText.Value = Math.Round((c1_sub + c1_total), 2).ToString();
 
-                    }
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
+                            oEditText.Value = Math.Round((ancho - (c1_sub + c1_total)), 2).ToString();
 
-                    if (c1_sub != 0)
-                    {
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
-                        oEditText.Value = Math.Round( c1_sub,2).ToString();
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
+                            oEditText.Value = (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString();
+                        }
+                        else
+                        {
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(18).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
 
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
-                        oEditText.Value = Math.Round( (c1_sub + c1_total),2).ToString();
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(19).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
 
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
-                        oEditText.Value = Math.Round((ancho - (c1_sub + c1_total)),2).ToString();
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(20).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
 
-                        oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
-                        oEditText.Value = (Math.Round(c1_sub * c1_largo * 2.54 * 2.54 * 12 / 10000, 2)).ToString();
+                            oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
+                            oEditText.Value = "0";
+                        }
                     }
                     else
                     {
@@ -1519,6 +1552,8 @@ namespace AddOnCorte
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(k).Cells.Item(21).Specific; //Cast the Cell of 
                         oEditText.Value = "0";
                     }
+
+                    
                     oPB.Value = oPB.Value + 1;
 
                 }
