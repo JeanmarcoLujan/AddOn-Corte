@@ -2687,6 +2687,9 @@ namespace AddOnCorte
                             string docEntryOV = "";
                             string indicator = "";
                             string trnspCode = "";
+                            string whscode = "";
+                            string taxcode = "";
+                            string muestra = "NO";
                             bool tiene_precio = false;
                             var asdasd = this.ComboBox0.Selected.Value.ToString();
                             oRS.DoQuery(Comunes.Consultas.GetPrecioOrdenVenta(this.ComboBox0.Selected.Value.ToString()));
@@ -2698,6 +2701,9 @@ namespace AddOnCorte
                                 cantidadOV = Math.Round(double.Parse(oRS.Fields.Item(2).Value.ToString()) * 1.05, 2);
                                 indicator = oRS.Fields.Item(3).Value.ToString();
                                 trnspCode = oRS.Fields.Item(4).Value.ToString();
+                                taxcode = oRS.Fields.Item(5).Value.ToString();
+                                whscode = oRS.Fields.Item(6).Value.ToString();
+                                muestra = oRS.Fields.Item(7).Value.ToString();
                             }
                             else
                                 tiene_precio = false;
@@ -2746,7 +2752,10 @@ namespace AddOnCorte
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_SOLCOR").Value = this.ComboBox0.Selected.Value.ToString();
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_REFREC").Value = this.EditText0.Value.ToString();
                             oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
-                            
+                            oEntrega.UserFields.Fields.Item("U_MGS_CL_MUESTR").Value = muestra;
+
+
+
                             if (tiene_precio)
                                 oEntrega.UserFields.Fields.Item("U_MGS_CL_REFOVE").Value = docEntryOV;
                             //oEntrega.UserFields.Fields.Item("U_MGS_CL_TIPORD").Value = "2";
@@ -2779,7 +2788,7 @@ namespace AddOnCorte
                                 {
 
                                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
-                                    double cantidad = double.Parse(oEditText.Value.ToString());
+                                    double cantidad = 1; // double.Parse(oEditText.Value.ToString());
 
                                     if (cantidad != 0)
                                     {
@@ -2797,9 +2806,13 @@ namespace AddOnCorte
                                         oEntrega.Lines.Quantity = cantidad;
 
                                         if (tiene_precio)
+                                        {
                                             oEntrega.Lines.Price = precio;
+                                            oEntrega.Lines.TaxCode = taxcode;
+                                        }
+                                        
 
-                                        oEntrega.Lines.WarehouseCode = "CORTE";
+                                        oEntrega.Lines.WarehouseCode = whscode; //"CORTE";
 
                                         oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
                                         var sdsd = oCombo.Selected.Value.ToString();
