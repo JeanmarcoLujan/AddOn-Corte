@@ -404,7 +404,7 @@ namespace AddOnCorte
                 
 
                 string respuestaGlobal = "";
-                
+
 
                 if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la(s) solicitud de traslado?", 1, "Continuar", "Cancelar", "") == 1)
                 {
@@ -419,7 +419,7 @@ namespace AddOnCorte
                             string docEntry = oForm.DataSources.DataTables.Item("dt_gr").GetValue("Codigo", i).ToString();
 
 
-                            if (almacen != null && almacen!="")
+                            if (almacen != null && almacen != "")
                             {
                                 Agendado agenda = new Agendado();
                                 agenda.DocEntry = docEntry;
@@ -429,14 +429,16 @@ namespace AddOnCorte
                             else
                                 incompleto++;
 
-                            if (incompleto == 0)
-                            {
-                                foreach (Agendado item in listaAgenda)
-                                {
-                                    listaAgendaRespuesta.Add(GenerateSolicitudTransferencia(item));
-                                }
 
-                            }
+                        }
+
+                    }
+
+                    if (incompleto == 0)
+                    {
+                        foreach (Agendado item in listaAgenda)
+                        {
+                            listaAgendaRespuesta.Add(GenerateSolicitudTransferencia(item));
                         }
 
                     }
