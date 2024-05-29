@@ -107,8 +107,7 @@ namespace AddOnCorte
             this.LinkedButton1 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
             this.Button5 = ((SAPbouiCOM.Button)(this.GetItem("Item_57").Specific));
             this.Button5.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button5_PressedAfter);
-            this.Button6 = ((SAPbouiCOM.Button)(this.GetItem("Item_60").Specific));
-            this.Button6.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button6_PressedAfter);
+            //this.Button6.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button6_PressedAfter);
             this.CheckBox0 = ((SAPbouiCOM.CheckBox)(this.GetItem("Item_61").Specific));
             this.CheckBox0.PressedAfter += new SAPbouiCOM._ICheckBoxEvents_PressedAfterEventHandler(this.CheckBox0_PressedAfter);
             this.StaticText23 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_62").Specific));
@@ -152,19 +151,30 @@ namespace AddOnCorte
                         case "1284":
                             if (Globales.oApp.Forms.ActiveForm.BusinessObject.Type.ToString() == "MGS_CL_COCABE")
                             {
-                                if (validateDocCancel(this.EditText21.Value))
+                                if (!validateSolicitudCancel())
                                 {
-                                    var asdad = oForm;
-                                    if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la solicitud de corte?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
-                                        BubbleEvent = true;
+                                    if (validateDocCancel(this.EditText21.Value))
+                                    {
+                                        var asdad = oForm;
+                                        if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la solicitud de corte?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
+                                            BubbleEvent = true;
+                                        else
+                                            BubbleEvent = false;
+                                    }
                                     else
+                                    {
                                         BubbleEvent = false;
+                                        Globales.oApp.MessageBox("No es posible cancelar la solicitud, porque ya se generó la 'Oferta de venta'. ");
+                                    }
+
                                 }
                                 else
                                 {
                                     BubbleEvent = false;
-                                    Globales.oApp.MessageBox("No es posible cancelar la solicitud, porque ya se generó la 'Oferta de venta'. ");
+                                    Globales.oApp.MessageBox("La solicitud ya se encuentra CANCELADA. ");
                                 }
+
+                                
                             }
 
 
@@ -182,7 +192,7 @@ namespace AddOnCorte
 
                             this.Button3.Item.Enabled = false;
                             Comunes.Funciones.AutoResizeColumnsMatrix(oForm);
-                            this.Button6.Item.Enabled = false;
+                            //this.Button6.Item.Enabled = false;
                             this.EditText0.Item.Enabled = false;
                             this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
                             this.EditText4.Item.Enabled = true;
@@ -228,7 +238,7 @@ namespace AddOnCorte
             Comunes.Funciones.AutoResizeColumnsMatrix(oForm);
             this.EditText1.Value = DateTime.Now.ToString("yyyyMMdd");
             CondiconesCFLsSN();
-            this.Button6.Item.Enabled = false;
+            //this.Button6.Item.Enabled = false;
             this.EditText0.Item.Enabled = false;
             oForm.Items.Item("Item_36").Width = 350;
             oForm.Items.Item("Item_37").Left = oForm.Items.Item("Item_36").Width + oForm.Items.Item("Item_36").Left + 1;
@@ -721,19 +731,29 @@ namespace AddOnCorte
             {
                 //GenerateOferta(out oListErr);
 
-                if (this.EditText21.Value == "")
+                if (!validateSolicitudCancel())
                 {
-                    if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la oferta de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
+                    if (this.EditText21.Value == "")
                     {
 
+                        if (Globales.oApp.MessageBox("¿Esta Ud. seguro de generar la oferta de venta?, revise toda la información", 1, "Continuar", "Cancelar", "") == 1)
+                        {
 
-                        GenerateOferta(out oListErr);
+
+                            GenerateOferta(out oListErr);
+                        }
+                    }
+                    else
+                    {
+                        Globales.oApp.MessageBox("La oferta de ventas para este registro, ya se generó");
                     }
                 }
                 else
                 {
-                    Globales.oApp.MessageBox("La oferta de ventas para este registro, ya se generó");
+                    Globales.oApp.MessageBox("No es posible generar una oferta de ventas, porque la solicitud esta CANCELADA.");
                 }
+
+                
                 
 
             }
@@ -1316,11 +1336,11 @@ namespace AddOnCorte
                 this.Button3.Item.Enabled = true;
                 this.EditText0.Item.Enabled = false;
 
-                if (this.EditText21.Value == "")
-                {
-                    this.Button6.Item.Enabled = false;
-                }else
-                    this.Button6.Item.Enabled = true;
+                //if (this.EditText21.Value == "")
+                //{
+                //    this.Button6.Item.Enabled = false;
+                //}else
+                //    this.Button6.Item.Enabled = true;
 
                 this.EditText4.Item.Enabled = false;
                 this.CheckBox0.Item.Enabled = false;
@@ -1672,9 +1692,7 @@ namespace AddOnCorte
             //}
         }
 
-        private SAPbouiCOM.Button Button6;
-
-        private void Button6_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        private void Button6_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal) //CANCELAR LA OFERTA 
         {
             SAPbobsCOM.Documents oSalesOpportunity = null;
             try
@@ -2222,6 +2240,36 @@ namespace AddOnCorte
 
 
                 
+            }
+            catch (Exception ex)
+            {
+                rs = false;
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+            return rs;
+        }
+
+        private bool validateSolicitudCancel()
+        {
+            SAPbobsCOM.Recordset oRS = null;
+            bool rs = true;
+            try
+            {
+
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+                var ss = this.EditText0.Value;
+                oRS.DoQuery(Comunes.Consultas.ValidateSolicitudCancel(this.EditText0.Value.ToString()));
+                if (oRS.RecordCount > 0)
+                {
+                    rs = true;
+                }
+                else
+                {
+                    rs = false;
+                }
+
+
+
             }
             catch (Exception ex)
             {

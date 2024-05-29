@@ -201,6 +201,32 @@ namespace AddOnCorte.Comunes
             }
         }
 
+
+        public static void CancelUDOAgendarSolicitud(string udoId)
+        {
+
+            SAPbobsCOM.GeneralService oGeneralService = null;
+            SAPbobsCOM.GeneralData oGeneralData = null;
+            SAPbobsCOM.GeneralDataParams oGeneralParams = null;
+            SAPbobsCOM.CompanyService oCompanyService = null;
+
+            try
+            {
+                oCompanyService = Globales.oCompany.GetCompanyService();
+                oGeneralService = oCompanyService.GetGeneralService("MGS_CL_COCABE");
+                oGeneralParams = ((SAPbobsCOM.GeneralDataParams)(oGeneralService.GetDataInterface(SAPbobsCOM.GeneralServiceDataInterfaces.gsGeneralDataParams)));
+                oGeneralParams.SetProperty("DocEntry", udoId);
+                oGeneralService.Cancel(oGeneralParams); // Update(oGeneralData);
+                //return true;
+            }
+            catch (Exception ex)
+            {
+                //Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                //return false;
+            }
+        }
+
+
         public static Solicitud GetUDOSolicitudAgendada(string udoId)
         {
 

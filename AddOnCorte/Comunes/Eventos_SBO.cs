@@ -61,6 +61,26 @@ namespace AddOnCorte.Comunes
         void m_SBO_Appl_FormDataEvent(ref SAPbouiCOM.BusinessObjectInfo BusinessObjectInfo, out bool BubbleEvent)
         {
             BubbleEvent = true;
+            try
+            {
+                switch (BusinessObjectInfo.FormTypeEx)
+                {
+
+                    
+                    case "149":
+                    case "139":
+                        Forms.Frm_149 objFrm940 = null;
+                        objFrm940 = new Forms.Frm_149();
+                        objFrm940.m_SBO_Appl_FormDataEvent(ref BusinessObjectInfo, out BubbleEvent);
+                        objFrm940 = null;
+                        break;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                /// ExceptionLogging.HandleExcepcion(ex, this.GetType(), MethodBase.GetCurrentMethod().Name);
+            }
         }
         void m_SBO_Appl_ItemEvent(string FormUID, ref SAPbouiCOM.ItemEvent pVal, out bool BubbleEvent)
         {
@@ -94,19 +114,16 @@ namespace AddOnCorte.Comunes
             {
                 switch (pVal.BeforeAction)
                 {
-                    case false:
+                  
+                    case true:
                         switch (pVal.MenuUID)
                         {
-                            //case "MSS_APMD":
-                            //    Formularios.Frm_APMD_P1 oFrm_APMD_P1 = null;
-                            //    oFrm_APMD_P1 = new MSS_Asistente_PMD.Formularios.Frm_APMD_P1(true);
-                            //    oFrm_APMD_P1 = null;
-                            //    break;
-                            //case "MSS_CPMD":
-                            //    Formularios.Frm_MSSL_PMD oFrm_MSSL_PMD = null;
-                            //    oFrm_MSSL_PMD = new MSS_Asistente_PMD.Formularios.Frm_MSSL_PMD(true);
-                            //    oFrm_MSSL_PMD = null;
-                                //break;
+                            case "1284":
+                                Forms.Frm_149 oFrm_149 = null;
+                                oFrm_149 = new Forms.Frm_149();
+                                oFrm_149.m_SBO_Appl_MenuEvent(ref pVal, out BubbleEvent, "", 1, true);
+                                oFrm_149 = null;
+                                break;
                         }
                         break;
                 }

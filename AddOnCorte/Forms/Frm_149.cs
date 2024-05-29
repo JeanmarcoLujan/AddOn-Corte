@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace AddOnCorte.Forms
 {
-    class Frm_149
+    public class Frm_149
     {
         public const string csFormType = "149";
-
+        public static string corteCode = "";
         public void m_SBO_Appl_ItemEvent(string FormUID, ref SAPbouiCOM.ItemEvent pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            try
+            try 
             {
                 if (pVal.BeforeAction)
                 {
@@ -96,6 +96,75 @@ namespace AddOnCorte.Forms
                 //ExceptionLogging.HandleExcepcion(ex, this.GetType(), MethodBase.GetCurrentMethod().Name);
             }
         }
+
+        public void m_SBO_Appl_MenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent, string ItemUID = "", int row = -1, bool proceso = false)
+        {
+            BubbleEvent = true;
+            SAPbouiCOM.Form oForm = null;
+            try
+            {
+                var sdfsdf = pVal.MenuUID;
+                switch (pVal.MenuUID)
+                {
+                    case "1284":
+                        if (proceso)
+                        {
+                            oForm = Clases.Globales.oApp.Forms.ActiveForm; //  Conexion.Conexion_SBO.m_SBO_Appl.Forms.ActiveForm;
+
+                            var asdasd = oForm.TypeEx;
+
+                            if (oForm.TypeEx == "149" || oForm.TypeEx == "139")
+                            {
+                                // BubbleEvent = FacturacionNX.LiberarDocument(oForm, 13);
+                                BubbleEvent =  CancelSolcitudCorte(oForm.UDFFormUID, oForm.TypeEx); //GetInfo(oForm.UDFFormUID, "", bFormDataADDevent: true, csFormTable);
+                            }
+
+                        }
+
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                //ExceptionLogging.HandleExcepcion(ex, this.GetType(), MethodBase.GetCurrentMethod().Name);
+            }
+        }
+
+
+        public void m_SBO_Appl_FormDataEvent(ref SAPbouiCOM.BusinessObjectInfo BusinessObjectInfo, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+
+            try
+            {
+                switch (BusinessObjectInfo.EventType)
+                {
+
+                    case SAPbouiCOM.BoEventTypes.et_FORM_DATA_UPDATE:
+                        //case SAPbouiCOM.BoEventTypes.et_RIGHT_CLICK:
+
+                        if (!BusinessObjectInfo.BeforeAction)
+                        {
+                            if (BusinessObjectInfo.ActionSuccess)
+                            {
+                                if (corteCode != "")
+                                {
+                                    Comunes.FuncionesComunes.UpdateUDO(corteCode, "C", "U_MGS_CL_ESTD");
+                                    corteCode = "";
+                                }
+                                    //BubbleEvent = Comunes.FuncionesComunes.UpdateUDO(corteCode, "C", "U_MGS_CL_ESTD"); // RegisterLotesUDO1_(BusinessObjectInfo.FormUID, BusinessObjectInfo.FormTypeEx, bFormDataADDevent: true, csFormTable, false);
+                            }
+                        }
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+               // FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+                BubbleEvent = false;
+            }
+        }
+
 
         private void DubujarBoton(string s_FormUID, string formTypeEx)
         {
@@ -257,6 +326,59 @@ namespace AddOnCorte.Forms
             {
                 Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
             }
+        }
+        private bool CancelSolcitudCorte(string s_FormUID, string formEx)
+        {
+
+            SAPbouiCOM.Grid oGrid = null;
+            SAPbouiCOM.Form oForm = null;
+            SAPbouiCOM.DBDataSource dBDataSource = null;
+            bool rpta = true;
+            try
+            {
+                oForm = Clases.Globales.oApp.Forms.Item(s_FormUID);
+                string table = "";
+                bool solicitud = true;
+                switch (formEx)
+                {
+                    case "149":
+                        table = "OQUT";
+                        solicitud = true;
+                        break;
+                    case "139":
+                        table = "ORDR";
+                        solicitud = true;
+                        break;
+                }
+
+                dBDataSource = oForm.DataSources.DBDataSources.Item(table);
+
+                if (solicitud)
+                {
+                    corteCode = dBDataSource.GetValue("U_MGS_CL_SOLCOR", 0);
+                    if (corteCode != "")
+                    {
+                        //Comunes.FuncionesComunes.UpdateUDO(corteCode, "C", "U_MGS_CL_ESTD");
+                        rpta = true;
+                        
+                        //Form1 activeForm = new Form1(int.Parse(corteCode));
+                        //activeForm.Show();
+                    }
+                    
+                }
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                rpta = false;
+                Comunes.FuncionesComunes.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+            }
+
+            return rpta;
         }
     }
 }
