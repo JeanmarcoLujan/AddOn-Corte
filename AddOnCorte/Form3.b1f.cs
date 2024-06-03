@@ -2788,9 +2788,9 @@ namespace AddOnCorte
                                 {
 
                                     oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(8).Cells.Item(i).Specific;
-                                    double cantidad = 1; // double.Parse(oEditText.Value.ToString());
+                                    double cantidad =  double.Parse(oEditText.Value.ToString() == ""?"0": oEditText.Value.ToString());
 
-                                    if (cantidad != 0)
+                                    if(cantidad > double.Epsilon) //if (cantidad != 0)
                                     {
                                         oEntrega.Lines.ItemCode = this.EditText4.Value.ToString();
 
@@ -2807,7 +2807,8 @@ namespace AddOnCorte
 
                                         if (tiene_precio)
                                         {
-                                            oEntrega.Lines.Price = precio;
+                                            //oEntrega.Lines.Price = precio;
+                                            oEntrega.Lines.UnitPrice = precio;
                                             oEntrega.Lines.TaxCode = taxcode;
                                         }
                                         
@@ -2843,40 +2844,47 @@ namespace AddOnCorte
 
                                 }
 
-
-
-                                iErrCod = oEntrega.Add();
-                                if (iErrCod != 0)
+                                if (tiene_precio)
                                 {
+                                    iErrCod = oEntrega.Add();
+                                    if (iErrCod != 0)
+                                    {
 
-                                    Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
+                                        Globales.oCompany.GetLastError(out iErrCod, out sErrMsg);
 
 
-                                    Globales.oApp.MessageBox("Entrega de venta: " + sErrMsg);
+                                        Globales.oApp.MessageBox("Entrega de venta: " + sErrMsg);
 
+                                    }
+                                    else
+                                    {
+
+                                        oEntrega.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
+
+
+
+                                        Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
+
+                                        FuncionesComunes.RegisterLotesUDO3_(oEntrega, "DLN19");
+
+                                        //UpdateEntrega(oEntrega.DocEntry);
+
+                                        CloseOrdenVenta();
+
+                                        Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
+                                        SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
+
+                                        oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
+
+
+                                    }
                                 }
                                 else
                                 {
-
-                                    oEntrega.GetByKey(int.Parse(Globales.oCompany.GetNewObjectKey()));
-
-                                   
-
-                                    Comunes.FuncionesComunes.UpdateUDORecibo(this.EditText0.Value.ToString(), Globales.oCompany.GetNewObjectKey(), "U_MGS_CL_REFETG");
-
-                                    FuncionesComunes.RegisterLotesUDO3_(oEntrega, "DLN19");
-
-                                    //UpdateEntrega(oEntrega.DocEntry);
-
-                                    CloseOrdenVenta();
-
-                                    Globales.oApp.StatusBar.SetText(AddOnCorte.Properties.Resources.NombreAddon + " Se generó la entrega de venta ",
-                                    SAPbouiCOM.BoMessageTime.bmt_Short, SAPbouiCOM.BoStatusBarMessageType.smt_Success);
-
-                                    oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
-
-
+                                    Globales.oApp.MessageBox("No se encontró orden de venta.");
                                 }
+
+                                
                             }
                             else
                             {
