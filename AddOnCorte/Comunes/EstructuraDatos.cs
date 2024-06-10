@@ -308,7 +308,7 @@ namespace AddOnCorte.Comunes
 
                 //nuevo campos
                 CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_CANTCO", "Cantidad cores", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
-                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ENTREL", "Entrega relacionada", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
+                CreaCampoMD("@MGS_CL_RCOCABE", "MGS_CL_ENTREL", "Entrega relacionada", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 20, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "ODLN");
 
 
                 CreaCampoMD("@MGS_CL_RCOMAST", "MGS_CL_LOTE", "Lote master", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 40, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
@@ -598,6 +598,8 @@ namespace AddOnCorte.Comunes
                         oUserFieldsMD.LinkedSystemObject = SAPbobsCOM.UDFLinkedSystemObjectTypesEnum.ulOrders;
                     else if (tablaVinculada == "OITM")
                         oUserFieldsMD.LinkedSystemObject = SAPbobsCOM.UDFLinkedSystemObjectTypesEnum.ulItems;
+                    else if (tablaVinculada == "ODLN")
+                        oUserFieldsMD.LinkedSystemObject = SAPbobsCOM.UDFLinkedSystemObjectTypesEnum.ulDeliveryNotes;
                     else
                         oUserFieldsMD.LinkedTable = tablaVinculada;
                 }

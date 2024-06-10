@@ -164,6 +164,7 @@ namespace AddOnCorte
             this.EditText12 = ((SAPbouiCOM.EditText)(this.GetItem("Item_100").Specific));
             this.EditText12.KeyDownAfter += new SAPbouiCOM._IEditTextEvents_KeyDownAfterEventHandler(this.EditText12_KeyDownAfter);
             this.EditText13 = ((SAPbouiCOM.EditText)(this.GetItem("Item_101").Specific));
+            this.EditText13.ChooseFromListAfter += new SAPbouiCOM._IEditTextEvents_ChooseFromListAfterEventHandler(this.EditText13_ChooseFromListAfter);
             this.LinkedButton6 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_102").Specific));
             this.OnCustomInitialize();
 
@@ -3769,6 +3770,25 @@ namespace AddOnCorte
             }
 
             
+
+        }
+
+        private void EditText13_ChooseFromListAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            
+            try
+            {
+                SAPbouiCOM.SBOChooseFromListEventArg chooseFromListEvent = ((SAPbouiCOM.SBOChooseFromListEventArg)(pVal));
+                var currentForm = Application.SBO_Application.Forms.Item(pVal.FormUID);
+                SAPbouiCOM.DBDataSource oDBDS = currentForm.DataSources.DBDataSources.Item("@MGS_CL_RCOCABE");
+
+                this.EditText13.Value = chooseFromListEvent.SelectedObjects.GetValue(0, 0).ToString();
+                //oDBDS.SetValue("U_MGS_CL_CLID", 0, chooseFromListEvent.SelectedObjects.GetValue(1, 0).ToString());
+            }
+            catch
+            {
+
+            }
 
         }
     }
