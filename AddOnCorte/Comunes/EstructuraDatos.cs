@@ -187,8 +187,8 @@ namespace AddOnCorte.Comunes
                 //Cabecera
                 string[] ValidValues = null;
                 string[] ValidDescrip = null;
-                ValidValues = new string[4] { "A", "G", "S", "C"};
-                ValidDescrip = new string[4] { "Por aprobar", "Agendado", "Solicitado","Cancelado" };
+                ValidValues = new string[5] { "A", "G", "S", "C", "R"};
+                ValidDescrip = new string[5] { "Por aprobar", "Agendado", "Solicitado","Cancelado", "Cerrado" };
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_ESTD", "Estado", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 2, SAPbobsCOM.BoYesNoEnum.tNO, ValidValues, ValidDescrip, "A","");
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_CLIE", "Cliente", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 30, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");
                 CreaCampoMD("@MGS_CL_COCABE", "MGS_CL_CLID", "Razon social", SAPbobsCOM.BoFieldTypes.db_Alpha, SAPbobsCOM.BoFldSubTypes.st_None, 150, SAPbobsCOM.BoYesNoEnum.tNO, null, null, null, "");

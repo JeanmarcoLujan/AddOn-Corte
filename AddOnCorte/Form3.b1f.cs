@@ -929,6 +929,8 @@ namespace AddOnCorte
 
                     oRS.DoQuery(Comunes.Consultas.ValidateCorridasDelRecibo(this.ComboBox0.Selected.Value.ToString()));
 
+                    //this.EditText12.Item.Enabled = false;
+
                     bool continuar = true;
                     string columnName = "U_MGS_CL_PRO" + ((column - 1).ToString());
                     if (oRS.RecordCount > 0)
@@ -1029,8 +1031,13 @@ namespace AddOnCorte
                         }
                     }
 
-                    
-                    
+
+
+                }
+                if (pVal.FormMode == 2 && pVal.InnerEvent == false)
+                {
+                    bool valor_encontrado = checkBox.Checked;
+                    checkBox.Checked = !valor_encontrado;
                 }
             }
             catch (Exception ex)
@@ -3608,7 +3615,7 @@ namespace AddOnCorte
                 this.EditText2.Item.Enabled = state;
                 this.EditText21.Item.Enabled = state;
                 this.EditText22.Item.Enabled = state;
-                this.EditText20.Item.Enabled = state;
+                //this.EditText20.Item.Enabled = state;
                 this.EditText10.Item.Enabled = state;
                 this.EditText3.Item.Enabled = state;
                 this.EditText5.Item.Enabled = state;
@@ -3723,6 +3730,12 @@ namespace AddOnCorte
 
 
                     }
+                }
+
+                if (pVal.FormMode == 2 && pVal.InnerEvent == false)
+                {
+                    bool valor_encontrado = this.CheckBox12.Checked;
+                    this.CheckBox12.Checked = !valor_encontrado;
                 }
 
 
