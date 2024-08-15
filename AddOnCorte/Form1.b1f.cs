@@ -1118,7 +1118,7 @@ namespace AddOnCorte
         {
             SAPbouiCOM.Matrix oMatrix = null;
             SAPbouiCOM.DBDataSource oDBDataSource = null;
-            SAPbouiCOM.Column oColumn = null;
+           
             SAPbouiCOM.EditText oEditText = null;
             SAPbouiCOM.ComboBox oCombo = null;
             try
@@ -1194,7 +1194,7 @@ namespace AddOnCorte
             string sErrMsg = "";
             SAPbouiCOM.ProgressBar oPB = null;
             SAPbouiCOM.EditText oEditText = null;
-            SAPbouiCOM.ComboBox oCombo = null;
+         
             SAPbobsCOM.Recordset oRS = null;
 
             try

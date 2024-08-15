@@ -1487,10 +1487,12 @@ namespace AddOnCorte
                     Globales.oCompany.StartTransaction();
                 }
 
-                GenerateSalida();
-                GenerateEntrada();
-                GenerateSalidaCore();
-                
+                bool r1 = GenerateSalida();
+                bool r2 = GenerateEntrada();
+                bool r3 = GenerateSalidaCore();
+
+                if (r1 == true && r2 == true && r3 == true)
+                    CerrarSolcitud();
 
                 //oForm.Mode = SAPbouiCOM.BoFormMode.fm_ADD_MODE;
 
@@ -2078,6 +2080,113 @@ namespace AddOnCorte
 
             return rpta;
         }
+        
+        private bool CerrarSolcitud()
+        {
+
+            SAPbobsCOM.Documents oOrder = null;
+            //SalesOpportunities
+            SAPbouiCOM.Matrix oMatrix = null;
+            int iErrCod;
+            string sErrMsg = "";
+
+            SAPbouiCOM.EditText oEditText = null;
+            SAPbouiCOM.ComboBox oCombo = null;
+            SAPbobsCOM.Recordset oRS = null;
+            bool rpta = true;
+            try
+            {
+
+
+                oOrder = (SAPbobsCOM.Documents)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders);
+                oRS = (SAPbobsCOM.Recordset)Globales.oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                oRS.DoQuery(Comunes.Consultas.GetUltimaCorrida(this.ComboBox0.Selected.Value));
+
+                int ultimaCorrida = 0;
+                int docEntryOV = 0;
+                bool continuar = false;
+
+                if (oRS.RecordCount > 0)
+                {
+                    ultimaCorrida = int.Parse(oRS.Fields.Item(0).Value.ToString());
+                    docEntryOV = int.Parse(oRS.Fields.Item(1).Value.ToString());
+                    continuar = true;
+
+                }
+                else
+                {
+                    continuar = false; rpta = false;
+                }
+
+
+
+                if (continuar)
+                {
+                    bool proceder = false;
+
+                    switch (ultimaCorrida)
+                    {
+                        case 1:
+                            proceder = this.CheckBox0.Checked;
+                            break;
+                        case 2:
+                            proceder = this.CheckBox1.Checked;
+                            break;
+                        case 3:
+                            proceder = this.CheckBox2.Checked;
+                            break;
+                        case 4:
+                            proceder = this.CheckBox3.Checked;
+                            break;
+                        case 5:
+                            proceder = this.CheckBox4.Checked;
+                            break;
+                        case 6:
+                            proceder = this.CheckBox5.Checked;
+                            break;
+                        case 7:
+                            proceder = this.CheckBox6.Checked;
+                            break;
+                        case 8:
+                            proceder = this.CheckBox7.Checked;
+                            break;
+                        case 9:
+                            proceder = this.CheckBox8.Checked;
+                            break;
+                        case 10:
+                            proceder = this.CheckBox9.Checked;
+                            break;
+
+
+                    }
+
+
+                    if (proceder)
+                    {
+
+
+                        string soli = this.ComboBox0.Selected.Value.ToString();
+                        Comunes.FuncionesComunes.UpdateUDO(soli, "R", "U_MGS_CL_ESTD");
+
+                        
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //Comunes.Funciones.DisplayErrorMessages(ex.Message, System.Reflection.MethodBase.GetCurrentMethod());
+
+                throw ex;
+                //Comunes.Funciones.RemoveRegisterUDO(docEntryUDO);
+            }
+
+            return rpta;
+        }
+
+
         private bool CloseOrdenVenta()
         {
 
@@ -2306,7 +2415,7 @@ namespace AddOnCorte
         {
             SAPbouiCOM.Matrix oMatrix = null;
             SAPbouiCOM.DBDataSource oDBDataSource = null;
-            SAPbouiCOM.Column oColumn = null;
+           
             SAPbouiCOM.EditText oEditText = null;
             SAPbouiCOM.ProgressBar oPB = null;
             try
@@ -3360,7 +3469,7 @@ namespace AddOnCorte
 
         private void Button3_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
         {
-            SAPbobsCOM.Documents oEntrega = null;
+           
             //SalesOpportunities
             SAPbouiCOM.Matrix oMatrix = null;
             int iErrCod;
