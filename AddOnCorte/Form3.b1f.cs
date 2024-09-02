@@ -1487,6 +1487,10 @@ namespace AddOnCorte
                     Globales.oCompany.StartTransaction();
                 }
 
+
+
+
+
                 bool r1 = GenerateSalida();
                 bool r2 = GenerateEntrada();
                 bool r3 = GenerateSalidaCore();
@@ -1562,11 +1566,13 @@ namespace AddOnCorte
 
                     string modelo = "";
                     string ccrCod = "";
+                    string salidaCuenta = "5110190";
                     oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
                     if (oRS.RecordCount > 0)
                     {
                         modelo = oRS.Fields.Item(0).Value.ToString();
                         ccrCod = oRS.Fields.Item(1).Value.ToString();
+                        salidaCuenta = oRS.Fields.Item(3).Value.ToString();
                     }
 
 
@@ -1593,7 +1599,7 @@ namespace AddOnCorte
                         oInventoryExit.Lines.CostingCode = ccrCod;
 
                         oInventoryExit.Lines.WarehouseCode = "CORTE";
-                        oInventoryExit.Lines.AccountCode = "5110190";
+                        oInventoryExit.Lines.AccountCode = salidaCuenta; // "5110190"; 
 
                         oEditText = (SAPbouiCOM.EditText)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
                         oInventoryExit.Lines.BatchNumbers.BatchNumber = oEditText.Value.ToString();
@@ -1882,11 +1888,13 @@ namespace AddOnCorte
 
                     string modelo = "";
                     string ccrCod = "";
+                    string salCoreCuenta = "5110190";
                     oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText21.Value.ToString()));
                     if (oRS.RecordCount > 0)
                     {
                         modelo = oRS.Fields.Item(0).Value.ToString();
                         ccrCod = oRS.Fields.Item(1).Value.ToString();
+                        salCoreCuenta = oRS.Fields.Item(4).Value.ToString();
                     }
 
                     oMatrix = (SAPbouiCOM.Matrix)oForm.Items.Item("Item_17").Specific;
@@ -1900,7 +1908,7 @@ namespace AddOnCorte
                     oInventoryExit.Lines.ItemCode = this.EditText21.Value.ToString();
                     oInventoryExit.Lines.Quantity = NumCore; // (contar - contar_ancho_corridas);
                     oInventoryExit.Lines.WarehouseCode = almacen;
-                    oInventoryExit.Lines.AccountCode = "5110190";
+                    oInventoryExit.Lines.AccountCode = salCoreCuenta; // "5110190";
                     oInventoryExit.Lines.UserFields.Fields.Item("U_MGS_CL_MODELO").Value = modelo;
                     oInventoryExit.Lines.CostingCode = ccrCod;
                     oInventoryExit.Lines.Add();
@@ -1983,12 +1991,13 @@ namespace AddOnCorte
 
                 string modelo = "";
                 string ccrCod = "";
-
+                string entCuenta = "5110190";
                 oRS.DoQuery(Comunes.Consultas.GetItemData(this.EditText4.Value.ToString()));
                 if (oRS.RecordCount > 0)
                 {
                     modelo = oRS.Fields.Item(0).Value.ToString();
                     ccrCod = oRS.Fields.Item(1).Value.ToString();
+                    entCuenta = oRS.Fields.Item(2).Value.ToString();
                 }
 
 
@@ -2023,7 +2032,7 @@ namespace AddOnCorte
                     oSalesOpportunity.Lines.CostingCode = ccrCod;
 
                     oSalesOpportunity.Lines.WarehouseCode = "CORTE";
-                    oSalesOpportunity.Lines.AccountCode = "5110190";
+                    oSalesOpportunity.Lines.AccountCode = entCuenta; // "5110190";
 
                     oCombo = (SAPbouiCOM.ComboBox)oMatrix.Columns.Item(1).Cells.Item(i).Specific;
                     oSalesOpportunity.Lines.BatchNumbers.BatchNumber = oCombo.Selected.Value.ToString();

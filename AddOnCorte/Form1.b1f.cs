@@ -107,10 +107,12 @@ namespace AddOnCorte
             this.LinkedButton1 = ((SAPbouiCOM.LinkedButton)(this.GetItem("Item_59").Specific));
             this.Button5 = ((SAPbouiCOM.Button)(this.GetItem("Item_57").Specific));
             this.Button5.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button5_PressedAfter);
-            //this.Button6.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button6_PressedAfter);
+            //  this.Button6.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button6_PressedAfter);
             this.CheckBox0 = ((SAPbouiCOM.CheckBox)(this.GetItem("Item_61").Specific));
             this.CheckBox0.PressedAfter += new SAPbouiCOM._ICheckBoxEvents_PressedAfterEventHandler(this.CheckBox0_PressedAfter);
             this.StaticText23 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_62").Specific));
+            this.Button7 = ((SAPbouiCOM.Button)(this.GetItem("Item_63").Specific));
+            this.Button7.PressedAfter += new SAPbouiCOM._IButtonEvents_PressedAfterEventHandler(this.Button7_PressedAfter);
             this.OnCustomInitialize();
 
         }
@@ -138,51 +140,52 @@ namespace AddOnCorte
             try
             {
 
-                if (pVal.BeforeAction)
-                {
-                    switch (pVal.MenuUID)
-                    {
+                //if (pVal.BeforeAction)
+                //{
+                    //switch (pVal.MenuUID)
+                    //{
 
-                        case "1285":
-                            BubbleEvent = false;
-                            Globales.oApp.MessageBox("No es posible reestablecer, una vez cancelada la solicitud.");
-                            BubbleEvent = true;
-                            break;
-                        case "1284":
-                            if (Globales.oApp.Forms.ActiveForm.BusinessObject.Type.ToString() == "MGS_CL_COCABE")
-                            {
-                                if (!validateSolicitudCancel())
-                                {
-                                    if (validateDocCancel(this.EditText21.Value))
-                                    {
-                                        var asdad = oForm;
-                                        if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la solicitud de corte?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
-                                            BubbleEvent = true;
-                                        else
-                                            BubbleEvent = false;
-                                    }
-                                    else
-                                    {
-                                        BubbleEvent = false;
-                                        Globales.oApp.MessageBox("No es posible cancelar la solicitud, porque ya se generó la 'Oferta de venta'. ");
-                                    }
+                    //    case "1285":
+                    //        BubbleEvent = false;
+                    //        Globales.oApp.MessageBox("No es posible reestablecer, una vez cancelada la solicitud.");
+                    //        BubbleEvent = true;
+                    //        break;
+                    //    case "1284":
+                    //        if (Globales.oApp.Forms.ActiveForm.BusinessObject.Type.ToString() == "MGS_CL_COCABE")
+                    //        {
+                    //            if (!validateSolicitudCancel())
+                    //            {
+                    //                if (validateDocCancel(this.EditText21.Value))
+                    //                {
+                    //                    var asdad = oForm;
+                    //                    if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la solicitud de corte?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
+                    //                        BubbleEvent = true;
+                    //                    else
+                    //                        BubbleEvent = false;
+                    //                }
+                    //                else
+                    //                {
+                    //                    BubbleEvent = false;
+                    //                    Globales.oApp.MessageBox("No es posible cancelar la solicitud, porque ya se generó la 'Oferta de venta'. ");
+                    //                }
 
-                                }
-                                else
-                                {
-                                    BubbleEvent = false;
-                                    Globales.oApp.MessageBox("La solicitud ya se encuentra CANCELADA. ");
-                                }
+                    //            }
+                    //            else
+                    //            {
+                    //                BubbleEvent = false;
+                    //                Globales.oApp.MessageBox("La solicitud ya se encuentra CANCELADA. ");
+                    //            }
 
                                 
-                            }
+                    //        }
 
 
                             
-                            break;
-                    }
-                }
-                else
+                    //        break;
+                    //}
+                //}
+                //else
+                if (!pVal.BeforeAction)
                 {
                     switch (pVal.MenuUID)
                     {
@@ -214,9 +217,9 @@ namespace AddOnCorte
                             this.EditText4.Item.Enabled = false;
                             this.CheckBox0.Item.Enabled = false;
                             break;
-                        case "1284":
-                            Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "C", "U_MGS_CL_ESTD");
-                            break;
+                        //case "1284":
+                        //    Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "C", "U_MGS_CL_ESTD");
+                        //    break;
                     }
                 }
 
@@ -2325,6 +2328,48 @@ namespace AddOnCorte
         private int RGB(int red, int green, int blue)
         {
             return (red & 0xFF) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 16);
+        }
+
+        private SAPbouiCOM.Button Button7;
+
+        private void Button7_PressedAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            //throw new System.NotImplementedException();
+            
+
+            if(oForm.Mode == SAPbouiCOM.BoFormMode.fm_OK_MODE)
+            {
+                if (!validateSolicitudCancel())
+                {
+                    if (validateDocCancel(this.EditText21.Value))
+                    {
+                        var asdad = oForm;
+                        if (Globales.oApp.MessageBox("¿Esta Ud. de cancelar la solicitud de corte?, es un proceso irreversible.", 1, "Continuar", "Cancelar", "") == 1)
+                        {
+                            Comunes.FuncionesComunes.UpdateUDO(this.EditText0.Value.ToString(), "C", "U_MGS_CL_ESTD");
+                        }
+                        //BubbleEvent = true;
+
+                    }
+                    else
+                    {
+
+                        Globales.oApp.MessageBox("No es posible cancelar la solicitud, porque ya se generó la 'Oferta de venta'. ");
+                    }
+
+                }
+                else
+                {
+
+                    Globales.oApp.MessageBox("La solicitud ya se encuentra CANCELADA. ");
+                }
+            }
+            else
+            {
+                Globales.oApp.MessageBox("Debe buscar una solicitud para aplicar esta opción. ");
+            }
+            
+
         }
     }
 }
