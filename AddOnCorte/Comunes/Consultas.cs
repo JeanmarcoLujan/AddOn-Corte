@@ -18,7 +18,7 @@ namespace AddOnCorte.Comunes
 
             //ES UNA PRUEBA DE AGRITOP
 
-            switch (bo_ServerTypes)
+            switch (bo_ServerTypes) 
             {
                 case SAPbobsCOM.BoDataServerTypes.dst_HANADB:
                     m_sSQL.AppendFormat("SELECT * FROM \"@{0}\"", NAddon.ToUpper());
